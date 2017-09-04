@@ -1,2 +1,2 @@
 ## Laboratory Sessions
-[Lab 1](labs/lab1.md)
+[LAB 1: Introduction to Microcontrollers](labs/lab1.md)
