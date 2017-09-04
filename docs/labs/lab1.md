@@ -6,15 +6,15 @@ extra credit, following a black-taped line using a Line Follower
 Sensor.
 
 ### Materials
-..* Arduino IDE Software
-..* 1 Arduino Uno
-..* 1 USB A/B cable
-..* 1 Continuous rotation servo
-..* 1 Pushbutton
-..* 1 LED (we chose a blue LED)
-..* 1 Potentiometer
-..* Several resistors (300Ω and kΩ range)
-..* 1 Solderless breadboard
+  * Arduino IDE Software
+  * 1 Arduino Uno
+  * 1 USB A/B cable
+  * 1 Continuous rotation servo
+  * 1 Pushbutton
+  * 1 LED (we chose a blue LED)
+  * 1 Potentiometer
+  * Several resistors (300Ω and kΩ range)
+  * 1 Solderless breadboard
 
 ### Blinking an internal LED
 
