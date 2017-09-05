@@ -5,7 +5,7 @@ In this introductory lab, we learned how to use the various functionalities of t
 extra credit, following a black-taped line using a Line Follower
 Sensor.
 
-![alt text](pictures/materials.HEIC)
+![alt text](pictures/materials.png)
 
 ### Materials
   * Arduino IDE Software
