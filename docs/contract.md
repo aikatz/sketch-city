@@ -2,10 +2,10 @@
 
 ECE 3400, Fall 2017, Team 9
 
-## Team Members 
+## Team Members
 * Alex Katz
 * Christine Ou
-* Eric Berg 
+* Eric Berg
 * Juan Albrecht
 * Yazhi Fan
 
@@ -31,15 +31,15 @@ Consequences for Failing to Follow Procedures and Fulfill Expectations
 Anyone who discovers other members who are not living up to this contract should remind them. If these infractions continues, it will be discussed during team meetings. Team should notify course staff if problems become extreme.
 
 ### Work Quality
-* Website should be updated at least once every week by Juan and Alex 
+* Website should be updated at least once every week by Juan and Alex
 * At least one design review will be held before each Milestone
 * Any individual’s task should be functionally completed one day before the deadline    
 
 ### Strategies to fulfill these standards
 
 #### Team Participation
-1. To ensure cooperation and equal distribution of tasks, we will set plan, clarify tasks, and maintain good communications. Tasks should be assigned at the end of each meeting, so all members know what they are responsible for during the following week. Major or key tasks should be assigned to at least two people to ensure that they will be completed on time to expectation. 
-2. To encourage ideas from all team members, we will discuss each individual’s progress during team meetings. All team members should share their opinions, including components that they are not working on. 
+1. To ensure cooperation and equal distribution of tasks, we will set plan, clarify tasks, and maintain good communications. Tasks should be assigned at the end of each meeting, so all members know what they are responsible for during the following week. Major or key tasks should be assigned to at least two people to ensure that they will be completed on time to expectation.
+2. To encourage ideas from all team members, we will discuss each individual’s progress during team meetings. All team members should share their opinions, including components that they are not working on.
 3. Task maintenance is dependent both on the team leader and team members. All members should complete their tasks to expectation on time. Team leader and other team members should remind individuals who have not presented their promised tasks before deadline and those who have are not responding to messages promptly.98776
 4. If an individual is having trouble with his or her task, the individual should first seek help in the team by either posting on Slack or presenting the problem during team meetings. If other team members cannot solve the problem either, the individual should seek help outside the team through Piazza or course staff.   
 
@@ -76,4 +76,3 @@ ___
 3. Alex Katz............date: 09/01/2017   
 4. Yazhi Fan............date: 09/01/2017   
 5. Juan Joel Albrecht...date: 09/01/2017   
-
