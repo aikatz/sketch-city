@@ -55,4 +55,6 @@ We decided to go with bigger wheels in order to analyze how the robot behaves wi
 ### Driving your robot autonomously
 As an extra-credit for Lab 1, our team included a Line Follower sensor that detected the existence of a black tape and knew the difference in color with respect to the white tiles on the floor. Using different sensors to manipulate the data acquired and programming our robot to react in a certain depending on the environment stimulation, is what actually makes it autonomous. On future labs, the team is planning on including different sensors like ultrasonic sensor for detecting the walls inside the maze, and maybe even position sensors to map the trajectory of the robot while solving the maze.
 
+**Find a link to our robot's performance by clicking [here](../index.md)**
+
 ### Conclusions
