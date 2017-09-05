@@ -47,9 +47,11 @@ During this stage, the white input signal wire on the parallax servo was connect
 
 ##### Here is a picture of the initial steps of assembling the robot:
 ![Robot in the making](../pictures/assembling.png)
+
+
 We decided to go with bigger wheels in order to analyze how the robot behaves with such large tiles and the amount of speed it can reach.
 
-##### Here is a picture of team member Eric Berg finishing the assembly of the robot:
+##### Here is a picture of team members Eric Berg and Christine Ou starting the assembly of the wheels:
 ![Team Picture](../pictures/laughingEric.png)
 
 ### Driving your robot autonomously
