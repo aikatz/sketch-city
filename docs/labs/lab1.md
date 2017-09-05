@@ -18,12 +18,12 @@ Sensor.
   * Several resistors (300Ω and kΩ range)
   * 1 Solderless breadboard
 
-![alt text](pictures/materials.png)
+![Materials](pictures/materials.png)
 
 ### Blinking an internal LED
 The “Blink” example code was used to test the communication between the Arduino Uno and the IDE. At first, the code was compiled and uploaded without any modifications, and the on-board LED blinked on and off according to a certain value of delay.
 
-![alt text](pictures/arduinoCodeBlink.png)
+![Blink Code](pictures/arduinoCodeBlink.png)
 
 ### Blinking an external LED
 To test the digital pins, an external blue LED was connected to digital **pin 13** in series with a 1k Ohm resistor. The external LED blinked on and off according to a certain value of delay.
