@@ -2,7 +2,7 @@
 
 ---
 
-<iframe width="356" height="200" src="https://www.youtube.com/embed/lxCcdF9XyvM" frameborder="0" allowfullscreen></iframe>
+<iframe width="534" height="300" src="https://www.youtube.com/embed/lxCcdF9XyvM" frameborder="0" allowfullscreen></iframe>
 
 ### Objective
 In this introductory lab, we learned how to use the various functionalities of the Arduino Uno and the Arduino IDE. Our team constructed a simple functional Arduino program using multiple external components and the Arduino Uno. Once we mastered this basic understanding, we put together our robot and had it perform a simple autonomous task like turning in nearly 90-degree angles and as an
