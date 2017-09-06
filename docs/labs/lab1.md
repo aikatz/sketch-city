@@ -38,12 +38,12 @@ void loop() {
 ```
 
 ### Blinking an external LED
-To test the digital pins, an external blue LED was connected to digital **pin 13** in series with a 1k Ohm resistor. The external LED blinked on and off according to a certain value of delay.
+To test the digital pins, an external LED was connected to a digital pin in series with a 330 ohm resistor. The LED was tested with each of the digital pins to ensure that all pins functioned correctly. The external LED blinked on and off every second. 
 
 ![External LED Blink](../pictures/LEDBlink.png)
 
 ### Reading the value of a potentiometer
-To test the analog input pins, a **potentiometer** was connected to analog input **pin 0** in series with a 1k Ohm resistor to input different voltages. For data analysis, we used enabled the serial monitor to display the analog value every half second.
+To test the analog input pins, a potentiometer was connected to an analog input pin in series with a 330 ohm resistor to input different voltages. Again, the potentiometer was tested with each of the analog pins. The serial monitor displayed the analog value every half second. 
 
 ![Reading of Potentiometer](../pictures/potReading.png)
 
