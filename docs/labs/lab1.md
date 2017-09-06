@@ -80,7 +80,7 @@ As an extra feature for Lab 1, our team included an IR sensor that detected the 
 
 After seeing how the robot was behaving when approaching a tight curve like the one in the video, we realized that we were putting too much speed for the servo motors to achieve smooth left and right turns. Therefore, we lowered both servos' speeds and found a more efficient combination that definitely improved the robot's behavior.
 
-#### Algorithm used to follow the edge of the line using an IR sensor
+#### Program used to follow the edge of the line using an IR sensor
 
 ```c
 /*
