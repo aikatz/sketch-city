@@ -23,6 +23,11 @@ Sensor.
 ### Blinking an internal LED
 The “Blink” example code was used to test the communication between the Arduino Uno and the IDE. At first, the code was compiled and uploaded without any modifications, and the on-board LED blinked on and off according to a certain value of delay.
 
+```javascript
+var s = "JavaScript syntax highlighting";
+alert(s);
+```
+
 ![Blink Code](../pictures/arduinoCodeBlink.png)
 
 ### Blinking an external LED
