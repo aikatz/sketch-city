@@ -11,7 +11,6 @@ extra feature, following a black-taped line using an IR Sensor.
   * 1 Arduino Uno
   * 1 USB A/B cable
   * 1 Continuous rotation servo
-  * 1 Pushbutton
   * 1 LED (we chose a blue LED)
   * 1 Potentiometer
   * Several resistors (300Ω and kΩ range)
@@ -64,7 +63,7 @@ During this stage, the white input signal wire on the parallax servo was connect
 
 ### Assemble your robot
 
-**Stuff to be written here, please wait**
+During the assembly of the robot, we attached a wheel to each of the servo to allow mobility. Then the wheels were attached to the two sides of the chasis using screws. The Arduino circuit and the battery were put on top of the chasis. A ball bearing was attached to the front of the chasis for support.
 
 #### Here is a picture of the initial steps of assembling the robot:
 ![Robot in the making](../pictures/assembling.png)
@@ -81,8 +80,49 @@ As an extra feature for Lab 1, our team included an IR sensor that detected the 
 
 After seeing how the robot was behaving when approaching a tight curve like the one in the video, we realized that we were putting too much speed for the servo motors to achieve smooth left and right turns. Therefore, we lowered both servos' speeds and found a more efficient combination that definitely improved the robot's behavior.
 
-```c
+### Algorithm used to follow the edge of the line using an IR sensor
 
+```c
+/*
+ *  LineFollow.ino
+ *  
+ *  Uses a very basic algorithm to have the robot follow
+ *  a black line on a white background
+ */
+#include <Servo.h>
+// Declare two Servo objects - one to control each servo
+Servo rightServo;
+Servo leftServo;
+// Stores the pin # that is connected to the IR sensor
+const int analogInPin = 0;
+// Will use this to store the value from the ADC
+int sensorValue;
+void setup() {
+  // Connect right servo to pin 9, left servo to pin 10
+  rightServo.attach(9);
+  leftServo.attach(10);
+}
+void loop() {
+  // Read the value from the ADC connected to the IR sensor
+  sensorValue = analogRead(analogInPin);
+  // We decided on using 700 to partition the range of values after some experimentation
+  if(sensorValue > 700) {
+      // Turn left
+
+      // 180 = full power clockwise
+      // 89  = low power counter-clockwise
+      rightServo.write(180);
+      leftServo.write(89);
+  }else{
+      // Turn right
+
+      // 91 = low power clockwise
+      // 0  = full power counter-clockwise
+      rightServo.write(91);
+      leftServo.write(0);
+  }
+  delay(25);
+}
 ```
 <iframe width="534" height="300" src="https://www.youtube.com/embed/kUykOyhvOOE" frameborder="0" allowfullscreen></iframe>
 
