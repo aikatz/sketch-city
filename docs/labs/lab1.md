@@ -4,7 +4,7 @@
 
 ### Objective
 In this introductory lab, we learned how to use the various functionalities of the Arduino Uno and the Arduino IDE. Our team constructed a simple functional Arduino program using multiple external components and the Arduino Uno. Once we mastered this basic understanding, we put together our robot and had it perform a simple autonomous task like turning in nearly 90-degree angles and as an
-extra credit, following a black-taped line using a Line Follower
+extra feature, following a black-taped line using a Line Follower
 Sensor.
 
 ### Materials
@@ -63,7 +63,7 @@ We decided to go with bigger wheels in order to analyze how the robot behaves wi
 ![Team Picture](../pictures/laughingEric.png)
 
 ### Driving your robot autonomously
-As an extra-credit for Lab 1, our team included a Line Follower sensor that detected the existence of a black tape and knew the difference in color with respect to the white tiles on the floor. Using different sensors to manipulate the data acquired and programming our robot to react in a certain depending on the environment stimulation, is what actually makes it autonomous. On future labs, the team is planning on including different sensors like ultrasonic sensor for detecting the walls inside the maze, and maybe even position sensors to map the trajectory of the robot while solving the maze.
+As an extra feature for Lab 1, our team included a Line Follower sensor that detected the existence of a black tape and knew the difference in color with respect to the white tiles on the floor. Using different sensors to manipulate the data acquired and programming our robot to react in a certain depending on the environment stimulation, is what actually makes it autonomous. On future labs, the team is planning on including different sensors like ultrasonic sensor for detecting the walls inside the maze, and maybe even position sensors to map the trajectory of the robot while solving the maze.
 
 **Find a link to our robot's initial performance by clicking [here](../index.md).**
 
