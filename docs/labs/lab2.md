@@ -27,12 +27,28 @@ components in order to make debugging easier in the future. The Electret Microph
 
 For the purpose of the competition, we needed to amplify the signal since there is going to be a lot of background noise in Phillips Hall. We assembled a non-inverting amplifier with 10kΩ and 100kΩ, therefore having a gain of 10. However, we were not getting a signal at all, and the faculty even checked and validated our circuit before reaching any false conclusions. It was in fact a defectuous op amp, and many of the other teams were having the same issue. That is why we switched to a fully functional Electret Microphone Amplifier - MAX4466. This device already contained the desired analog filters, and an adjustable gain ranging from 4 to 27 -measured by our team using the function generator and the oscilloscope-. From this lab, until the competition, we will work with such device to solve the acoustic challenges.
 
-### Testing the FFT algorithm provided by the Arduino
+### Testing the Fast-Fourier-Transform algorithm provided by the Arduino
+
+First of all, we started testing the function generator by hooking it up directly to the oscilloscope and make sure it was working properly. We tested it with a 660Hz frequency, 2.55Vpp amplitude, and 1.25V offset. Here is the feedback of the experiment:
+
+Function generator:
+<div style="text-align:center"> <img src="../pictures/lab2/functGenTest.jpg"/> </div>
+
+Oscilloscope:
+<div style="text-align:center"> <img src="../pictures/lab2/oscilloscopeTest.jpg"/> </div>
+
+With the function generator working properly, it was time to test the FFT algorithm provided by the Arduino Library ```c <FFT.h> ```. Before assembling the circuit together, we had to do some work to figure out where our 660Hz frequency would fall inside the output from the FFT. 
 
 ### Testing the circuit with a 660 Hz tone
 
+
+
 ### Conclusions
 
+
+
 ## IR Sensor Team
+
+
 
 ### Materials
