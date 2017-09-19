@@ -37,7 +37,8 @@ Function generator:
 Oscilloscope:
 <div style="text-align:center"> <img src="../pictures/lab2/oscilloscopeTest.jpg"/> </div>
 
-With the function generator working properly, it was time to test the FFT algorithm provided by the Arduino Library ```c <FFT.h> ```. Before assembling the circuit together, we had to do some work to figure out where our 660Hz frequency would fall inside the output from the FFT. 
+With the function generator working properly, it was time to test the FFT algorithm provided by the Arduino Library
+`<FFT.h> `. Before assembling the circuit together, we had to do some work to figure out where our 660Hz frequency would fall inside the output from the FFT.
 
 ### Testing the circuit with a 660 Hz tone
 
