@@ -31,11 +31,9 @@ For the purpose of the competition, we needed to amplify the signal since there 
 
 First of all, we started testing the function generator by hooking it up directly to the oscilloscope and make sure it was working properly. We tested it with a 660Hz frequency, 2.55Vpp amplitude, and 1.25V offset. Here is the feedback of the experiment:
 
-Function generator:
-<div style="text-align:center"> <img src="../pictures/lab2/functGenTest.jpg"/> </div>
-
-Oscilloscope:
-<div style="text-align:center"> <img src="../pictures/lab2/oscilloscopeTest.jpg"/> </div>
+Function Generator         |  Oscilloscope
+:-------------------------:|:-------------------------:
+![](../pictures/lab2/functGenTest.jpg)  |  ![](../pictures/lab2/oscilloscopeTest.jpg)
 
 With the function generator working properly, it was time to test the FFT algorithm provided by the Arduino Library
 `<FFT.h> `. Before assembling the circuit together, we had to do some work to figure out where our 660Hz frequency would fall inside the output from the FFT.
