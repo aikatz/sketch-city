@@ -133,7 +133,7 @@ void loop() {
  <div style="text-align: center">
  <iframe width="534" height="300" src="https://www.youtube.com/embed/kUykOyhvOOE" frameborder="0" allowfullscreen></iframe>
  </div>
- 
+
 ### Conclusions
 
 The feedback we received from the robot's behavior has enabled our team to start thinking about how to build all the mechanical components, as well as how to write the motion algorithms based on sensor data analysis. We arrived to the conclusion that the servos can definitely behave strangely if not properly connected to power, contributing to an erroneous behavior from the robot. Also, with the inclusion of **relatively large** wheels, we confirmed that there is a serious tradeoff between speed and robustness. Even though we were one of the fastest teams in our lab session, we had to struggle and improvise a *sketchy* way of placing the sensor because of the ridiculous height of the robot.

@@ -31,7 +31,9 @@ components in order to make debugging easier in the future. The Electret Microph
 Please, watch a quick demonstration of the functionality of our circuit so far:
 
 <div style="text-align: center">
-<iframe width="534" height="300" src="https://youtu.be/f3Jj78DgqsM" frameborder="0" allowfullscreen></iframe>
+<iframe width="534" height="300"
+src="https://youtu.be/f3Jj78DgqsM" frameborder="0"
+allowfullscreen></iframe>
 </div>
 
 For the purpose of the competition, we needed to amplify the signal since there is going to be a lot of background noise in Phillips Hall. We assembled a non-inverting amplifier with 10kΩ and 100kΩ, therefore having a gain of 10. However, we were not getting a signal at all, and the faculty even checked and validated our circuit before reaching any false conclusions. It was in fact a defectuous op amp, and many of the other teams were having the same issue. That is why we switched to a fully functional Electret Microphone Amplifier - MAX4466. This device already contained the desired analog filters, and an adjustable gain ranging from 4 to 26 -measured by our team using the function generator and the oscilloscope-:
