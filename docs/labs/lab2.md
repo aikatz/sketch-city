@@ -17,6 +17,9 @@ at 7kHz.
   * Arduino Uno
   * Electret Microphone Amplifier - MAX4466 with Adjustable Gain
   * ~3 kΩ resistor
+  * Function Generator
+  * Oscilloscope
+  * Tone generator phone-application
 
 ### Analysis of the microphone in the built-in system
 
@@ -33,9 +36,11 @@ For the purpose of the competition, we needed to amplify the signal since there 
 
 From this lab, until the competition, we will work with such device to solve the acoustic challenges.
 
-### Testing the Fast-Fourier-Transform algorithm provided by the Arduino
+### Testing the Fast Fourier Transform algorithm provided by the Arduino
 
-First of all, we started testing the function generator by hooking it up directly to the oscilloscope and make sure it was working properly. We tested it with a 660Hz frequency, 2.55Vpp amplitude, and 1.25V offset. Here is the feedback of the experiment:
+First of all, let's discuss why the Fast Fourier Transform Algorithm is the right way to solve our issue. A fast Fourier transform (FFT) algorithm computes the discrete Fourier transform (DFT) of a sequence, or its inverse (IFFT). Fourier analysis converts a signal from its original domain (often time or space) to a representation in the frequency domain and vice versa. An FFT rapidly computes such transformations by factorizing the DFT matrix into a product of sparse (mostly zero) factors. As a result, it manages to reduce the complexity of computing the DFT from `O(n^2)`, which arises if one simply applies the definition of DFT, to `O(nlogn)`, where n is the data size.
+
+Now let's get into the process of using this powerful tool. We started testing the function generator by hooking it up directly to the oscilloscope and make sure it was working properly. We tested it with a 660Hz frequency, 2.55Vpp amplitude, and 1.25V offset. Here is the feedback of the experiment:
 
 Function Generator         |  Oscilloscope
 :-------------------------:|:-------------------------:
@@ -51,15 +56,86 @@ And this is the data that we obtained from the graph regarding different bins an
 
 (660: 5), (1320: 10), (1980: 14), (2640: 19), (3300: 23), (3960: 27), (4620: 32), (5280: 36)
 
-Our feedback was quite expected! We not only read the 660Hz in bin 5, but we could actually see the even spacing between the bins of the frequencies multiples of 660Hz -as it was expected, of course-. With that out of the way, we proceeded to actually test the circuit with our own 660Hz tone.
+Our feedback was what we expected! We not only read the 660Hz in bin 5, but we could actually see the even spacing between the bins of the frequencies multiples of 660Hz -as it was expected as well, of course-. With that out of the way, we proceeded to actually test the circuit with our own 660Hz tone.
 
 ### Testing the circuit with a 660 Hz tone
 
+Before doing any further analysis of the signal, or even editing the code to display any data, our team did a small double-check test to see how the circuit reacted to (1) people talking in the background, (2) a random song, and (3) the 660Hz tone generated from the mobile application we downloaded. This graph clearly portrays the result:
 
+<div style="text-align:center"><img src="../pictures/lab2/comparison.png"/></div>
+
+At the dotted spot, we can see how the 5th frequency bin is at its peak in the 660Hz tone graph, while the other two are really low at that point. This tells us three things:
+1. Our circuit is definitely recognizing the 660Hz above all.
+2. The signal can get tampered by outside noise, so we cannot rely on the reading at ONE specific point in time. We need a *moving average algorithm*!
+3. We need to work on filtering the signal even more so that we can set it apart from other relatively close signals -such as 585Hz (bin 4) or 735Hz (bin 6)-.
+
+#### Moving average
+
+A moving average is a succession of averages derived from successive segments (typically of constant size and overlapping) of a series of values. Here is how we accomplished ours:
+
+```c
+
+// Moving average variables
+const int numReadings = 10;
+
+int readings[numReadings];      // the readings from the analog input
+int readIndex = 0;              // the index of the current reading
+int total = 0;                  // the running total
+int average = 0;                // the average
+
+
+// Moving average algorithm --------------------------------------
+
+// subtract the last reading:
+total = total - readings[readIndex];
+
+// read from the sensor:
+readings[readIndex] = fft_log_out[4]; // fft_log_out[4] represents the 5th bin being outputted by the ADC
+
+// add the reading to the total:
+total = total + readings[readIndex];
+
+// advance to the next position in the array:
+readIndex = readIndex + 1;
+
+// if we're at the end of the array...
+if (readIndex >= numReadings) {
+  // ...wrap around to the beginning:
+  readIndex = 0;
+}
+
+// calculate the average:
+average = (int)(total / numReadings);
+
+```
+
+We definitely saw an improvement regarding the stability of the signal readings, since it was not fluctuating so much as before. Now it was time to focus on the 3rd point that was mentioned above. With such goal in mind, we came up with a simple, yet effective idea to make our signal stronger: a digital filter. Although it may sound hard, it is just a mathematical algorithm to set apart values that are different already. This is the code that we used:
+
+```
+// Digital Filter Algorithm
+average = (average - 100) * 10;
+```
+
+This expression actually created a bigger difference that expected regarding the separation of the signal. We were able to detect the 660Hz -nothing lower or higher- at a considerable distance of 10 inches! Considering that in the actual competition, the starting tone speaker will be approximately 5 inches apart and at a full volume, we can safely consider our circuit to work very effective. To test it even further, now integrated to the code, we created the following function to help us visualize the reaction of the Arduino in the presence of the tone:
+
+```c
+void detectingTone(int value){
+  if(value > 450){
+      Serial.println("Yes");
+    }
+    else{
+      Serial.println("No");
+    }
+}
+```
+
+The variable `value` is the output of the moving average, which is compared to 450 -a generic value determined by testing the circuit with other signals- to output either "Yes" or "No". Please, see a demonstration of the process in the following video:
+
+**Process video to be uploaded here**
 
 ### Conclusions
 
-
+Our team has done a great job figuring out the endless possibilities to solve the issues that come along this project. We used different techniques and principles of signal analysis to not only convert analog to digital signal, but to filter them in both states. We practiced how to filter our signal using high and low pass filters, as well as digital filters. We worked with operational amplifiers to amplify our analog input, and very importantly, we had the opportunity to analyze the data obtained from the ADC inside the Arduino script. However, we still believe there is more work that can be done in order to improve the efficiency of our circuit. For instance, we are starting to consider using cascading amplifiers to obtain a relatively larger gain -two amplifiers of gain 10 each, for example-. Also, we also want to create a sort of band pass filter to limit our circuit to obtain data from a certain range of frequencies and ignore all remaining noise. It will all be determined in the future, depending on the feedback we receive from intense testing sessions. 
 
 ## IR Sensor Team
 
