@@ -118,7 +118,13 @@ We definitely saw an improvement regarding the stability of the signal readings,
 average = (average - 100) * 10;
 ```
 
-This expression actually created a bigger difference that expected regarding the separation of the signal. We were able to detect the 660Hz -nothing lower or higher- at a considerable distance of 10 inches! Considering that in the actual competition, the starting tone speaker will be approximately 5 inches apart and at a full volume, we can safely consider our circuit to work very effective. To test it even further, now integrated to the code, we created the following function to help us visualize the reaction of the Arduino in the presence of the tone:
+This expression actually created a bigger difference that expected regarding the separation of the signal. We were able to detect the 660Hz -nothing lower or higher- at a considerable distance of 10 inches! Considering that in the actual competition, the starting tone speaker will be approximately 5 inches apart and at a full volume, we can safely consider our circuit to work very effective.
+
+### Distinguish a 660Hz tone (from tones at 585Hz and 735Hz)
+
+**TO BE WRITTEN YET**
+
+To test it even further, now integrated to the code, we created the following function to help us visualize the reaction of the Arduino in the presence of the tone:
 
 ```c
 void detectingTone(int value){
