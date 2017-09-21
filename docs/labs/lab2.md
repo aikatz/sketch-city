@@ -115,24 +115,34 @@ if (readIndex >= numReadings) {
 average = (int)(total / numReadings);
 ```
 
-We definitely saw an improvement regarding the stability of the signal readings, since it was not fluctuating so much as before. Now it was time to focus on the 3rd point that was mentioned above. With such goal in mind, we came up with a simple, yet effective idea to make our signal stronger: a digital filter. Although it may sound hard, it is just a mathematical algorithm to set apart values that are different already. This is the code that we used:
-
-```
-// Digital Filter Algorithm
-average = (average - 100) * 10;
-```
-
-This expression actually created a bigger difference that expected regarding the separation of the signal. We were able to detect the 660Hz -nothing lower or higher- at a considerable distance of 10 inches! Considering that in the actual competition, the starting tone speaker will be approximately 5 inches apart and at a full volume, we can safely consider our circuit to work very effective.
+We definitely saw an improvement regarding the stability of the signal readings, since it was not fluctuating so much as before. Now it was time to focus on the 3rd point that was mentioned above.
 
 ### Distinguish a 660Hz tone (from tones at 585Hz and 735Hz)
 
-**TO BE WRITTEN YET**
+When testing our circuit to see if it could recognize the different frequencies (585Hz, 660Hz, 735Hz), we stumbled across an interesting issue. The circuit was activated with the three frequencies instead of just 660Hz! And we could see why: 585Hz, 660Hz, and 735Hz fall within -or really close- the same 5th frequency bin. Refer to the following picture for the data recollected:
 
-To test it even further, now integrated to the code, we created the following function to help us visualize the reaction of the Arduino in the presence of the tone:
+<div style="text-align:center"><img src="../pictures/lab2/uneditFreqs.png"/></div>
+
+The three frequencies definitely fall really close to each other, so it expected that the circuit does not recognize each of them individually. We came up with a solution that was very effective and it involved the slowing of the ADC clock. In the previous sections, we had pre-scalar of 32 and that was giving us a bins with a frequency range of approximately 150Hz. We cannot afford to keep working like this, since this 150Hz range contains -or is really close to- the three frequencies above. Our solution was to alter the pre-scalar by changing the following line in the Arduino: `ADCSRA = 0xe5;` to `ADCSRA = 0xe7;`. This sets the value of the pre-scalar to 128, which yields the following result: 16MHz / 256 points / 13 cycles / 128 ps = 37.56Hz frequency range for each bin. This result is great! With a smaller range, our three frequencies will fall more apart from each other and therefore will be recognized independently by the Arduino. Refer to the following graph for the new circuit performance:
+
+<div style="text-align:center"><img src="../pictures/lab2/editFreqs.png"/></div>
+
+In this case, 585Hz falls in bin 16, 660Hz falls in bin 18, and 785Hz falls in bin 20. To separate them even more, we came up with a simple, yet effective idea to make our signal stronger: a digital filter. Although it may sound hard, it is just a mathematical algorithm to set apart values that are different already. This is the code that we used:
+
+```
+// Digital Filter Algorithm
+average = (average - 50) * 100;
+```
+
+This expression actually created a bigger difference that expected regarding the separation of the signal. We were able to detect the 660Hz -nothing lower or higher- at a considerable distance of 10 inches! Considering that in the actual competition, the starting tone speaker will be approximately 5 inches apart and at a full volume, we can safely consider our circuit to work very effective. Please, take a look at the comparison between the three frequencies' outputs at random bins, running the function generator at 660Hz:
+
+<div style="text-align:center"><img src="../pictures/lab2/freqComp.png"/></div>
+
+To test it even further, we created the following function to help us visualize the reaction of the Arduino in the presence of the tone:
 
 ```c
 void detectingTone(int value){
-  if(value > 450){
+  if(value > 8000){
       Serial.println("Yes");
     }
     else{
@@ -141,7 +151,7 @@ void detectingTone(int value){
 }
 ```
 
-The variable `value` is the output of the moving average, which is compared to 450 -a generic value determined by testing the circuit with other signals- to output either "Yes" or "No". Please, see a demonstration of the process in the following video:
+The variable `value` is the output of the moving average, which is compared to 8000 -a generic value determined by testing the circuit with other signals- to output either "Yes" or "No". Please, see a demonstration of the process in the following video:
 
 **Process video to be uploaded here**
 
