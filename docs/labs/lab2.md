@@ -180,8 +180,6 @@ Our team has done a great job figuring out the endless possibilities to solve th
   * Treasure Beacon
 
 ### Treasure Signal Unamplified
-<div style="text-align:center"> <img src="../pictures/lab2/IR_Team.png"/> </div>
-
 
 We initially set up a basic circuit to measure the output of the IR phototransistor consisting of the phototransistor connected in series with a resistor between a 5V power supply and ground. We measured the output voltage as the voltage drop across the resistor. The output voltage varies based on the amount of current passing through the phototransistor. Without amplification, we had output voltages ranging from ~500 mV at 2 inches between the treasure and the phototransistor to ~1.5 V at 0.5 inches. This signal is displayed as Ch1 in our pictures of the oscilloscope readings. While the signal was still reasonably large, we decided to amplify the output anyway to minimize the likelihood of a false positive from our treasure detection software and so that we can detect treasures from farther away.
 
@@ -192,12 +190,14 @@ We initially set up a basic circuit to measure the output of the IR phototransis
 
 We decided to use a noninverting amplifier to increase the magnitude of our output signal. We chose a noninverting amplifier as opposed to an inverting amplifier so that we would not need to worry about supplying a negative voltage to our op amp rails. For a noninverting amplifier, the gain is given by the equation
 A_v = 1 + R_f/R_i
+
 where R_f is the feedback resistor between the output and the inverting input and R_i is the resistor between the inverting input and ground. Since our output is already fairly large, we chose to implement our amplifier with a gain of 3. To do this, we chose the resistor values R_f = 22 kΩ and R_i = 10 kΩ.
 
-Our actual output from the amplifier circuit did not quite have the gain of 3 that we expected. The gain seemed to vary between 2 and 3 depending on the magnitude of the input. We weren’t able to determine exactly why the gain fluctuated so much, but we suspect that it is most likely due to the transistors making up the op amp. While we did not feel that this issue was sufficiently important to attempt to fix for this lab, it may be worthwhile later on to switch out our op amp so that the circuit behaves a little more predictably.
-
-
 <div style="text-align:center"> <img  width="370" height="220" src="../pictures/lab2/IR_circuit_amplifier.PNG"/> </div>
+
+Our actual output from the amplifier circuit did not quite have the gain of 3 that we expected. The gain seemed to vary between 2 and 3 depending on the magnitude of the input. We weren’t able to determine exactly why the gain fluctuated so much, but we suspect that it is most likely due to the transistors making up the op amp. The output from the op amp is shown as Ch2 in the pictures of the oscilloscope data. While we did not feel that this issue was sufficiently important to attempt to fix for this lab, it may be worthwhile later on to switch out our op amp so that the circuit behaves a little more predictably.
+
+
 
 Treasure         |  Oscilloscope
 :-------------------------:|:-------------------------:
@@ -242,6 +242,8 @@ To determine whether we had detected the treasure, we compared the magnitude of 
 
 
 ### Distinguishing between 7kHz and 12kHz 
+
+For testing purposes, we wrote an Arduino program that would detect treasures at 7 kHz and 12 kHz and light up different LEDs corresponding to which frequency was detected. When we detect a 7 kHz signal, we light up a green LED. When we detect a 12 kHz signal, we light up a red LED. A demonstration of the treasure detection is shown in the following video.
 
 <div style="text-align: center">
 <iframe width="534" height="300" src="https://www.youtube.com/embed/Q39TYC1IMCU" frameborder="0" allowfullscreen></iframe>
