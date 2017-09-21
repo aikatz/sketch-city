@@ -181,7 +181,7 @@ Our team has done a great job figuring out the endless possibilities to solve th
 
 ### Treasure Signal Unamplified
 <div style="text-align:center"> <img src="../pictures/lab2/IR_Team.png"/> </div>
-<div style="text-align:center"> <img width="370" height="200" src="../pictures/lab2/IR_circuit.PNG"/> </div>
+<div style="text-align:center"> <img width="200" height="370" src="../pictures/lab2/IR_circuit.PNG"/> </div>
 <div style="text-align:center"> <img  width="370" height="200" src="../pictures/lab2/IR_circuit_amplifier.PNG"/> </div>
 
 ### Treasure Signal Amplified
@@ -205,13 +205,16 @@ Treasure         |  Oscilloscope
 :-------------------------:|:-------------------------:
 ![](../pictures/lab2/12kHz_Sweep.PNG)  |  ![](../pictures/lab2/7kHz_Sweep.PNG)
 
-<iframe width="534" height="300" src="https://www.youtube.com/embed/Q39TYC1IMCU" frameborder="0" allowfullscreen></iframe>
 
 
 <!-- <div style="text-align:center"> <img src="../pictures/lab2/12kHz_Sweep.PNG"/> </div>
 <div style="text-align:center"> <img src="../pictures/lab2/7kHz_Sweep.PNG"/> </div> -->
 
 ### Distinguishing between 7kHz and 12kHz 
+
+<div style="text-align: center">
+<iframe width="534" height="300" src="https://www.youtube.com/embed/Q39TYC1IMCU" frameborder="0" allowfullscreen></iframe>
+</div>
 
 <!-- <iframe width="534" height="300" src="https://www.youtube.com/embed/f3Jj78DgqsM" frameborder="0" allowfullscreen></iframe> -->
 
