@@ -191,7 +191,7 @@ We initially set up a basic circuit to measure the output of the IR phototransis
 We decided to use a noninverting amplifier to increase the magnitude of our output signal. We chose a noninverting amplifier as opposed to an inverting amplifier so that we would not need to worry about supplying a negative voltage to our op amp rails. For a noninverting amplifier, the gain is given by the equation:
 
 
-<div style="text-align:center"> <img  width="370" height="220" src="../pictures/lab2/Op_Amp_Formula.PNG"/> </div>
+<div style="text-align:center"> <img  width="370" height="220" src="../pictures/lab2/OpAmp_Formula.PNG"/> </div>
 
 where R1 is the feedback resistor between the output and the inverting input and R2 is the resistor between the inverting input and ground. Since our output is already fairly large, we chose to implement our amplifier with a gain of 3. To do this, we chose the resistor values R1 = 22 kΩ and R2 = 10 kΩ.
 
