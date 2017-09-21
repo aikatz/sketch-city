@@ -31,9 +31,7 @@ components in order to make debugging easier in the future. The Electret Microph
 Please, watch a quick demonstration of the functionality of our circuit so far:
 
 <div style="text-align: center">
-<iframe width="534" height="300"
-src="https://youtu.be/f3Jj78DgqsM" frameborder="0"
-allowfullscreen></iframe>
+<iframe width="534" height="300" src="https://www.youtube.com/embed/f3Jj78DgqsM" frameborder="0" allowfullscreen></iframe>
 </div>
 
 For the purpose of the competition, we needed to amplify the signal since there is going to be a lot of background noise in Phillips Hall. We assembled a non-inverting amplifier with 10kΩ and 100kΩ, therefore having a gain of 10. However, we were not getting a signal at all, and the faculty even checked and validated our circuit before reaching any false conclusions. It was in fact a defectuous op amp, and many of the other teams were having the same issue. That is why we switched to a fully functional Electret Microphone Amplifier - MAX4466. This device already contained the desired analog filters, and an adjustable gain ranging from 4 to 26 -measured by our team using the function generator and the oscilloscope-:
@@ -153,14 +151,14 @@ void detectingTone(int value){
 
 The variable `value` is the output of the moving average, which is compared to 8000 -a generic value determined by testing the circuit with other signals- to output either "Yes" or "No". Please, see a demonstration of the process in the following video:
 
-**Process video to be uploaded here**
+<div style="text-align: center">
+<iframe width="854" height="480" src="https://www.youtube.com/embed/1Al7tk_LpDg" frameborder="0" allowfullscreen></iframe>
+</div>
 
 ### Conclusions
 
 Our team has done a great job figuring out the endless possibilities to solve the issues that come along this project. We used different techniques and principles of signal analysis to not only convert analog to digital signal, but to filter them in both states. We practiced how to filter our signal using high and low pass filters, as well as digital filters. We worked with operational amplifiers to amplify our analog input, and very importantly, we had the opportunity to analyze the data obtained from the ADC inside the Arduino script. However, we still believe there is more work that can be done in order to improve the efficiency of our circuit. For instance, we are starting to consider using cascading amplifiers to obtain a relatively larger gain -two amplifiers of gain 10 each, for example-. Also, we also want to create a sort of band pass filter to limit our circuit to obtain data from a certain range of frequencies and ignore all remaining noise. It will all be determined in the future, depending on the feedback we receive from intense testing sessions.
 
 ## IR Sensor Team
-
-
 
 ### Materials
