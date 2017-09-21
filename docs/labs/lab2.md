@@ -213,6 +213,26 @@ Treasure         |  Oscilloscope
 :-------------------------:|:-------------------------:
 ![](../pictures/lab2/12kHz_Sweep.PNG)  |  ![](../pictures/lab2/7kHz_Sweep.PNG)
 
+```
+// Filtering for high magnitude in bin 47 and bin 80
+    bool top1 = (fft_log_out[47] - fft_log_out[44]) > 20;
+    bool bottom1 = (fft_log_out[47] - fft_log_out[49]) > 20;
+
+    bool top2 = (fft_log_out[80] - fft_log_out[78]) > 20;
+    bool bottom2 = (fft_log_out[80] - fft_log_out[82]) > 20;
+
+
+///Detecting LEDs
+    if (top1 && bottom1){ // 7khz signal because bin 40 is a spike
+      digitalWrite(led1, HIGH);}   // turn the LED on (HIGH is the voltage level)
+    else{
+      digitalWrite(led1, LOW);}
+    
+    if (top2 && bottom2){  // 12khz because bin 80 is a spike
+      digitalWrite(led2, HIGH);}   // turn the LED on (HIGH is the voltage level)
+    else{
+      digitalWrite(led2, LOW);}
+```
 
 
 ### Distinguishing between 7kHz and 12kHz 
@@ -220,7 +240,7 @@ Treasure         |  Oscilloscope
 <div style="text-align: center">
 <iframe width="534" height="300" src="https://www.youtube.com/embed/Q39TYC1IMCU" frameborder="0" allowfullscreen></iframe>
 </div>
-
+f
 
 When we started assembling our circuit, we made sure to test its different
 
