@@ -8,11 +8,7 @@ Our first goal is to make the robot follow a black line on a white background. W
 
 
 ### Grid Traversal (figure eight)
-<<<<<<< HEAD
 In order to get our robot to tranverse grids, we implemented a
-=======
-In order to get our robot to tranverse grids, we implemented two more sensor. Two sensor are alighed on the front of the robot, and one sensor is implemented behind the front right sensor. The two sensor on the front allow straight line following and intersection detection. The sensor behind the right sensor make sure the robot returns to straight line following after turning at an intersection. We also had to do a few major modifications of our code for this section. Instead of using while and for loops, we created a finite state machine and used switch statements instead. 
->>>>>>> 665c1c93ea82af831e5362860565df46080738e4
 
 ### Advantages of using an FSM
 One advantage of using a FSM is that we can replace most the while and for loops which can cause infinite loops that are hard to debug. The delay function also causes many problems, but we can get around the delay function with FSM using the Arduino timer and millis(). In the future, we are going to have much more complex code and FSM can be very helpful in keeping our code organized and concise.
