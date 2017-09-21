@@ -17,7 +17,7 @@ In order to get our robot to transverse grids, we implemented two more sensor. T
 
 Here's our full code for the Grid Traversal:
 
-```
+```C
 #include <Servo.h>
 
 #define FULL_POWER_CCW   180
