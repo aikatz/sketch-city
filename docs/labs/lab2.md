@@ -255,4 +255,4 @@ For testing purposes, we wrote an Arduino program that would detect treasures at
 
 ### Conclusions
 
-Our team has done a great job figuring out the endless possibilities to solve the issues that co
+We were able to successfully implement an IR detection circuit that would reliably detect the treasure at ~2 inches away from the phototransistor. We have some lingering quirks, primarily the gain that is fluctuating with the magnitude of the input, but these are issues that can be dealt with later with minimal effort if necessary. Our code is able to distinguish between the two different treasures and can be easily expanded to include detection for the 17 kHz treasure. We may want to look into including filters in our circuit later to minimize the effects of random IR noise if further testing suggests that noise may become an issue.
