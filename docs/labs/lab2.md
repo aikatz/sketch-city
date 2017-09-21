@@ -185,10 +185,19 @@ Our team has done a great job figuring out the endless possibilities to solve th
 <div style="text-align:center"> <img src="../pictures/lab2/IR_circuit_amplifier.png"/> </div>
 
 ### Treasure Signal Amplified
-<div style="text-align:center"> <img src="../pictures/lab2/Treasure_1in.jpg"/> </div>
+
+Treasure         |  Oscilloscope
+:-------------------------:|:-------------------------:
+![](../pictures/lab2/Treasure_1in.jpg)  |  ![](../pictures/lab2/Scope_1in.jpg) 
+
+Treasure         |  Oscilloscope
+:-------------------------:|:-------------------------:
+![](../pictures/lab2/Treasure_2in.jpg)  |  ![](../pictures/lab2/Scope_2in.jpg) 
+
+<!-- <div style="text-align:center"> <img src="../pictures/lab2/Treasure_1in.jpg"/> </div>
 <div style="text-align:center"> <img src="../pictures/lab2/Treasure_2in.jpg"/> </div>
 <div style="text-align:center"> <img src="../pictures/lab2/Scope_1in.jpg"/> </div>
-<div style="text-align:center"> <img src="../pictures/lab2/Scope_2in.jpg"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/Scope_2in.jpg"/> </div> -->
 
 ### Detecting Treasure using FFT
 <div style="text-align:center"> <img src="../pictures/lab2/12kHz_Sweep.png"/> </div>
