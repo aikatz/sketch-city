@@ -8,7 +8,7 @@ Our first goal is to make the robot follow a black line on a white background. W
 
 
 ### Grid Traversal (figure eight)
-In order to get our robot to tranverse grids, we implemented a 
+In order to get our robot to tranverse grids, we implemented a
 
 ### Advantages of using an FSM
 
