@@ -199,7 +199,7 @@ where R1 is the feedback resistor between the output and the inverting input and
 
 Our actual output from the amplifier circuit did not quite have the gain of 3 that we expected. The gain seemed to vary between 2 and 3 depending on the magnitude of the input. We weren’t able to determine exactly why the gain fluctuated so much, but we suspect that it is most likely due to the transistors making up the op amp. The output from the op amp is shown as Ch2 in the pictures of the oscilloscope data. While we did not feel that this issue was sufficiently important to attempt to fix for this lab, it may be worthwhile later on to switch out our op amp so that the circuit behaves a little more predictably.
 
-THhe pictures below show the Treausre location and the corresponding signal being picked up by the phototransistor. The yellow signal is unamplified and the blue signal is amplified. Even at 2 inches away, our amplifier was stil outputing signal pk-to-pk of 960mV. We think this setup will work well for detecing treasures from long distances (~2in).
+The pictures below show the treasure location and the corresponding signal being picked up by the phototransistor. The yellow signal is unamplified and the blue signal is amplified. Even at 2 inches away, our amplifier was stil outputing signal pk-to-pk of 960mV. We think this setup will work well for detecing treasures from long distances (~2in).
 
 
 
