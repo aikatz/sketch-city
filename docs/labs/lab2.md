@@ -181,14 +181,18 @@ Our team has done a great job figuring out the endless possibilities to solve th
 
 ### Treasure Signal Unamplified
 <div style="text-align:center"> <img src="../pictures/lab2/IR_Team.png"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/IR_circuit.png"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/IR_circuit_amplifier.png"/> </div>
 
 ### Treasure Signal Amplified
 <div style="text-align:center"> <img src="../pictures/lab2/Treasure_1in.jpg"/> </div>
 <div style="text-align:center"> <img src="../pictures/lab2/Treasure_2in.jpg"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/Scope_1in.jpg"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/Scope_2in.jpg"/> </div>
 
 ### Detecting Treasure using FFT
-<div style="text-align:center"> <img src="../pictures/lab2/12kHz_Sweep"/> </div>
-<div style="text-align:center"> <img src="../pictures/lab2/7kHz_Sweep"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/12kHz_Sweep.png"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/7kHz_Sweep.png"/> </div>
 
 ### Distinguishing between 7kHz and 12kHz 
 
