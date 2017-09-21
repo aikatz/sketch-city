@@ -188,8 +188,10 @@ We initially set up a basic circuit to measure the output of the IR phototransis
 
 ### Treasure Signal Amplified
 
-We decided to use a noninverting amplifier to increase the magnitude of our output signal. We chose a noninverting amplifier as opposed to an inverting amplifier so that we would not need to worry about supplying a negative voltage to our op amp rails. For a noninverting amplifier, the gain is given by the equation
-A_v = 1 + R_f/R_i
+We decided to use a noninverting amplifier to increase the magnitude of our output signal. We chose a noninverting amplifier as opposed to an inverting amplifier so that we would not need to worry about supplying a negative voltage to our op amp rails. For a noninverting amplifier, the gain is given by the equation:
+
+
+<div style="text-align:center"> <img  width="370" height="220" src="../pictures/lab2/Op_Amp_Formula.PNG"/> </div>
 
 where R_f is the feedback resistor between the output and the inverting input and R_i is the resistor between the inverting input and ground. Since our output is already fairly large, we chose to implement our amplifier with a gain of 3. To do this, we chose the resistor values R_f = 22 kΩ and R_i = 10 kΩ.
 
