@@ -162,17 +162,34 @@ Our team has done a great job figuring out the endless possibilities to solve th
 ## IR Sensor Team
 
 
-<div style="text-align:center"> <img src="../pictures/lab2/mic.jpeg"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/IR_Team.png"/> </div>
 
 ### Materials
 
   * Arduino Uno
-  * Electret Microphone Amplifier - MAX4466 with Adjustable Gain
-  * ~3 kΩ resistor
+  * NPN IR Photo Transistor
+  * LM358P Op Amp
+  * 2.2kΩ resistor
+  * 10kΩ resistor
+  * 22kΩ resistor
+  * 2x 330Ω resistors
+  * Green LED
+  * Red LED
   * Function Generator
   * Oscilloscope
-  * Tone generator phone-application
+  * Treasure Beacon
 
-### Analysis of the microphone in the built-in system
+### Treasure Signal Unamplified
+<div style="text-align:center"> <img src="../pictures/lab2/IR_Team.png"/> </div>
+
+### Treasure Signal Amplified
+<div style="text-align:center"> <img src="../pictures/lab2/Treasure_1in.jpg"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/Treasure_2in.jpg"/> </div>
+
+### Detecting Treasure using FFT
+<div style="text-align:center"> <img src="../pictures/lab2/12kHz_Sweep"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/7kHz_Sweep"/> </div>
+
+### Distinguishing between 7kHz and 12kHz 
 
 When we started assembling our circuit, we made sure to test its different
