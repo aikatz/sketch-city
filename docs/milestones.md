@@ -1,1 +1,2 @@
-# TO BE WRITTEN YET. PLEASE, WAIT
+## MILESTONES  
+[Milestone 1](milestone/milestone1.md)
