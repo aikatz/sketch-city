@@ -181,8 +181,8 @@ Our team has done a great job figuring out the endless possibilities to solve th
 
 ### Treasure Signal Unamplified
 <div style="text-align:center"> <img src="../pictures/lab2/IR_Team.png"/> </div>
-<div style="text-align:center"> <img src="../pictures/lab2/IR_circuit.png"/> </div>
-<div style="text-align:center"> <img src="../pictures/lab2/IR_circuit_amplifier.png"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/IR_circuit.PNG"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/IR_circuit_amplifier.PNG"/> </div>
 
 ### Treasure Signal Amplified
 
@@ -203,7 +203,7 @@ Treasure         |  Oscilloscope
 
 7kHz Treasure        |  12kHz Treasure
 :-------------------------:|:-------------------------:
-![](../pictures/lab2/12kHz_Sweep.PNG)  |  ![](../pictures/lab2/7kHz_Sweep.PNG")
+![](../pictures/lab2/12kHz_Sweep.PNG)  |  ![](../pictures/lab2/7kHz_Sweep.PNG)
 
 
 <!-- <div style="text-align:center"> <img src="../pictures/lab2/12kHz_Sweep.PNG"/> </div>
