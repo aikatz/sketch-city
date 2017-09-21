@@ -161,4 +161,18 @@ Our team has done a great job figuring out the endless possibilities to solve th
 
 ## IR Sensor Team
 
+
+<div style="text-align:center"> <img src="../pictures/lab2/mic.jpeg"/> </div>
+
 ### Materials
+
+  * Arduino Uno
+  * Electret Microphone Amplifier - MAX4466 with Adjustable Gain
+  * ~3 kΩ resistor
+  * Function Generator
+  * Oscilloscope
+  * Tone generator phone-application
+
+### Analysis of the microphone in the built-in system
+
+When we started assembling our circuit, we made sure to test its different
