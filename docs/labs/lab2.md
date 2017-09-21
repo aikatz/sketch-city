@@ -205,7 +205,7 @@ Treasure         |  Oscilloscope
 :-------------------------:|:-------------------------:
 ![](../pictures/lab2/12kHz_Sweep.PNG)  |  ![](../pictures/lab2/7kHz_Sweep.PNG)
 
-<iframe width="534" height="300" src="https://youtube/Q39TYC1IMCU" frameborder="0" allowfullscreen></iframe>
+<iframe width="534" height="300" src="https://www.youtube.com/embed/Q39TYC1IMCU" frameborder="0" allowfullscreen></iframe>
 
 
 <!-- <div style="text-align:center"> <img src="../pictures/lab2/12kHz_Sweep.PNG"/> </div>
