@@ -1,2 +1,2 @@
-## MILESTONES  
-[Milestone 1](milestone/milestone1.md)
+## Milestones  
+[Milestone 1](milestones/milestone1.md)
