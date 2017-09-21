@@ -152,7 +152,7 @@ void detectingTone(int value){
 The variable `value` is the output of the moving average, which is compared to 8000 -a generic value determined by testing the circuit with other signals- to output either "Yes" or "No". Please, see a demonstration of the process in the following video:
 
 <div style="text-align: center">
-<iframe width="854" height="480" src="https://www.youtube.com/embed/1Al7tk_LpDg" frameborder="0" allowfullscreen></iframe>
+<iframe width="534" height="300" src="https://www.youtube.com/embed/1Al7tk_LpDg" frameborder="0" allowfullscreen></iframe>
 </div>
 
 ### Conclusions
