@@ -200,8 +200,14 @@ Treasure         |  Oscilloscope
 <div style="text-align:center"> <img src="../pictures/lab2/Scope_2in.jpg"/> </div> -->
 
 ### Detecting Treasure using FFT
-<div style="text-align:center"> <img src="../pictures/lab2/12kHz_Sweep.png"/> </div>
-<div style="text-align:center"> <img src="../pictures/lab2/7kHz_Sweep.png"/> </div>
+
+7kHz Treasure        |  12kHz Treasure
+:-------------------------:|:-------------------------:
+![](../pictures/lab2/12kHz_Sweep.PNG)  |  ![](../pictures/lab2/7kHz_Sweep.PNG")
+
+
+<!-- <div style="text-align:center"> <img src="../pictures/lab2/12kHz_Sweep.PNG"/> </div>
+<div style="text-align:center"> <img src="../pictures/lab2/7kHz_Sweep.PNG"/> </div> -->
 
 ### Distinguishing between 7kHz and 12kHz 
 
