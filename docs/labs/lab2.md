@@ -197,3 +197,7 @@ Our team has done a great job figuring out the endless possibilities to solve th
 ### Distinguishing between 7kHz and 12kHz 
 
 When we started assembling our circuit, we made sure to test its different
+
+### Conclusions
+
+Our team has done a great job figuring out the endless possibilities to solve the issues that co
