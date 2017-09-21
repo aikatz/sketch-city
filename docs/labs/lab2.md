@@ -182,6 +182,7 @@ Our team has done a great job figuring out the endless possibilities to solve th
 ### Treasure Signal Unamplified
 <div style="text-align:center"> <img src="../pictures/lab2/IR_Team.png"/> </div>
 
+
 We initially set up a basic circuit to measure the output of the IR phototransistor consisting of the phototransistor connected in series with a resistor between a 5V power supply and ground. We measured the output voltage as the voltage drop across the resistor. The output voltage varies based on the amount of current passing through the phototransistor. Without amplification, we had output voltages ranging from ~500 mV at 2 inches between the treasure and the phototransistor to ~1.5 V at 0.5 inches. This signal is displayed as Ch1 in our pictures of the oscilloscope readings. While the signal was still reasonably large, we decided to amplify the output anyway to minimize the likelihood of a false positive from our treasure detection software and so that we can detect treasures from farther away.
 
 <div style="text-align:center"> <img width="200" height="320" src="../pictures/lab2/IR_circuit.PNG"/> </div>
@@ -213,6 +214,11 @@ Treasure         |  Oscilloscope
 :-------------------------:|:-------------------------:
 ![](../pictures/lab2/12kHz_Sweep.PNG)  |  ![](../pictures/lab2/7kHz_Sweep.PNG)
 
+Like the acoustic team, we used the Arduino FFT libraries to take the fourier transform of our input signal to determine the frequency of the IR signal. Using the same calculations described in the section “Testing the Fast Fourier Transform algorithm provided by the Arduino”, we determined that 7 kHz would appear in bin 46 or 47, 12 kHz would appear in bin 80, and 17 kHz would appear in bin 133 or 134. For the purposes of this lab, we only focused on treasures set at 7 kHz and 12 kHz. The FFT output from the Arduino confirmed that our calculations were correct.
+
+To determine whether we had detected the treasure, we compared the magnitude of the FFT output in the bin corresponding to our desired frequency to the magnitude of the FFT output in the bins to either side of that frequency. When the treasure is present, we expect the FFT to have a much larger magnitude at the bin the treasure frequency is in than in the surrounding bins. For instance, to detect the 7 kHz signal, we compared the value in bin 47 to the values in bins 44 and 49. If bin 47 contained a value with a magnitude at least 20 greater than both of the other two bins, we determined that the 7 kHz treasure was present. We chose a threshold of 20 because it was large enough to encompass the fluctuations due to noise but not so large that it would fail to detect a signal of ~800 mV.
+
+
 ```
 // Filtering for high magnitude in bin 47 and bin 80
     bool top1 = (fft_log_out[47] - fft_log_out[44]) > 20;
@@ -240,7 +246,7 @@ Treasure         |  Oscilloscope
 <div style="text-align: center">
 <iframe width="534" height="300" src="https://www.youtube.com/embed/Q39TYC1IMCU" frameborder="0" allowfullscreen></iframe>
 </div>
-f
+
 
 When we started assembling our circuit, we made sure to test its different
 
