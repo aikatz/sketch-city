@@ -60,18 +60,6 @@ void updateSensors() {
   right_sensor_value = analogRead(right_sensor_pin);
   left_sensor_value = analogRead(left_sensor_pin);
   center_sensor_value = analogRead(center_sensor_pin);
-  /*Serial.print("Left: ");
-  Serial.print(left_sensor_value);
-  Serial.print(" Center: ");
-  Serial.print(center_sensor_value);
-  Serial.print(" Right: ");
-  Serial.print(right_sensor_value);
-  //Serial.print(" Current State: ");
-  //Serial.print(current_state);
-  //Serial.print(" Next_State; ");
-  //Serial.print(next_state);
-  Serial.print("\n");*/
- 
 }
 
 void loop() {
@@ -83,13 +71,11 @@ void loop() {
   // State Outputs
   switch(current_state) {
     case STOP:
-      //Serial.println("STOP");
       right_servo.write(SERVO_STOP);
       left_servo.write(SERVO_STOP);
       delay(5000);
       break;
     case STRAIGHT:
-      //Serial.println("STRAIGHT");
       if(right_sensor_value > 850 && left_sensor_value > 850)           // At intersection, do next turn
         next_state = INTERSECTION;
       else if(right_sensor_value > 850)  next_state = SLIGHT_RIGHT;    // Drifting left, correct right
@@ -100,8 +86,7 @@ void loop() {
         next_state = STRAIGHT;
       }
       break;
-    case SLIGHT_RIGHT:      // Drifting left, correct right
-      //Serial.println("SLIGHT RIGHT");
+    case SLIGHT_RIGHT:                                                  // Drifting left, correct right
       right_servo.write(LOW_POWER_CW);
       left_servo.write(MID_POWER_CCW);
       
@@ -110,8 +95,7 @@ void loop() {
       else if(right_sensor_value > 850) next_state = SLIGHT_RIGHT;
       else next_state = STRAIGHT;
       break;
-    case SLIGHT_LEFT:           // Drifting right, correct left
-      //Serial.println("SLIGHT LEFT");
+    case SLIGHT_LEFT:                                                   // Drifting right, correct left
       right_servo.write(FULL_POWER_CW);
       left_servo.write(MID_POWER_CCW);
       
@@ -121,7 +105,6 @@ void loop() {
       else next_state = STRAIGHT;
       break;
     case INTERSECTION:
-      //Serial.println("INTERSECTION");
       if(center_sensor_value > 850) {
         next_state = moves[move_idx];
         move_idx += 1;
@@ -130,12 +113,8 @@ void loop() {
       else next_state = INTERSECTION;
       break;
     case RIGHT:
-      //Serial.println("RIGHT");
       right_servo.write(FULL_POWER_CCW);
       left_servo.write(FULL_POWER_CCW);
-
-      //right_servo.write(MID_POWER_CCW);
-      //left_servo.write(MID_POWER_CCW);
 
       if(previousMillis == 0) {
          previousMillis = millis();
@@ -147,12 +126,8 @@ void loop() {
       else next_state = RIGHT;
       break;
     case LEFT:
-      //Serial.println("LEFT");
       right_servo.write(FULL_POWER_CW);
       left_servo.write(FULL_POWER_CW);
-
-      //right_servo.write(MID_POWER_CW);
-      //left_servo.write(MID_POWER_CW);
 
       if(previousMillis == 0) {
          previousMillis = millis();
@@ -164,7 +139,6 @@ void loop() {
       else next_state = LEFT;
       break;
     default:
-      //Serial.println("DEFAULT");
       right_servo.write(SERVO_STOP);
       left_servo.write(SERVO_STOP);
   }
