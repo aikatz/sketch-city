@@ -5,12 +5,9 @@
 
 In Lab 2, we had already calculated the bins in which each of the treasure frequencies would appear. The 7 kHz treasure would appear in bin 46/47, the 12 kHz treasure would appear in bin 80, and the 17 kHz treasure would appear in bin 113/114. We confirmed our calculations using the following FFT plots.
 
-We had also written code during Lab 2 to distinguish between the 7 kHz and 12 kHz treasures by comparing the value in the bin for each of the treasures with the values in the surrounding bins. We expanded this code to also account for the 17 kHz treasure, using the same algorithm.
-
-
-<div style="text-align:center"> <img width="534" height="300"  src="../pictures/lab2/7kHz_Sweep.PNG"/> </div>
-<div style="text-align:center"> <img width="534" height="300"  src="../pictures/lab2/12kHz_Sweep.PNG"/> </div>
-<div style="text-align:center"> <img width="534" height="300"  src="../pictures/lab2/17kHz_Sweep.PNG"/> </div>
+<div style="text-align:center"> <img width="475" height="250"  src="../pictures/lab2/7kHz_Sweep.PNG"/> </div>
+<div style="text-align:center"> <img width="475" height="250"  src="../pictures/lab2/12kHz_Sweep.PNG"/> </div>
+<div style="text-align:center"> <img width="475" height="250"  src="../pictures/lab2/17kHz_Sweep.PNG"/> </div>
 
 We had also written code during Lab 2 to distinguish between the 7 kHz and 12 kHz treasures by comparing the value in the bin for each of the treasures with the values in the surrounding bins. We expanded this code to also account for the 17 kHz treasure, using the same algorithm.
 
