@@ -61,7 +61,7 @@ void loop() {
     sei(); // turn interrupts back on
     //Serial.write(255); // send a start byte
 
-    // Filtering for high magnitude in bin 47 and bin 80
+// Filtering for high magnitude in bin 47, 80, and 114
     bool top7 = (fft_log_out[47] - fft_log_out[43]) > gain;
     bool bottom7 = (fft_log_out[47] - fft_log_out[50]) > gain;
 
