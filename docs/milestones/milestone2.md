@@ -12,6 +12,37 @@ We had also written code during Lab 2 to distinguish between the 7 kHz and 12 kH
 <div style="text-align:center"> <img width="534" height="300"  src="../pictures/lab2/12kHz_Sweep.PNG"/> </div>
 <div style="text-align:center"> <img width="534" height="300"  src="../pictures/lab2/17kHz_Sweep.PNG"/> </div>
 
+We had also written code during Lab 2 to distinguish between the 7 kHz and 12 kHz treasures by comparing the value in the bin for each of the treasures with the values in the surrounding bins. We expanded this code to also account for the 17 kHz treasure, using the same algorithm.
+
+```
+// Filtering for high magnitude in bin 47, 80, and 114
+    bool top7 = (fft_log_out[47] - fft_log_out[43]) > gain;
+    bool bottom7 = (fft_log_out[47] - fft_log_out[50]) > gain;
+
+    bool top12 = (fft_log_out[80] - fft_log_out[77]) > gain;
+    bool bottom12 = (fft_log_out[80] - fft_log_out[83]) > gain;
+
+    bool top17 = (fft_log_out[114] - fft_log_out[111]) > gain;
+    bool bottom17 = (fft_log_out[114] - fft_log_out[117]) > gain;
+
+
+///detecting LEDs
+    if (top7 && bottom7){ // 7khz
+      digitalWrite(led1, HIGH);}   // turn the LED on (HIGH is the voltage level)
+    else{
+      digitalWrite(led1, LOW);}
+    
+    if (top12 && bottom12){  // 12khz
+      digitalWrite(led2, HIGH);}   // turn the LED on (HIGH is the voltage level)
+    else{
+      digitalWrite(led2, LOW);}
+
+    if (top17 && bottom17){  // 17khz
+      digitalWrite(led3, HIGH);}   // turn the LED on (HIGH is the voltage level)
+    else{
+      digitalWrite(led3, LOW);}
+```
+
 The following video contains a demo of our code using LEDs to easily indicate when each of the treasures is detected.
 
 <div style="text-align: center">
