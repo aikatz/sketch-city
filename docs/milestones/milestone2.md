@@ -11,7 +11,7 @@ In Lab 2, we had already calculated the bins in which each of the treasure frequ
 
 We had also written code during Lab 2 to distinguish between the 7 kHz and 12 kHz treasures by comparing the value in the bin for each of the treasures with the values in the surrounding bins. We expanded this code to also account for the 17 kHz treasure, using the same algorithm.
 
-```
+```C
 // Filtering for high magnitude in bin 47, 80, and 114
     bool top7 = (fft_log_out[47] - fft_log_out[43]) > gain;
     bool bottom7 = (fft_log_out[47] - fft_log_out[50]) > gain;
