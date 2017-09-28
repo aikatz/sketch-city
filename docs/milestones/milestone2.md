@@ -6,9 +6,9 @@
 What up homies!!
 
 
-<div style="text-align:center"> <img   src="../pictures/lab2/7kHz_Sweep.PNG"/> </div>
-<div style="text-align:center"> <img   src="../pictures/lab2/12kHz_Sweep.PNG"/> </div>
-<div style="text-align:center"> <img   src="../pictures/lab2/17kHz_Sweep.PNG"/> </div>
+<div style="text-align:center"> <img width="534" height="300"  src="../pictures/lab2/7kHz_Sweep.PNG"/> </div>
+<div style="text-align:center"> <img width="534" height="300"  src="../pictures/lab2/12kHz_Sweep.PNG"/> </div>
+<div style="text-align:center"> <img width="534" height="300"  src="../pictures/lab2/17kHz_Sweep.PNG"/> </div>
 
 
 <div style="text-align: center">
