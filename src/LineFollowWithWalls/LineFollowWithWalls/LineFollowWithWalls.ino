@@ -20,11 +20,13 @@ Servo left_servo;
 const int right_sensor_pin = 0;
 const int left_sensor_pin = 1;
 const int center_sensor_pin = 2;
+const int wall_sensor_pin = 3;
 
 // Will use this to store the value from the ADC
 int right_sensor_value;
 int left_sensor_value;
 int center_sensor_value;
+int wall_sensor_value;
 
 enum state{
   STOP,
@@ -33,12 +35,13 @@ enum state{
   SLIGHT_LEFT,
   INTERSECTION,
   RIGHT,
-  LEFT
+  LEFT,
+  TURN_AROUND
 };
 
 volatile state current_state = STRAIGHT;
 volatile state next_state = STRAIGHT;
-const state moves[] = {RIGHT, LEFT, LEFT, LEFT, RIGHT, RIGHT, RIGHT, RIGHT, STOP};     
+const state moves[] = {STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT};     
 volatile int n_moves = 9;
 volatile int move_idx = 0;
 
@@ -61,7 +64,8 @@ void setup() {
 void updateSensors() {
   right_sensor_value = analogRead(right_sensor_pin);
   left_sensor_value = analogRead(left_sensor_pin);
-  center_sensor_value = analogRead(center_sensor_pin);
+  center_sensor_value = analogRead(center_sensor_pin); 
+  wall_sensor_value = analogRead(wall_sensor_pin); 
 }
 
 void loop() {
@@ -79,7 +83,9 @@ void loop() {
       break;
       
     case STRAIGHT:
-      if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD) // At intersection, do next turn
+      if(wall_sensor_value > 400)                                                   // Wall ahead, turn around
+        next_state = TURN_AROUND;
+      else if(right_sensor_value > 850 && left_sensor_value > 850)                  // At intersection, do next turn
         next_state = INTERSECTION;
       else if(right_sensor_value > LINE_THRESHOLD)  next_state = SLIGHT_RIGHT;      // Drifting left, correct right
       else if(left_sensor_value > LINE_THRESHOLD)   next_state = SLIGHT_LEFT;       // Drifting right, correct left
@@ -146,7 +152,21 @@ void loop() {
       if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
       else next_state = LEFT;
       break;
+
+    case TURN_AROUND:
+      right_servo.write(FULL_POWER_CW);
+      left_servo.write(FULL_POWER_CW);
       
+      if(previousMillis == 0) {
+         previousMillis = millis();
+      }
+      
+      currentMillis = millis();
+      
+      if(currentMillis - previousMillis > 700) next_state = STRAIGHT;
+      else next_state = TURN_AROUND;
+      break;
+
     default:
       right_servo.write(SERVO_STOP);
       left_servo.write(SERVO_STOP);
