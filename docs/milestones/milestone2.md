@@ -57,10 +57,27 @@ Please, refer to the following video to see how the circuit behaved according to
 
 This worked reasonably well however we noticed that when the sensor was very close to the wall, and ~30cm away, it would give the same value. Our threshold was higher than that value so that did not affect our robot significantly. We added our sensor to the robot and added it into the code by adding a state called TURN_AROUND, where the robot would turn 180 degrees if it sensed a wall in front of it.
 
-Below is a snippet of the Arduino code that performed the turn-around when detecing a wall:
-
-```c
-arduino code
+We incorporated our the wall detection code into our code frome milestone one. Below is the snippet where we check whether the sensor is detecting a wall. 
+```C
+// Wall ahead, turn around 
+if(wall_sensor_value > WALL_THRESHOlD)
+  next_state = TURN_AROUND;
+```
+This is the code for the TURN_AROUND state. 
+```C
+case TURN_AROUND:
+  right_servo.write(FULL_POWER_CW);
+  left_servo.write(FULL_POWER_CW);
+      
+  if(previousMillis == 0) {
+    previousMillis = millis();
+  }
+      
+  currentMillis = millis();
+      
+  if(currentMillis - previousMillis > FULL_TURN_LENGTH) next_state = STRAIGHT;
+  else next_state = TURN_AROUND;
+  break;
 ```
 
 Please, refer to the following video to see how the robot detected the walls and turned around:
