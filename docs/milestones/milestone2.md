@@ -21,7 +21,9 @@ arduino code
 
 Please, refer to the following video to see how the robot detected the walls and turned around:
 
-**INSERT VIDEO HERE**
+<div style="text-align: center">
+<iframe width="534" height="300" src="https://www.youtube.com/embed/C-fAJswnzsU" frameborder="0" allowfullscreen></iframe>
+</div>
 
 ### Conclusions
 For future milestones and labs, we are starting to merge all the software and hardware components inside the robot so we can plan ahead on how to structure the code and even designing a new sophisticated model to assemble all the parts. We are also working on integrating a PID system in order to provide efficiency and precision in movement. 
