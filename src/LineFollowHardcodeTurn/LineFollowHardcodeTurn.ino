@@ -1,15 +1,16 @@
 #include <Servo.h>
 
 #define FULL_POWER_CCW   180
-#define MID_POWER_CCW    120
+#define MID_POWER_CCW    95
 #define LOW_POWER_CCW    91
 
 #define FULL_POWER_CW  0
-#define MID_POWER_CW   60
+#define MID_POWER_CW   85
 #define LOW_POWER_CW   89
 
 #define SERVO_STOP     90
 
+#define LINE_THRESHOLD 800
 // Declare two Servo objects - one to control each servo
 Servo right_servo;
 Servo left_servo; 
@@ -75,43 +76,48 @@ void loop() {
       left_servo.write(SERVO_STOP);
       delay(5000);
       break;
+      
     case STRAIGHT:
-      if(right_sensor_value > 850 && left_sensor_value > 850)           // At intersection, do next turn
+      if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD) // At intersection, do next turn
         next_state = INTERSECTION;
-      else if(right_sensor_value > 850)  next_state = SLIGHT_RIGHT;    // Drifting left, correct right
-      else if(left_sensor_value > 850)   next_state = SLIGHT_LEFT;     // Drifting right, correct left
-      else {                                                           // Go striaght
-        right_servo.write(FULL_POWER_CW);
-        left_servo.write(FULL_POWER_CCW);
+      else if(right_sensor_value > LINE_THRESHOLD)  next_state = SLIGHT_RIGHT;      // Drifting left, correct right
+      else if(left_sensor_value > LINE_THRESHOLD)   next_state = SLIGHT_LEFT;       // Drifting right, correct left
+      else {                                                                        // Go striaght
+        right_servo.write(MID_POWER_CW);
+        left_servo.write(MID_POWER_CCW);
         next_state = STRAIGHT;
       }
       break;
-    case SLIGHT_RIGHT:                                                  // Drifting left, correct right
+      
+    case SLIGHT_RIGHT:                                                              // Drifting left, correct right
       right_servo.write(LOW_POWER_CW);
       left_servo.write(MID_POWER_CCW);
       
-      if(right_sensor_value > 850 && left_sensor_value > 850)           // At intersection, do next turn
+      if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD) // At intersection, do next turn
         next_state = INTERSECTION;
-      else if(right_sensor_value > 850) next_state = SLIGHT_RIGHT;
+      else if(right_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_RIGHT;
       else next_state = STRAIGHT;
       break;
-    case SLIGHT_LEFT:                                                   // Drifting right, correct left
-      right_servo.write(FULL_POWER_CW);
-      left_servo.write(MID_POWER_CCW);
       
-      if(right_sensor_value > 850 && left_sensor_value > 850)           // At intersection, do next turn
+    case SLIGHT_LEFT:                                                               // Drifting right, correct left
+      right_servo.write(MID_POWER_CW);
+      left_servo.write(LOW_POWER_CCW);
+      
+      if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD) // At intersection, do next turn
         next_state = INTERSECTION;
-      else if(left_sensor_value > 850) next_state = SLIGHT_LEFT;
+      else if(left_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_LEFT;
       else next_state = STRAIGHT;
       break;
+      
     case INTERSECTION:
-      if(center_sensor_value > 850) {
+      if(center_sensor_value > LINE_THRESHOLD) {
         next_state = moves[move_idx];
         move_idx += 1;
         previousMillis = 0;
       }
       else next_state = INTERSECTION;
       break;
+      
     case RIGHT:
       right_servo.write(FULL_POWER_CCW);
       left_servo.write(FULL_POWER_CCW);
@@ -122,9 +128,10 @@ void loop() {
       
       currentMillis = millis();
       
-      if(currentMillis - previousMillis > 420) next_state = STRAIGHT;
+      if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
       else next_state = RIGHT;
       break;
+      
     case LEFT:
       right_servo.write(FULL_POWER_CW);
       left_servo.write(FULL_POWER_CW);
@@ -135,9 +142,10 @@ void loop() {
       
       currentMillis = millis();
       
-      if(currentMillis - previousMillis > 420) next_state = STRAIGHT;
+      if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
       else next_state = LEFT;
       break;
+      
     default:
       right_servo.write(SERVO_STOP);
       left_servo.write(SERVO_STOP);
