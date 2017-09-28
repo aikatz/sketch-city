@@ -1,6 +1,14 @@
 # Milestone 2
 
-### Trasure Detector
+### Treasure Detector
+
+
+What up homies!!
+
+
+<div style="text-align:center"> <img  width="330" height="100" src="../pictures/lab2/7kHz_Sweep.PNG"/> </div>
+<div style="text-align:center"> <img  width="330" height="100" src="../pictures/lab2/12kHz_Sweep.PNG"/> </div>
+<div style="text-align:center"> <img  width="330" height="100" src="../pictures/lab2/17kHz_Sweep.PNG"/> </div>
 
 ### Wall Detection
 In order to detect walls we used a short range proximity sensor. The sensor uses an IR sensor and an LED to detect large obstacles in front of the sensor. It takes 5V as input, and the output varies between 0.3V and 3.3V. We used the ADC on the Arduino to convert the analog output from the sensor to discrete values and through some trial and error, we decided on a threshold of 450 to detect walls. 
