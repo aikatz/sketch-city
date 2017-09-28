@@ -7,7 +7,9 @@ In order to detect walls we used a short range proximity sensor. The sensor uses
 
 Please, refer to the following video to see how the circuit behaved according to the presence of a wooden wall:
 
-**INSERT VIDEO HERE**
+<div style="text-align: center">
+<iframe width="534" height="300" src="https://www.youtube.com/embed/eG_E8hI7VyI" frameborder="0" allowfullscreen></iframe>
+</div>
 
 This worked reasonably well however we noticed that when the sensor was very close to the wall, and ~30cm away, it would give the same value. Our threshold was higher than that value so that did not affect our robot significantly. We added our sensor to the robot and added it into the code by adding a state called TURN_AROUND, where the robot would turn 180 degrees if it sensed a wall in front of it.
 
