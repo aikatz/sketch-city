@@ -29,7 +29,7 @@ This is a perfect mechanism since different principles help us achieve the resul
 *image*
 
 Given the result of the calculations above, our resistor values are:
-RED ->
+RED -> 
 GREEN ->
 
 However, for blue, we get a different result since we have a different set up with less bits, and hence, less resistors:
