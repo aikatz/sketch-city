@@ -81,12 +81,11 @@ void loop() {
 
 Both signals output 5V if HIGH and the DE0-Nano operates at 3.3V, therefore we needed to create two voltage dividers. For such operation, we made the calculations to determine what resistors to use and came up with the following results:
 
-*image 1*
-*image 2*
+<div style="text-align:center"><img src ="../pictures/lab3/voltDiv.png" /></div>
 
-With the appropriate outputs set up, then we connected them to the two GPIO inputs in the FPGA and updated our *pixel_color* array accordingly. Specifically, we focused on storing appropriate values to a 4-bit, 2-by-2 array within our 4-by-4 grid. Either red or white was stored in these bits according to the combinational reading from both switches. Here is the pseudocode for it:
+We then chose a 500Ω and a 1kΩ resistors to create our voltage divider. Before continuing with our process, we checked with a multimeter that the output was 3.3V: and it was, precisely, 3.297V. With the appropriate outputs set up, then we connected them to the two GPIO inputs in the FPGA and updated our *pixel_color* array accordingly. Specifically, we focused on storing appropriate values to a 4-bit, 2-by-2 array within our 4-by-4 grid. Either red or white was stored in these bits according to the combinational reading from both switches. Here is the pseudocode for it:
 
-``` python
+``` c
 pixel_colors[x][y] = if switch_x == 1'b1 AND switch_y == 1'b0) then red else white
 ```
 
@@ -95,7 +94,7 @@ Please note that the piece of code from above symbolizes the assignment of a sin
 ### Mapping external inputs to four different outputs on the screen
 Inside the DE0-Nano.v file, we set the following *always* block to update our pixel color in the screen in case of an external input:
 
-```c
+``` c
 reg [7:0] pixel_colors [0:3][0:3];
 
  always @(posedge CLOCK_25) begin
@@ -124,6 +123,6 @@ The variables *switch_x* and *switch_y*, as stated above, are read from the GPIO
 
 Refer to the following video of our final circuitry described above that combines the switches, the Arduino, and the FPGA:
 
-*image 3*
+<div style="text-align:center"><img src ="../pictures/lab3/circuit.jpg" /></div>
 
 ### Acoustic Team: Eric Berg, Alex Katz
