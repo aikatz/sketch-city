@@ -18,6 +18,33 @@ This lab is divided into two. One team will take at least two external inputs to
 ### Logic explanation for the screen display
 
 ### Description of how the DAC on the provided VGA connectors works and how the resistor values were chosen.
+The FPGA outputs digital signals at 3.3V, while the computer reads analog signals at a range of 0-1V through the VGA port. The solution to this problem is to add a *Digital-to-Analog Converter* that can convert such signal and keep it in the desired range.
+
+The converter we used for this case is called **R/2R DAC** and please, refer to the image below to see how it works:
+
+<div style="text-align:center"><img src ="../pictures/lab3/dacRG.png" /></div>
+
+This is a perfect mechanism since different principles help us achieve the results we wish to obtain. For instance, having an increasing *power-of-2* amount of equal resistors between will enable us to achieve different voltage values given which bit is set *HIGH* in a given color. This means, if the MSB (bit 8) is set HIGH, then a higher voltage is given to the VGA than if the LSB (bit 6) is set HIGH, since there is a much higher voltage drop after the more populated series resistance. With this idea in mind and the fact we need a voltage range between 0-1V, we arrived to the following conclusion: if all bits are set LOW (000) then VGA voltage = 0V; if all bits are set HIGH (111) then VGA voltage = 1V. If we apply *node-voltage* on the circuit above, we get the following calculation:
+
+*image*
+
+Given the result of the calculations above, our resistor values are:
+RED ->
+GREEN ->
+
+However, for blue, we get a different result since we have a different set up with less bits, and hence, less resistors:
+
+<div style="text-align:center"><img src ="../pictures/lab3/dacB.png" /></div>
+
+Here, the calculations are as following:
+
+*image*
+
+And the resistor values we obtain are R1 = ? and R2 = ?.
+
+Please, refer to the following table of the full results of the DAC system:
+
+*table*
 
 ### Drawing one box on the screen
 
@@ -95,7 +122,7 @@ Please note that the piece of code from above symbolizes the assignment of a sin
 Inside the DE0-Nano.v file, we set the following *always* block to update our pixel color in the screen in case of an external input:
 
 ``` c
-reg [7:0] pixel_colors [0:3][0:3];
+reg [7:0] pixel_colors [3:0][3:0];
 
  always @(posedge CLOCK_25) begin
 	  pixel_colors[0][0] = 8'b111_111_11; //white
