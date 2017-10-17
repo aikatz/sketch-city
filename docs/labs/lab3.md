@@ -17,8 +17,10 @@ This lab is divided into two. One team will take at least two external inputs to
 
 ### Logic explanation for the screen display
 
+### Drawing one box on the screen
+
 ### Reading external inputs to FPGA
-For this part of the lab, we used two external switches in order to interact with the Arduino and the FPGA. We provided both switches with 3.3V from the Arduino and connected their respective outputs to specific GPIO pins in the FPGA.
+For this part of the lab, we used two external switches in order to interact with the FPGA. We provided both switches with 3.3V from the Arduino and connected their respective outputs to specific GPIO pins in the FPGA.
 
 <div style="text-align:center"><img src ="../pictures/lab3/switch.jpg" /></div>
 
@@ -32,15 +34,91 @@ assign switch_y = GPIO_1_D[25];
 Then, we manipulated our blocks of pixels on the screen based on the readings from the variables *switch_x* and *switch_y*.
 
 ### Correctly updating a 4-bit array dependent on the inputs
-Based on the reading from such pins, we then modified two selected digital output pins from the Arduino and set them to LOW/HIGH accordingly. Both signals output 5V and the DE0-Nano operates at 3.3V, therefore we need to create two voltage dividers:
+For this part, we decided to create a flow system to interact all of our components: the switches, with the Arduino, and the FPGA. This time, we connected the output of the switches to two analog input pins on the Arduino. We then updated two digital output pins based on the values read from the switches: if the analog reading from the switches was higher than a 400 threshold -set by the original sample code- then we set the output signal to HIGH; else, to LOW.
 
-### Drawing one box on the screen
+```c
+const int analogIn_x = A1; // analog input pin for switch 1
+const int analogIn_y = A2; // analog input pin for switch 2
 
+int value_x; // reading from input pin A1
+int value_y; // reading from input pin A2
+
+const int digitalOut_x = 5; // digital output pin for switch 1
+const int digitalOut_y = 6; // digital output pin for switch 2
+
+const int threshold = 400; // specific value set in the sample code
+
+void setup() {
+  // initialize serial communications at 9600 bps:
+  Serial.begin(9600);
+  pinMode(digitalOut_x, OUTPUT); // setting pin1 to output
+  pinMode(digitalOut_y, OUTPUT); // setting pin2 to output
+}
+
+void loop() {
+  value_x = analogRead(analogIn_x); // reading pin switch 1
+  value_y = analogRead(analogIn_y); // reading pin switch 2
+
+  // Setting it to either LOW or HIGH based on value read
+  if (value_x > threshold) {
+    digitalWrite(digitalOut_x, HIGH);
+  } else {
+    digitalWrite(digitalOut_x, LOW);
+  }
+
+  // Setting it to either LOW or HIGH based on value read
+  if (value_y > threshold) {
+    digitalWrite(digitalOut_y, HIGH);
+  } else {
+    digitalWrite(digitalOut_y, LOW);
+  }
+
+  delay(2); // small delay and keep reading
+}
+```
+
+Both signals output 5V if HIGH and the DE0-Nano operates at 3.3V, therefore we needed to create two voltage dividers. For such operation, we made the calculations to determine what resistors to use and came up with the following results:
+
+*image 1*
+*image 2*
+
+With the appropriate outputs set up, then we connected them to the two GPIO inputs in the FPGA and updated our *pixel_color* array accordingly.
 
 ### Description of how the DAC on the provided VGA connectors works and how the resistor values were chosen.
 
 
 ### Mapping external inputs to four different outputs on the screen
+Inside the DE0-Nano.v file, we set the following *always* block to update our pixel color in the screen in case of an external input:
 
+```c
+reg [7:0] pixel_colors [0:3][0:3];
+
+ always @(posedge CLOCK_25) begin
+	  pixel_colors[0][0] = 8'b111_111_11; //white
+	  pixel_colors[0][1] = 8'b111_111_11; //white
+	  pixel_colors[0][2] = 8'b111_111_11; //white
+	  pixel_colors[0][3] = 8'b111_111_11; //white
+	  pixel_colors[1][0] = 8'b111_111_11; //white
+	  pixel_colors[1][1] = (switch_x == 1'b0 && switch_y == 1'b0)? 8'b111_000_00:8'b111_111_11; // red OR white
+	  pixel_colors[1][2] = (switch_x == 1'b0 && switch_y == 1'b1)? 8'b111_000_00:8'b111_111_11; // red OR white
+	  pixel_colors[1][3] = 8'b111_111_11; //white
+	  pixel_colors[2][0] = 8'b111_111_11; //white
+	  pixel_colors[2][1] = (switch_x == 1'b1 && switch_y == 1'b0)? 8'b111_000_00:8'b111_111_11; // red OR white
+	  pixel_colors[2][2] = (switch_x == 1'b1 && switch_y == 1'b1)? 8'b111_000_00:8'b111_111_11; // red OR white
+	  pixel_colors[2][3] = 8'b111_111_11; //white
+	  pixel_colors[3][0] = 8'b111_111_11; //white
+	  pixel_colors[3][1] = 8'b111_111_11; //white
+	  pixel_colors[3][2] = 8'b111_111_11; //white
+	  pixel_colors[3][3] = 8'b111_111_11; //white
+end
+```
+
+The variables *switch_x* and *switch_y*, as stated above, are read from the GPIO pins inside the FPGA. Then, we update our two-dimensional array, specifically the block sections **[1][1]**, **[1][2]**, **[2][1]**, and **[2][2]**. These blocks represent the middle section of the 4x4 grid screen we developed. As it can be appreciated in the code above, we set up these pixels to either red (8'b111_000_00) or white (8'b111_111_11) based on the appropriate combination of the values of the switches. The following video demonstrates how the algorithm behaves to the four different combinations of the switches:
+
+*video 1*
+
+Refer to the following video of our final circuitry described above that combines the switches, the Arduino, and the FPGA:
+
+*image 3*
 
 ### Acoustic Team: Eric Berg, Alex Katz
