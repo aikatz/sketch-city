@@ -28,8 +28,7 @@ The converter we used for this case is called **R/2R DAC** and please, refer to 
 
 This is a perfect mechanism since different principles help us achieve the results we wish to obtain. For instance, having an increasing *power-of-2* amount of equal resistors between will enable us to achieve different voltage values given which bit is set *HIGH* in a given color. This means, if the MSB (bit 8) is set HIGH, then a higher voltage is given to the VGA than if the LSB (bit 6) is set HIGH, since there is a much higher voltage drop after the more populated series resistance. With this idea in mind and the fact we need a voltage range between 0-1V, we arrived to the following conclusion: if all bits are set LOW (000) then VGA voltage = 0V; if all bits are set HIGH (111) then VGA voltage = 1V. If we apply *node-voltage* on the circuit above, we get the following calculation:
 
-\[\frac{3.3V - 1V}{R_{eq}} = \frac{1V - 0V}{50\Omega}\]
-<script type="text/javascript" src="http://www.hostmath.com/Math/MathJax.js?config=OK"></script>
+\frac{3.3V - 1V}{R_{eq}} = \frac{1V - 0V}{50\Omega}
 
 Given the result of the calculations above, our resistor values are:
 RED ->
