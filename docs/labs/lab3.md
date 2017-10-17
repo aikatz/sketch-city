@@ -17,6 +17,8 @@ This lab is divided into two. One team will take at least two external inputs to
 
 ### Logic explanation for the screen display
 
+### Description of how the DAC on the provided VGA connectors works and how the resistor values were chosen.
+
 ### Drawing one box on the screen
 
 ### Reading external inputs to FPGA
@@ -82,10 +84,13 @@ Both signals output 5V if HIGH and the DE0-Nano operates at 3.3V, therefore we n
 *image 1*
 *image 2*
 
-With the appropriate outputs set up, then we connected them to the two GPIO inputs in the FPGA and updated our *pixel_color* array accordingly.
+With the appropriate outputs set up, then we connected them to the two GPIO inputs in the FPGA and updated our *pixel_color* array accordingly. Specifically, we focused on storing appropriate values to a 4-bit, 2-by-2 array within our 4-by-4 grid. Either red or white was stored in these bits according to the combinational reading from both switches. Here is the pseudocode for it:
 
-### Description of how the DAC on the provided VGA connectors works and how the resistor values were chosen.
+``` python
+pixel_colors[x][y] = if switch_x == 1'b1 AND switch_y == 1'b0) then red else white
+```
 
+Please note that the piece of code from above symbolizes the assignment of a single bit; such code is included in all four bits of the block as explained in the next section.
 
 ### Mapping external inputs to four different outputs on the screen
 Inside the DE0-Nano.v file, we set the following *always* block to update our pixel color in the screen in case of an external input:
@@ -113,7 +118,7 @@ reg [7:0] pixel_colors [0:3][0:3];
 end
 ```
 
-The variables *switch_x* and *switch_y*, as stated above, are read from the GPIO pins inside the FPGA. Then, we update our two-dimensional array, specifically the block sections **[1][1]**, **[1][2]**, **[2][1]**, and **[2][2]**. These blocks represent the middle section of the 4x4 grid screen we developed. As it can be appreciated in the code above, we set up these pixels to either red (8'b111_000_00) or white (8'b111_111_11) based on the appropriate combination of the values of the switches. The following video demonstrates how the algorithm behaves to the four different combinations of the switches:
+The variables *switch_x* and *switch_y*, as stated above, are read from the GPIO pins inside the FPGA. Then, we update our 16-bit two-dimensional array, specifically the block sections **[1][1]**, **[1][2]**, **[2][1]**, and **[2][2]**. These blocks represent the middle section of the 4x4 grid screen we developed. As it can be appreciated in the code above, we set up these pixels to either red (8'b111_000_00) or white (8'b111_111_11) based on the appropriate combination of the values of the switches. The following video demonstrates how the algorithm behaves to the four different combinations of the switches:
 
 *video 1*
 
