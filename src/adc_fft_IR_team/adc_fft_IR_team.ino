@@ -17,8 +17,11 @@ fft_adc.pde
 #include <FFT.h> // include the library
 
 int inputPin = A1;
-int led1 = 5;
-int led2 = 6;
+int led1 = 5; //red
+int led2 = 6; //green
+int led3 = 3; //blue
+
+int gain = 25;
 
 // ------------------------------------------------------------------------------
 void setup() {
@@ -31,7 +34,8 @@ void setup() {
  
   //debugging LEDs
   pinMode(led1, OUTPUT);   
-  pinMode(led2, OUTPUT);  
+  pinMode(led2, OUTPUT);
+  pinMode(led3, OUTPUT);   
   
 }
 
@@ -58,49 +62,58 @@ void loop() {
     //Serial.write(255); // send a start byte
 
     // Filtering for high magnitude in bin 47 and bin 80
-    bool top1 = (fft_log_out[47] - fft_log_out[44]) > 20;
-    bool bottom1 = (fft_log_out[47] - fft_log_out[49]) > 20;
+    bool top7 = (fft_log_out[47] - fft_log_out[43]) > gain;
+    bool bottom7 = (fft_log_out[47] - fft_log_out[50]) > gain;
 
-    bool top2 = (fft_log_out[80] - fft_log_out[78]) > 20;
-    bool bottom2 = (fft_log_out[80] - fft_log_out[82]) > 20;
+    bool top12 = (fft_log_out[80] - fft_log_out[77]) > gain;
+    bool bottom12 = (fft_log_out[80] - fft_log_out[83]) > gain;
+
+    bool top17 = (fft_log_out[114] - fft_log_out[111]) > gain;
+    bool bottom17 = (fft_log_out[114] - fft_log_out[117]) > gain;
 
 
 ///detecting LEDs
-    if (top1 && bottom1){ // 7khz
+    if (top7 && bottom7){ // 7khz
       digitalWrite(led1, HIGH);}   // turn the LED on (HIGH is the voltage level)
     else{
       digitalWrite(led1, LOW);}
     
-    if (top2 && bottom2){  // 12khz
+    if (top12 && bottom12){  // 12khz
       digitalWrite(led2, HIGH);}   // turn the LED on (HIGH is the voltage level)
     else{
       digitalWrite(led2, LOW);}
 
+    if (top17 && bottom17){  // 17khz
+      digitalWrite(led3, HIGH);}   // turn the LED on (HIGH is the voltage level)
+    else{
+      digitalWrite(led3, LOW);}
+
+//excel output code
 //      for (int i = 0; i<128; i++){
 //        Serial.print(i);
 //        Serial.print(", ");
 //        Serial.println(fft_log_out[i]);
 //      }
 
-//    Serial.print("  45:   ");
-//    Serial.print(fft_log_out[45]);
-//    Serial.print("  46:   ");
-//    Serial.print(fft_log_out[46]);
-//    Serial.print("  47:   ");
-//    Serial.print(fft_log_out[47]);
-//    Serial.print("  48:   ");
-//    Serial.print(fft_log_out[48]);
-//    Serial.print("        78:   ");
-//    Serial.print(fft_log_out[78]);
-//    Serial.print("  80:   ");
-//    Serial.print(fft_log_out[80]);
-//    Serial.print("  82:   ");
-//    Serial.print(fft_log_out[82]);
-//    Serial.print(" Top: ");
-//    Serial.print(top1, DEC);
-//    Serial.print(" Bottom: ");
-//    Serial.print(bottom1, DEC);
-//    Serial.println("END");
+    Serial.print("  110:   ");
+    Serial.print(fft_log_out[110]);
+    Serial.print("  111:   ");
+    Serial.print(fft_log_out[111]);
+    Serial.print("  112:   ");
+    Serial.print(fft_log_out[112]);
+    Serial.print("  113:   ");
+    Serial.print(fft_log_out[113]);
+    Serial.print("  114:   ");
+    Serial.print(fft_log_out[114]);
+    Serial.print("  115:   ");
+    Serial.print(fft_log_out[115]);
+    Serial.print("  116:   ");
+    Serial.print(fft_log_out[116]);
+    Serial.print(" Top: ");
+    Serial.print(top17, DEC);
+    Serial.print(" Bottom: ");
+    Serial.print(bottom17, DEC);
+    Serial.println("END");
 
     
   }

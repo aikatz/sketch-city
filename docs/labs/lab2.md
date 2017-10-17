@@ -214,7 +214,7 @@ Treasure         |  Oscilloscope
 
 ### Detecting Treasure using FFT
 
-Like the acoustic team, we used the Arduino FFT libraries to take the fourier transform of our input signal to determine the frequency of the IR signal. Using the same calculations described in the section “Testing the Fast Fourier Transform algorithm provided by the Arduino”, we determined that 7 kHz would appear in bin 46 or 47, 12 kHz would appear in bin 80, and 17 kHz would appear in bin 133 or 134. For the purposes of this lab, we only focused on treasures set at 7 kHz and 12 kHz. The FFT output from the Arduino confirmed that our calculations were correct, as shown in the graphs below.
+Like the acoustic team, we used the Arduino FFT libraries to take the fourier transform of our input signal to determine the frequency of the IR signal. Using the same calculations described in the section “Testing the Fast Fourier Transform algorithm provided by the Arduino”, we determined that 7 kHz would appear in bin 46 or 47, 12 kHz would appear in bin 80, and 17 kHz would appear in bin 113 or 114. For the purposes of this lab, we only focused on treasures set at 7 kHz and 12 kHz. The FFT output from the Arduino confirmed that our calculations were correct, as shown in the graphs below.
 
 :-------------------------:|:-------------------------:
 ![](../pictures/lab2/12kHz_Sweep.PNG)  |  ![](../pictures/lab2/7kHz_Sweep.PNG)
