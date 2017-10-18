@@ -65,19 +65,22 @@ BLUE COLOR:
 <div style="text-align:center"><img src ="../pictures/lab3/newOVB.png" /></div>
 
 These are the results:
-* The resistors indeed -approximately- double their values according to the bit (561 ~ 270*2; 1200 ~ 270*4)
+* The resistors indeed -approximately- double their values according to the bit (561 ~ 270 \* 2; 1200 ~ 270 \* 4)
 * The outputs voltages in both cases (0.1352V and 0.345V) are within 0V and 1V.
 
 The results above clearly confirm our theory and our analysis on how the resistors of the DAC are chosen.
 
 ### Drawing one box on the screen
 We started experimenting with the VGA by simply changing the screen color. This can be done easily by changing the RGB value that is send to the VGA driver.
+
 ``` c
-assign PIXEL_COLOR = 8'b111_111_11; //White
+assign PIXEL_COLOR = 8'b111_111_11; // White
 ```
+
 Then we tried to draw a box at the top corner of the screen following Team Alpha's example.
+
 ``` c
-always @ (*) begin
+always @ (\*) begin
   if(PIXEL_COORD_X < 10'd64 && PIXEL_COORD_Y < 10'd64) begin
     PIXEL_COLOR = 8'b111_000_00;
   end
@@ -86,8 +89,8 @@ always @ (*) begin
   end
 end
 ```
-This code assigns color red to all pixels' whose x and y coordinates are less than decimal value 64, and it assigns color white to all other pixels.
 
+This code assigns color red to all pixels' whose x and y coordinates are less than decimal value 64, and it assigns color white to all other pixels.
 
 ### Reading external inputs to FPGA
 For this part of the lab, we used two external switches in order to interact with the FPGA. We provided both switches with 3.3V from the Arduino and connected their respective outputs to specific GPIO pins in the FPGA.
@@ -96,7 +99,7 @@ For this part of the lab, we used two external switches in order to interact wit
 
 We used the following assignment operations to be able to read from the GPIO pins:
 
-``` c
+```c
 assign switch_x = GPIO_1_D[29];
 assign switch_y = GPIO_1_D[25];
 ```
