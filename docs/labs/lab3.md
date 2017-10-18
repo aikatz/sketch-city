@@ -26,7 +26,18 @@ The converter we used for this case is called **R/2R DAC** and please, refer to 
 
 <div style="text-align:center"><img src ="../pictures/lab3/dacRG.png" /></div>
 
-Please, note how the blocks of series resistors following every bit input are in parallel with each other. This is a perfect mechanism since different principles help us achieve the results we wish to obtain. For instance, having an increasing *power-of-2* amount of equal resistors between will enable us to achieve different voltage values given which bit is set *HIGH* in a given color. This means, if the MSB (bit 8) is set HIGH, then a higher voltage is given to the VGA than if the LSB (bit 6) is set HIGH, since there is a much higher voltage drop after the more populated series resistance. With this idea in mind and the fact we need a voltage range between 0-1V, we arrived to the following conclusion: if all bits are set LOW (000) then VGA voltage = 0V; if all bits are set HIGH (111) then VGA voltage = 1V. If we apply *node-voltage* on the circuit above, we get the following calculation:
+Please, note how the blocks of series resistors following every bit input are in parallel with each other. This is a perfect mechanism since different principles help us achieve the results we wish to obtain. For instance, having an increasing *power-of-2* amount of equal resistors between will enable us to achieve different voltage values given which bit is set *HIGH* in a given color. This means, if the MSB (bit 8) is set HIGH, then a higher voltage is given to the VGA than if the LSB (bit 6) is set HIGH, since there is a much higher voltage drop after the more populated series resistance. With this idea in mind and the fact we need a voltage range between 0-1V, we arrived to the following conclusion: if all bits are set LOW (000) then VGA voltage = 0V; if all bits are set HIGH (111) then VGA voltage = 1V; any bit combination in between (001, 010, 011, etc) will just output a sum of voltages between 0V and 1V.
+
+<div style="text-align:center"><img src ="../pictures/lab3/bitValues.png" /></div>
+
+With such voltage values for each bit, we can successfully put together containing the output of the DAC
+given a specific 3-bit number (in the case of red and green color):
+
+<div style="text-align:center"><img src ="../pictures/lab3/outputTab.png" /></div>
+
+Now, let's focus on the circuit presented earlier and how we can find the exact
+resistor values for the DAC to behave properly. If we apply *node-voltage* on the
+circuit above, we get the following calculation:
 
 <div style="text-align:center"><img src ="../pictures/lab3/calcRG.png" /></div>
 
