@@ -40,7 +40,7 @@ Here, the calculations are as following:
 
 Please, refer to the following table of the full results of the DAC system:
 
-<div style="text-align:center"><img src ="../pictures/lab3/calcRG.png" /></div>
+<div style="text-align:center"><img src ="../pictures/lab3/resTable.png" /></div>
 
 The calculations above provided us with the **minimum** resistor values for the output value of the DAC to be between 0V and 1V. This means that any lower impedance of the circuit would output values greater than 1V and the computer would be in trouble reading it. However, the calculation above represents the ultimate case where **111** outputs 1V. We do not exactly need that output; as long as we maintain it between 0V and 1V, we are good. Therefore, let's check that the resistors we used for the actual lab meet the requirements:
 * Each resistor is approximately doubling the value of its previous bit's resistor.
@@ -65,7 +65,7 @@ BLUE COLOR:
 <div style="text-align:center"><img src ="../pictures/lab3/newOVB.png" /></div>
 
 These are the results:
-* The resistors indeed -approximately- double their values according to the bit (561 ~ 270*2 | 1200 ~ 270*4)
+* The resistors indeed -approximately- double their values according to the bit (561 ~ 270*2; 1200 ~ 270*4)
 * The outputs voltages in both cases (0.1352V and 0.345V) are within 0V and 1V.
 
 The results above clearly confirm our theory and our analysis on how the resistors of the DAC are chosen.
