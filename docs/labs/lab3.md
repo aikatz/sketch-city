@@ -80,7 +80,7 @@ assign PIXEL_COLOR = 8'b111_111_11; // White
 Then we tried to draw a box at the top corner of the screen following Team Alpha's example.
 
 ``` c
-always @ (\*) begin
+always @ (*) begin
   if(PIXEL_COORD_X < 10'd64 && PIXEL_COORD_Y < 10'd64) begin
     PIXEL_COLOR = 8'b111_000_00;
   end
@@ -91,6 +91,8 @@ end
 ```
 
 This code assigns color red to all pixels' whose x and y coordinates are less than decimal value 64, and it assigns color white to all other pixels.
+
+<div style="text-align:center"><img src ="../pictures/lab3/box.jpeg" /></div>
 
 ### Reading external inputs to FPGA
 For this part of the lab, we used two external switches in order to interact with the FPGA. We provided both switches with 3.3V from the Arduino and connected their respective outputs to specific GPIO pins in the FPGA.
@@ -190,7 +192,9 @@ end
 
 The variables *switch_x* and *switch_y*, as stated above, are read from the GPIO pins inside the FPGA. Then, we update our 16-bit two-dimensional array, specifically the block sections **[1][1]**, **[1][2]**, **[2][1]**, and **[2][2]**. These blocks represent the middle section of the 4x4 grid screen we developed. As it can be appreciated in the code above, we set up these pixels to either red (8'b111_000_00) or white (8'b111_111_11) based on the appropriate combination of the values of the switches. The following video demonstrates how the algorithm behaves to the four different combinations of the switches:
 
-*video 1*
+<div style="text-align: center">
+<iframe width="534" height="300" src="https://www.youtube.com/embed/a1Th8jgk4mo" frameborder="0" allowfullscreen></iframe>
+</div>
 
 Refer to the following video of our final circuitry described above that combines the switches, the Arduino, and the FPGA:
 
