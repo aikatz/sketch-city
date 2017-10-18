@@ -26,13 +26,9 @@ The converter we used for this case is called **R/2R DAC** and please, refer to 
 
 <div style="text-align:center"><img src ="../pictures/lab3/dacRG.png" /></div>
 
-This is a perfect mechanism since different principles help us achieve the results we wish to obtain. For instance, having an increasing *power-of-2* amount of equal resistors between will enable us to achieve different voltage values given which bit is set *HIGH* in a given color. This means, if the MSB (bit 8) is set HIGH, then a higher voltage is given to the VGA than if the LSB (bit 6) is set HIGH, since there is a much higher voltage drop after the more populated series resistance. With this idea in mind and the fact we need a voltage range between 0-1V, we arrived to the following conclusion: if all bits are set LOW (000) then VGA voltage = 0V; if all bits are set HIGH (111) then VGA voltage = 1V. If we apply *node-voltage* on the circuit above, we get the following calculation:
+Please, note how the blocks of series resistors following every bit input are in parallel with each other. This is a perfect mechanism since different principles help us achieve the results we wish to obtain. For instance, having an increasing *power-of-2* amount of equal resistors between will enable us to achieve different voltage values given which bit is set *HIGH* in a given color. This means, if the MSB (bit 8) is set HIGH, then a higher voltage is given to the VGA than if the LSB (bit 6) is set HIGH, since there is a much higher voltage drop after the more populated series resistance. With this idea in mind and the fact we need a voltage range between 0-1V, we arrived to the following conclusion: if all bits are set LOW (000) then VGA voltage = 0V; if all bits are set HIGH (111) then VGA voltage = 1V. If we apply *node-voltage* on the circuit above, we get the following calculation:
 
-\frac{3.3V - 1V}{R_{eq}} = \frac{1V - 0V}{50\Omega}
-
-Given the result of the calculations above, our resistor values are:
-RED ->
-GREEN ->
+<div style="text-align:center"><img src ="../pictures/lab3/calcRG.png" /></div>
 
 However, for blue, we get a different result since we have a different set up with less bits, and hence, less resistors:
 
@@ -40,13 +36,39 @@ However, for blue, we get a different result since we have a different set up wi
 
 Here, the calculations are as following:
 
-*image*
-
-And the resistor values we obtain are R1 = ? and R2 = ?.
+<div style="text-align:center"><img src ="../pictures/lab3/calcB.png" /></div>
 
 Please, refer to the following table of the full results of the DAC system:
 
-*table*
+<div style="text-align:center"><img src ="../pictures/lab3/calcRG.png" /></div>
+
+The calculations above provided us with the **minimum** resistor values for the output value of the DAC to be between 0V and 1V. This means that any lower impedance of the circuit would output values greater than 1V and the computer would be in trouble reading it. However, the calculation above represents the ultimate case where **111** outputs 1V. We do not exactly need that output; as long as we maintain it between 0V and 1V, we are good. Therefore, let's check that the resistors we used for the actual lab meet the requirements:
+* Each resistor is approximately doubling the value of its previous bit's resistor.
+* The final output of the DAC is contained within 0V and 1V.
+
+According to this resistor-value sheet, we determined the values of the resistors we used in the lab:
+
+<div style="text-align:center"><img src ="../pictures/lab3/resColor.jpg" /></div>
+
+Based on this, we calculated the resistance of each resistor and included them in this picture:
+
+<div style="text-align:center"><img src ="../pictures/lab3/ourRes.jpg" /></div>
+
+Nice results! We can see how the built-in resistors are actually larger than the ones we determined above, therefore the output voltage is guaranteed to be less than 1V when all bits are asserted. Now, let's see that it all properly checks out:
+
+RED-GREEN COLOR:
+
+<div style="text-align:center"><img src ="../pictures/lab3/newOVRG.png" /></div>
+
+BLUE COLOR:
+
+<div style="text-align:center"><img src ="../pictures/lab3/newOVB.png" /></div>
+
+These are the results:
+* The resistors indeed -approximately- double their values according to the bit (561 ~ 270*2 | 1200 ~ 270*4)
+* The outputs voltages in both cases (0.1352V and 0.345V) are within 0V and 1V.
+
+The results above clearly confirm our theory and our analysis on how the resistors of the DAC are chosen.
 
 ### Drawing one box on the screen
 We started experimenting with the VGA by simply changing the screen color. This can be done easily by changing the RGB value that is send to the VGA driver.
