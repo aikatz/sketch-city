@@ -223,4 +223,80 @@ Refer to the following video of our final circuitry described above that combine
 
 ### Generate a Square Wave Tone (without DAC)
 ### Generate Multiple Tones (with DAC)
-### Use Arduino to Enable/Disabe Sound
+In order to play tones at different frequencies , we needed a way to generate a sine wave. We accomplished this using a sine table, which we generated with a simple one-liner that Alex wrote in Python. 
+
+```python
+[print("sine[{}] <= 8'd{};".format(n, int(127*math.sin(n*6.283/256))+127)) for n in xrange(0,256)]
+```
+
+The code discretizes values of a sine wave into the range 0-255. We generated 256 values. The output of the script is:
+
+```C
+sine[0] <= 8'd127;
+sine[1] <= 8'd130;
+...
+sine[255] <= 8'd124;
+```
+
+Then we copied the output from the script into a ROM module in Verilog (Based on code from Team Alpha) :
+
+```C
+module SINE_ROM
+(
+  input [7:0] addr,
+  input clk, 
+  output reg [7:0] q
+);
+   // The ROM
+  reg [7:0] sine[628:0];
+
+  initial
+  begin
+    sine[0] <= 8'd127;
+    sine[1] <= 8'd130;
+    ...
+    sine[255] <= 8'd124;
+  end
+
+  // Read out the value at addr
+  always @ (posedge clk)
+  begin
+    q <= sine[addr];
+  end
+endmodule
+``` 
+In order change the tone we were outputting, we only had to change the frequency at which we read the sine table. For this lab we had three frequencies: 245Hz, 490Hz and 735Hz. We wired GPIO_1_[0:7] to the inputs of our DAC, and connected the output of the DAC to the speaker. Our code is below. We got the general structure from Team Alpha's code. 
+
+```C
+ // Generate 25MHz clock for VGA, FPGA has 50 MHz clock
+always @ (posedge CLOCK_50) begin
+  CLOCK_25 <= ~CLOCK_25; 
+end // always @ (posedge CLOCK_50)
+	
+// Logic for generating the tones
+always @ (posedge CLOCK_25) begin
+  tone_index = GPIO_1_D[8] ? tone_index : 2'd3;
+  if (counter == 0) begin //when reach 0, increment table index
+    case(tone_index) //change frequency depending on tone
+      2'd0: counter <= CLKDIVIDER_245HZ - 1; 	//tone 1
+      2'd1: counter <= CLKDIVIDER_245HZ/2 - 1;  //tone 2
+      2'd2: counter <= CLKDIVIDER_245HZ/3 - 1;  //tone 3
+      2'd3: counter <= 0;			//no tone
+    endcase
+    table_index <= table_index + 1; //increase table index (go through sine table)
+  endWe
+  else begin
+    counter <= counter - 1; // countdown
+  end
+  //cycle through tones
+  if (tone_dur == 0) begin                      //when reach 0, increment tone index
+    tone_dur <= ONE_SEC - 1;                    // reset tone
+    tone_index <= tone_index + 1;               //change tone every second
+  end
+  else begin
+    tone_dur <= tone_dur - 1; // countdown
+  end
+end		 
+```
+
+### Use Arduino  to Enable/Disable Sound
