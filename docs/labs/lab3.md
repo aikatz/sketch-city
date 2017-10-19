@@ -3,7 +3,8 @@
 ---
 
 ### Objective
-This lab is divided into two. One team will take at least two external inputs to the FPGA and display them on a screen. The other team will react to an external input to the FPGA of their choice and generate a short ‘tune’ consisting of at least three tones to a speaker via an 8-bit DAC. Both of these tasks will help towards the design of the final system. In the final competition, all maze information discovered by the robot must be transmitted from the basestation Arduino to the FPGA, and then drawn on a VGA monitor. Once the maze has been completely mapped, the FPGA must generate a short tune to be played on a speaker to signify that the maze-mapping is done.
+This lab is divided into two. One team will take at least two external inputs to the FPGA and display them on a screen. The other team will react to an external input to the FPGA of their choice and generate a short ‘tune’ consisting of at least three tones to a speaker via an 8-bit DAC. Both of these tasks will help towards the design of the final system. In the final competition, all maze information discovered by the robot must be transmitted from the basestation Arduino to the FPGA, and then drawn on a VGA monitor. On+The next task at hand was to enable our sounds using a GPIO signal from the Arduino. The Arduino GPIO pins are 5V but the FPGA can only handle 3.3V. We used a voltage divider circuit to step the voltage down to 3.3V from 5V before connecting the pin to the FPGA board. We also added a switch to toggle the line high or low, in order to enable or disable the sound. Finally, we also had to connect the Arduino’s ground to the FPGA’s ground to ensure there was a common ground.
+ce the maze has been completely mapped, the FPGA must generate a short tune to be played on a speaker to signify that the maze-mapping is done.
 
 ### Graphics Team: Juan Joel Albrecht, Christine Ou, Yazhi Fan
 
@@ -222,7 +223,7 @@ Refer to the following video of our final circuitry described above that combine
 * Speakers with 3.5mm adapter
 
 ### Generate a Square Wave Tone (without DAC)
-Our first task was to generate a simple waveform by toggling a GPIO pin at a given frequency. In order to do this in verilog, we assigned a GPIO pin to a 1 bit register that is toggled  when a countdown timer reaches zero. The countdown timer value determines the frequency of the sound. We looked at Team Alpha's template code for this and implemented the same structure in order to generate a square wave. We checked our GPIO output signal on the oscilloscope and confirmed the signal was a 440Hz square wave. Then we connected the signal to our audio jack and plugged in our speakers. We successfully hear the glorious sound of a 440Hz square wave!
+Our first task was to generate a simple waveform by toggling a GPIO pin at a given frequency. In order to do this in verilog, we assigned a GPIO pin to a 1 bit register that is toggled  when a countdown timer reaches zero. The countdown timer value determines the frequency of the sound. We looked at Team Alpha's template code for this and implemented the same structure in order to generate a square wave. We checked our GPIO output signal on the oscilloscope and confirmed the signal was a 440Hz square wave. Then we connected the signal to our audio jack and plugged in our speakers. We successfully heard the glorious sound of a 440Hz square wave!
 
 
 
