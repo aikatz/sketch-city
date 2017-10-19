@@ -265,7 +265,7 @@ module SINE_ROM
   end
 endmodule
 ``` 
-In order change the tone we were outputting, we only had to change the frequency at which we read the sine table. For this lab we had three frequencies: 245Hz, 490Hz and 735Hz. We wired GPIO_1_[0:7] to the inputs of our DAC, and connected the output of the DAC to the speaker. Our code is below. We got the general structure from Team Alpha's code. 
+In order change the tone we were outputting, we only had to change the frequency at which we read the sine table. For this lab we had three frequencies: 245Hz, 490Hz and 735Hz. We wired GPIO_1_[0:7] to the inputs of our DAC, and connected the output of the DAC to the speaker. Our code is below. We got the general structure from Team Alpha's code. Our code below also incorporates the enable/disable signal from the Arduino. The switch is connected to GPIO_1_D[8], as described in the next section. 
 
 ```v
  // Generate 25MHz clock for VGA, FPGA has 50 MHz clock
