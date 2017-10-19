@@ -226,6 +226,8 @@ Refer to the following video of our final circuitry described above that combine
 Our first task was to generate a simple waveform by toggling a GPIO pin at a given frequency. In order to do this in verilog, we assigned a GPIO pin to a 1 bit register that is toggled  when a countdown timer reaches zero. The countdown timer value determines the frequency of the sound. We looked at Team Alpha's template code for this and implemented the same structure in order to generate a square wave. We checked our GPIO output signal on the oscilloscope and confirmed the signal was a 440Hz square wave. Then we connected the signal to our audio jack and plugged in our speakers. We successfully heard the glorious sound of a 440Hz square wave!
 
 <div style="text-align:center"><img src ="../pictures/lab3/lab3_square440.png" /></div>
+Scope with the 440Hz square wave (credit Team Alpha).
+
 
 ### Generate Multiple Tones (with DAC)
 In order to play tones at different frequencies , we needed a way to generate a sine wave. We accomplished this using a sine table, which we generated with a simple one-liner that Alex wrote in Python. 
