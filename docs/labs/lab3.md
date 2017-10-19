@@ -84,7 +84,7 @@ The results above clearly confirm our theory and our analysis on how the resisto
 ### Drawing one box on the screen
 We started experimenting with the VGA by simply changing the screen color. This can be done easily by changing the RGB value that is send to the VGA driver.
 
-``` c
+```C
 assign PIXEL_COLOR = 8'b111_111_11; // White
 ```
 
@@ -112,7 +112,7 @@ For this part of the lab, we used two external switches in order to interact wit
 
 We used the following assignment operations to be able to read from the GPIO pins:
 
-```c
+```C
 assign switch_x = GPIO_1_D[29];
 assign switch_y = GPIO_1_D[25];
 ```
@@ -122,7 +122,7 @@ Then, we manipulated our blocks of pixels on the screen based on the readings fr
 ### Correctly updating a 4-bit array dependent on the inputs
 For this part, we decided to create a flow system to interact all of our components: the switches, with the Arduino, and the FPGA. This time, we connected the output of the switches to two analog input pins on the Arduino. We then updated two digital output pins based on the values read from the switches: if the analog reading from the switches was higher than a 400 threshold -set by the original sample code- then we set the output signal to HIGH; else, to LOW.
 
-```c
+```C
 const int analogIn_x = A1; // analog input pin for switch 1
 const int analogIn_y = A2; // analog input pin for switch 2
 
@@ -169,7 +169,7 @@ Both signals output 5V if HIGH and the DE0-Nano operates at 3.3V, therefore we n
 
 We then chose a 500Ω and a 1kΩ resistors to create our voltage divider. Before continuing with our process, we checked with a multimeter that the output was 3.3V: and it was, precisely, 3.297V. With the appropriate outputs set up, then we connected them to the two GPIO inputs in the FPGA and updated our *pixel_color* array accordingly. Specifically, we focused on storing appropriate values to a 4-bit, 2-by-2 array within our 4-by-4 grid. Either red or white was stored in these bits according to the combinational reading from both switches. Here is the pseudocode for it:
 
-``` c
+``` C
 pixel_colors[x][y] = if switch_x == 1'b1 AND switch_y == 1'b0) then red else white
 ```
 
@@ -178,7 +178,7 @@ Please note that the piece of code from above symbolizes the assignment of a sin
 ### Mapping external inputs to four different outputs on the screen
 Inside the DE0-Nano.v file, we set the following *always* block to update our pixel color in the screen in case of an external input:
 
-``` c
+``` C
 reg [7:0] pixel_colors [3:0][3:0];
 
  always @(posedge CLOCK_25) begin
@@ -212,3 +212,15 @@ Refer to the following video of our final circuitry described above that combine
 <div style="text-align:center"><img src ="../pictures/lab3/circuit.jpg" /></div>
 
 ### Acoustic Team: Eric Berg, Alex Katz
+### Materials
+* DE0-NANO Board
+* Arduino
+* 2x Breadboards
+* Many jumpers
+* R2R DAC
+* A switch
+* Speakers with 3.5mm adapter
+
+### Generate a Square Wave Tone (without DAC)
+### Generate Multiple Tones (with DAC)
+### Use Arduino to Enable/Disabe Sound
