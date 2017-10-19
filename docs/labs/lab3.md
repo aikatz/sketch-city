@@ -222,6 +222,10 @@ Refer to the following video of our final circuitry described above that combine
 * Speakers with 3.5mm adapter
 
 ### Generate a Square Wave Tone (without DAC)
+Our first task was to generate a simple waveform by toggling a GPIO pin at a given frequency. In order to do this in verilog, we assigned a GPIO pin to a 1 bit register that is toggled  when a countdown timer reaches zero. The countdown timer value determines the frequency of the sound. We looked at Team Alpha's template code for this and implemented the same structure in order to generate a square wave. We checked our GPIO output signal on the oscilloscope and confirmed the signal was a 440Hz square wave. Then we connected the signal to our audio jack and plugged in our speakers. We successfully hear the glorious sound of a 440Hz square wave!
+
+
+
 ### Generate Multiple Tones (with DAC)
 In order to play tones at different frequencies , we needed a way to generate a sine wave. We accomplished this using a sine table, which we generated with a simple one-liner that Alex wrote in Python. 
 
@@ -265,6 +269,9 @@ module SINE_ROM
   end
 endmodule
 ``` 
+
+<div style="text-align:center"><img src ="../pictures/lab3/R2R Pinout.PNG" /></div>
+
 In order change the tone we were outputting, we only had to change the frequency at which we read the sine table. For this lab we had three frequencies: 245Hz, 490Hz and 735Hz. We wired GPIO_1_[0:7] to the inputs of our DAC, and connected the output of the DAC to the speaker. Our code is below. We got the general structure from Team Alpha's code. Our code below also incorporates the enable/disable signal from the Arduino. The switch is connected to GPIO_1_D[8], as described in the next section. 
 
 ```v
@@ -299,8 +306,12 @@ always @ (posedge CLOCK_25) begin
 end		 
 ```
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Z51QBP8-iao" frameborder="0" allowfullscreen></iframe>
+
 ### Use Arduino  to Enable/Disable Sound
 
 The next task at hand was to enable our sounds using a GPIO signal from the Arduino. The Arduino GPIO pins are 5V but the FPGA can only handle 3.3V. We used a voltage divider circuit to step the voltage down to 3.3V from 5V before connecting the pin to the FPGA board. We also added a switch to toggle the line high or low, in order to enable or disable the sound.
 
 Then we had to implement the reading of the Arduino signal in Verilog to allow or not allow sounds to play. As seen in the code below, we added a 4th case in our tone_index case statement to represent no tone. We implemented no tone by setting the counter equal to 0, which means the sine table is read at the clock frequency of 25MHz, which can not be audibly heard. Every time the switch is flipped on, the signal is raised high and the tone index is set to no tone using a ternary operator.
+
+<div style="text-align:center"><img src ="Sound_Setup.jpg" /></div>
