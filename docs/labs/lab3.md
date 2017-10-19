@@ -306,14 +306,12 @@ always @ (posedge CLOCK_25) begin
   end
 end		 
 ```
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Z51QBP8-iao" frameborder="0" allowfullscreen></iframe>
+<div style="text-align:center"><img src ="Sound_Setup.jpg" /></div>
 
 ### Use Arduino  to Enable/Disable Sound
 The next task at hand was to enable our sounds using a GPIO signal from the Arduino. The Arduino GPIO pins are 5V but the FPGA can only handle 3.3V. We used a voltage divider circuit to step the voltage down to 3.3V from 5V before connecting the pin to the FPGA board. We also added a switch to toggle the line high or low, in order to enable or disable the sound. Finally, we also had to connect the Arduino’s ground to the FPGA’s ground to ensure there was a common ground.
 
 Then we had to implement the reading of the Arduino signal in Verilog to allow or not allow sounds to play. As seen in the code below, we added a 4th case in our tone_index case statement to represent no tone. We implemented no tone by setting the counter equal to 0, which means the sine table is read at the clock frequency of 25MHz, which can not be audibly heard. Every time the switch is flipped on, the signal is raised high and the tone index is set to no tone using a ternary operator. 
-Below is a video of all 3 tones
+Below is a video of all 3 tones playing and the waveforms shown of each tone. When the switch is flipped all sounds stops. 
 
-
-<div style="text-align:center"><img src ="Sound_Setup.jpg" /></div>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Z51QBP8-iao" frameborder="0" allowfullscreen></iframe>
