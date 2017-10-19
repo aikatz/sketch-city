@@ -306,7 +306,7 @@ always @ (posedge CLOCK_25) begin
   end
 end		 
 ```
-<div style="text-align:center"><img src ="Sound_Setup.jpg" /></div>
+<div style="text-align:center"><img src ="../pictures/lab3/Sound_Setup.jpg" /></div>
 
 ### Use Arduino  to Enable/Disable Sound
 The next task at hand was to enable our sounds using a GPIO signal from the Arduino. The Arduino GPIO pins are 5V but the FPGA can only handle 3.3V. We used a voltage divider circuit to step the voltage down to 3.3V from 5V before connecting the pin to the FPGA board. We also added a switch to toggle the line high or low, in order to enable or disable the sound. Finally, we also had to connect the Arduino’s ground to the FPGA’s ground to ensure there was a common ground.
