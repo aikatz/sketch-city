@@ -3,7 +3,8 @@
 ---
 
 ### Objective
-This lab is divided into two. One team will take at least two external inputs to the FPGA and display them on a screen. The other team will react to an external input to the FPGA of their choice and generate a short ‘tune’ consisting of at least three tones to a speaker via an 8-bit DAC. Both of these tasks will help towards the design of the final system. In the final competition, all maze information discovered by the robot must be transmitted from the basestation Arduino to the FPGA, and then drawn on a VGA monitor. Once the maze has been completely mapped, the FPGA must generate a short tune to be played on a speaker to signify that the maze-mapping is done.
+This lab is divided into two. One team will take at least two external inputs to the FPGA and display them on a screen. The other team will react to an external input to the FPGA of their choice and generate a short ‘tune’ consisting of at least three tones to a speaker via an 8-bit DAC. Both of these tasks will help towards the design of the final system. In the final competition, all maze information discovered by the robot must be transmitted from the basestation Arduino to the FPGA, and then drawn on a VGA monitor. On+The next task at hand was to enable our sounds using a GPIO signal from the Arduino. The Arduino GPIO pins are 5V but the FPGA can only handle 3.3V. We used a voltage divider circuit to step the voltage down to 3.3V from 5V before connecting the pin to the FPGA board. We also added a switch to toggle the line high or low, in order to enable or disable the sound. Finally, we also had to connect the Arduino’s ground to the FPGA’s ground to ensure there was a common ground.
+ce the maze has been completely mapped, the FPGA must generate a short tune to be played on a speaker to signify that the maze-mapping is done.
 
 ### Graphics Team: Juan Joel Albrecht, Christine Ou, Yazhi Fan
 
@@ -84,7 +85,7 @@ The results above clearly confirm our theory and our analysis on how the resisto
 ### Drawing one box on the screen
 We started experimenting with the VGA by simply changing the screen color. This can be done easily by changing the RGB value that is send to the VGA driver.
 
-``` c
+```C
 assign PIXEL_COLOR = 8'b111_111_11; // White
 ```
 
@@ -112,7 +113,7 @@ For this part of the lab, we used two external switches in order to interact wit
 
 We used the following assignment operations to be able to read from the GPIO pins:
 
-```c
+```C
 assign switch_x = GPIO_1_D[29];
 assign switch_y = GPIO_1_D[25];
 ```
@@ -122,7 +123,7 @@ Then, we manipulated our blocks of pixels on the screen based on the readings fr
 ### Correctly updating a 4-bit array dependent on the inputs
 For this part, we decided to create a flow system to interact all of our components: the switches, with the Arduino, and the FPGA. This time, we connected the output of the switches to two analog input pins on the Arduino. We then updated two digital output pins based on the values read from the switches: if the analog reading from the switches was higher than a 400 threshold -set by the original sample code- then we set the output signal to HIGH; else, to LOW.
 
-```c
+```C
 const int analogIn_x = A1; // analog input pin for switch 1
 const int analogIn_y = A2; // analog input pin for switch 2
 
@@ -169,7 +170,7 @@ Both signals output 5V if HIGH and the DE0-Nano operates at 3.3V, therefore we n
 
 We then chose a 500Ω and a 1kΩ resistors to create our voltage divider. Before continuing with our process, we checked with a multimeter that the output was 3.3V: and it was, precisely, 3.297V. With the appropriate outputs set up, then we connected them to the two GPIO inputs in the FPGA and updated our *pixel_color* array accordingly. Specifically, we focused on storing appropriate values to a 4-bit, 2-by-2 array within our 4-by-4 grid. Either red or white was stored in these bits according to the combinational reading from both switches. Here is the pseudocode for it:
 
-``` c
+``` C
 pixel_colors[x][y] = if switch_x == 1'b1 AND switch_y == 1'b0) then red else white
 ```
 
@@ -178,7 +179,7 @@ Please note that the piece of code from above symbolizes the assignment of a sin
 ### Mapping external inputs to four different outputs on the screen
 Inside the DE0-Nano.v file, we set the following *always* block to update our pixel color in the screen in case of an external input:
 
-``` c
+``` C
 reg [7:0] pixel_colors [3:0][3:0];
 
  always @(posedge CLOCK_25) begin
@@ -212,3 +213,107 @@ Refer to the following video of our final circuitry described above that combine
 <div style="text-align:center"><img src ="../pictures/lab3/circuit.jpg" /></div>
 
 ### Acoustic Team: Eric Berg, Alex Katz
+### Materials
+* DE0-NANO Board
+* Arduino
+* 2x Breadboards
+* Many jumpers
+* R2R DAC
+* A switch
+* Speakers with 3.5mm adapter
+
+### Generate a Square Wave Tone (without DAC)
+Our first task was to generate a simple waveform by toggling a GPIO pin at a given frequency. In order to do this in verilog, we assigned a GPIO pin to a 1 bit register that is toggled  when a countdown timer reaches zero. The countdown timer value determines the frequency of the sound. We looked at Team Alpha's template code for this and implemented the same structure in order to generate a square wave. We checked our GPIO output signal on the oscilloscope and confirmed the signal was a 440Hz square wave. Then we connected the signal to our audio jack and plugged in our speakers. We successfully heard the glorious sound of a 440Hz square wave!
+
+<div style="text-align:center"><img src ="../pictures/lab3/lab3_square440.png" /></div>
+Scope with the 440Hz square wave (credit Team Alpha).
+
+
+### Generate Multiple Tones (with DAC)
+In order to play tones at different frequencies , we needed a way to generate a sine wave. We accomplished this using a sine table, which we generated with a simple one-liner that Alex wrote in Python. 
+
+```python
+[print("sine[{}] <= 8'd{};".format(n, int(127*math.sin(n*6.283/256))+127)) for n in xrange(0,256)]
+```
+
+The code discretizes values of a sine wave into the range 0-255. We generated 256 values. The output of the script is:
+
+```v
+sine[0] <= 8'd127;
+sine[1] <= 8'd130;
+...
+sine[255] <= 8'd124;
+```
+
+Then we copied the output from the script into a ROM module in Verilog (Based on code from Team Alpha) :
+
+```v
+module SINE_ROM
+(
+  input [7:0] addr,
+  input clk, 
+  output reg [7:0] q
+);
+   // The ROM
+  reg [7:0] sine[628:0];
+
+  initial
+  begin
+    sine[0] <= 8'd127;
+    sine[1] <= 8'd130;
+    ...
+    sine[255] <= 8'd124;
+  end
+
+  // Read out the value at addr
+  always @ (posedge clk)
+  begin
+    q <= sine[addr];
+  end
+endmodule
+``` 
+
+<div style="text-align:center"><img src ="../pictures/lab3/R2R Pinout.PNG" /></div>
+
+In order change the tone we were outputting, we only had to change the frequency at which we read the sine table. For this lab we had three frequencies: 245Hz, 490Hz and 735Hz. We wired GPIO_1_[0:7] to the inputs of our DAC, and connected the output of the DAC to the speaker. Our code is below. We got the general structure from Team Alpha's code. Our code below also incorporates the enable/disable signal from the Arduino. The switch is connected to GPIO_1_D[8], as described in the next section. 
+
+```v
+ // Generate 25MHz clock for VGA, FPGA has 50 MHz clock
+always @ (posedge CLOCK_50) begin
+  CLOCK_25 <= ~CLOCK_25; 
+end // always @ (posedge CLOCK_50)
+	
+// Logic for generating the tones
+always @ (posedge CLOCK_25) begin
+  tone_index = GPIO_1_D[8] ? tone_index : 2'd3;
+  if (counter == 0) begin //when reach 0, increment table index
+    case(tone_index) //change frequency depending on tone
+      2'd0: counter <= CLKDIVIDER_245HZ - 1; 	//tone 1
+      2'd1: counter <= CLKDIVIDER_245HZ/2 - 1;  //tone 2
+      2'd2: counter <= CLKDIVIDER_245HZ/3 - 1;  //tone 3
+      2'd3: counter <= 0;			//no tone
+    endcase
+    table_index <= table_index + 1; //increase table index (go through sine table)
+  endWe
+  else begin
+    counter <= counter - 1; // countdown
+  end
+  //cycle through tones
+  if (tone_dur == 0) begin                      //when reach 0, increment tone index
+    tone_dur <= ONE_SEC - 1;                    // reset tone
+    tone_index <= tone_index + 1;               //change tone every second
+  end
+  else begin
+    tone_dur <= tone_dur - 1; // countdown
+  end
+end		 
+```
+<div style="text-align:center"><img src ="../pictures/lab3/Sound_Setup.jpg" /></div>
+
+### Use Arduino  to Enable/Disable Sound
+The next task at hand was to enable our sounds using a GPIO signal from the Arduino. The Arduino GPIO pins are 5V but the FPGA can only handle 3.3V. We used a voltage divider circuit to step the voltage down to 3.3V from 5V before connecting the pin to the FPGA board. We also added a switch to toggle the line high or low, in order to enable or disable the sound. Finally, we also had to connect the Arduino’s ground to the FPGA’s ground to ensure there was a common ground.
+
+Then we had to implement the reading of the Arduino signal in Verilog to allow or not allow sounds to play. As seen in the code below, we added a 4th case in our tone_index case statement to represent no tone. We implemented no tone by setting the counter equal to 0, which means the sine table is read at the clock frequency of 25MHz, which can not be audibly heard. Every time the switch is flipped on, the signal is raised high and the tone index is set to no tone using a ternary operator. 
+Below is a video of all 3 tones playing and the waveforms shown of each tone. When the switch is flipped all sounds stops. 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Z51QBP8-iao" frameborder="0" allowfullscreen></iframe>
