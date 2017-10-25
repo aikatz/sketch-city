@@ -91,7 +91,7 @@ assign PIXEL_COLOR = 8'b111_111_11; // White
 
 Then we tried to draw a box at the top corner of the screen following Team Alpha's example.
 
-``` c
+```C
 always @ (*) begin
   if(PIXEL_COORD_X < 10'd64 && PIXEL_COORD_Y < 10'd64) begin
     PIXEL_COLOR = 8'b111_000_00;
@@ -230,7 +230,7 @@ Scope with the 440Hz square wave (credit Team Alpha).
 
 
 ### Generate Multiple Tones (with DAC)
-In order to play tones at different frequencies , we needed a way to generate a sine wave. We accomplished this using a sine table, which we generated with a simple one-liner that Alex wrote in Python. 
+In order to play tones at different frequencies , we needed a way to generate a sine wave. We accomplished this using a sine table, which we generated with a simple one-liner that Alex wrote in Python.
 
 ```python
 [print("sine[{}] <= 8'd{};".format(n, int(127*math.sin(n*6.283/256))+127)) for n in xrange(0,256)]
@@ -251,7 +251,7 @@ Then we copied the output from the script into a ROM module in Verilog (Based on
 module SINE_ROM
 (
   input [7:0] addr,
-  input clk, 
+  input clk,
   output reg [7:0] q
 );
    // The ROM
@@ -271,18 +271,18 @@ module SINE_ROM
     q <= sine[addr];
   end
 endmodule
-``` 
+```
 
 <div style="text-align:center"><img src ="../pictures/lab3/R2R Pinout.PNG" /></div>
 
-In order change the tone we were outputting, we only had to change the frequency at which we read the sine table. For this lab we had three frequencies: 245Hz, 490Hz and 735Hz. We wired GPIO_1_[0:7] to the inputs of our DAC, and connected the output of the DAC to the speaker. Our code is below. We got the general structure from Team Alpha's code. Our code below also incorporates the enable/disable signal from the Arduino. The switch is connected to GPIO_1_D[8], as described in the next section. 
+In order change the tone we were outputting, we only had to change the frequency at which we read the sine table. For this lab we had three frequencies: 245Hz, 490Hz and 735Hz. We wired GPIO_1_[0:7] to the inputs of our DAC, and connected the output of the DAC to the speaker. Our code is below. We got the general structure from Team Alpha's code. Our code below also incorporates the enable/disable signal from the Arduino. The switch is connected to GPIO_1_D[8], as described in the next section.
 
 ```v
  // Generate 25MHz clock for VGA, FPGA has 50 MHz clock
 always @ (posedge CLOCK_50) begin
-  CLOCK_25 <= ~CLOCK_25; 
+  CLOCK_25 <= ~CLOCK_25;
 end // always @ (posedge CLOCK_50)
-	
+
 // Logic for generating the tones
 always @ (posedge CLOCK_25) begin
   tone_index = GPIO_1_D[8] ? tone_index : 2'd3;
@@ -313,7 +313,7 @@ end
 ### Use Arduino  to Enable/Disable Sound
 The next task at hand was to enable our sounds using a GPIO signal from the Arduino. The Arduino GPIO pins are 5V but the FPGA can only handle 3.3V. We used a voltage divider circuit to step the voltage down to 3.3V from 5V before connecting the pin to the FPGA board. We also added a switch to toggle the line high or low, in order to enable or disable the sound. Finally, we also had to connect the Arduino’s ground to the FPGA’s ground to ensure there was a common ground.
 
-Then we had to implement the reading of the Arduino signal in Verilog to allow or not allow sounds to play. As seen in the code below, we added a 4th case in our tone_index case statement to represent no tone. We implemented no tone by setting the counter equal to 0, which means the sine table is read at the clock frequency of 25MHz, which can not be audibly heard. Every time the switch is flipped on, the signal is raised high and the tone index is set to no tone using a ternary operator. 
-Below is a video of all 3 tones playing and the waveforms shown of each tone. When the switch is flipped all sounds stops. 
+Then we had to implement the reading of the Arduino signal in Verilog to allow or not allow sounds to play. As seen in the code below, we added a 4th case in our tone_index case statement to represent no tone. We implemented no tone by setting the counter equal to 0, which means the sine table is read at the clock frequency of 25MHz, which can not be audibly heard. Every time the switch is flipped on, the signal is raised high and the tone index is set to no tone using a ternary operator.
+Below is a video of all 3 tones playing and the waveforms shown of each tone. When the switch is flipped all sounds stops.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Z51QBP8-iao" frameborder="0" allowfullscreen></iframe>
