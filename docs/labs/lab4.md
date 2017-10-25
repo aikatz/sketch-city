@@ -175,7 +175,55 @@ The value of x_coord is 2 or 010 in binary. The operation x_coord << 5 shifts th
 
 #### Receiver Side
 
-**Yazhi's analysis goes here**
+#### Receiver Side
+The receiver side is responsible for getting the packet and interpreting it. 
+
+```C
+if ( role == role_pong_back )
+{
+unsigned char got_data;
+bool done = false;
+unsigned char x_coord;
+unsigned char y_coord;
+unsigned char pos_data;
+
+while (!done)
+{
+// Fetch the payload, and see if this was the last one.
+done = radio.read( &got_data, sizeof(unsigned char) );
+
+// Interpret new data
+x_coord= (got_data & 0b11100000) >> 5;
+y_coord= (got_data & 0b00011100) >> 2;
+pos_data= (got_data & 0b00000011);
+got_maze[x_coord][y_coord] = pos_data;
+
+// Delay just a little bit to let the other unit
+// make the transition to receiver
+delay(20);
+
+}
+// if there is data ready
+if ( radio.available() )
+{
+// Print the maze
+for (int i=0; i < 5; i++) {
+for (int j=0; j < 5; j++) {
+printf("%d ", got_maze[i][j]);
+}
+printf("\n");
+}
+
+// Delay just a little bit to let the other unit
+// make the transition to receiver
+delay(20);
+
+printf("\n");
+}
+}
+```
+
+The first step in converting the 8-bit packet to useful information about the maze is and operation. To get the x coordinate, we perform and operation on the 8-bit number with 11100000 to get the 3 most significant bits. Then we right shift it 5 times to get the 3-bit information. Then we perform similar operations on the next 3 bits to get the y coordinate, and the last 2 bits to get the position data. After getting all the information, we update the position in the maze matrix corresponding to the x and y coordinate with the position data: got_maze[x_coord][y_coord] = pos_data;. In the end, we print the state of the entire maze to make sure it is updated correctly.
 
 #### Partial Conclusion
 To test our algorithm to update the maze, we created an array of data to be used. Such data contained 5 different x-coordinates, y-coordinates, and states. The final objective was to update the diagonals of the 5x5 maze -having a square array has its perks after all- using these values. Here is the code used:
