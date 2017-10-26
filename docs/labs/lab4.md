@@ -319,6 +319,8 @@ Then we were able to update each division the following the same procedure in th
 
 ### Communicating maze information from the Arduino to the FPGA
 
+sdfasdhgfrefg
+
 
 ### Display the robot location on the screen
 
