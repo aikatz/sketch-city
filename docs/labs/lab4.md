@@ -21,11 +21,7 @@ When trying to set up our circuit, we gathered all the materials and assembled b
 const uint64_t pipes[2] = { 0x000000001ELL, 0x000000001FLL };
 ```
 
-Then we proceeded to program our Arduinos with the correct pipes and went on to test our transmission process. We decided to use two different computers in order to be more comfortable reading both serial ports at the same time. On the transmitter Arduino, we set the baud rate to 57600 according to the setup() function provided in *GettingStarted* and typed "T" into the Serial port. On the other end, the receiving Arduino was properly setup as well with a baud rate of 57600 and it was ready to receive packets from the transmitter. This was our output when both Arduinos were really close to each other:
-
-**video**
-
-We then started playing around with distance to see how the dropped packets were starting to appear, what was the maximum distance before getting complete miscommunication between the Arduinos, and how AKC was working in these particular cases. After moving **710 cm** apart from each other we started to see how we were having dropped packets -this is way more than what we actually need-, alerted by the text *"Failed, response timed out"*. We then started thinking: in any case where the sent information is not complete, the next packet uses its first information blocks to fill the incomplete initial packet which is then analyzed. This is obviously wrong, but we receive a nice output saying that we have a dropped packet instead of continuing with the failing process described above. This is because the feature Auto-ACK inside RF24 is enabled by default: **a signal passed between communicating processes, computers, or devices to signify acknowledgement, or receipt of message, as part of a communications protocol.** This lets us not worry about failing packets, but we then need to worry about re-sending failing data. Finally, we perceived some interference not only when separating the Arduinos far enough, but when covering the radios with our hands.
+Then we proceeded to program our Arduinos with the correct pipes and went on to test our transmission process. We decided to use two different computers in order to be more comfortable reading both serial ports at the same time. On the transmitter Arduino, we set the baud rate to 57600 according to the setup() function provided in *GettingStarted* and typed "T" into the Serial port. On the other end, the receiving Arduino was properly setup as well with a baud rate of 57600 and it was ready to receive packets from the transmitter. We then started playing around with distance to see how the dropped packets were starting to appear, what was the maximum distance before getting complete miscommunication between the Arduinos, and how AKC was working in these particular cases. After moving **710 cm** apart from each other we started to see how we were having dropped packets -this is way more than what we actually need-, alerted by the text *"Failed, response timed out"*. We then started thinking: in any case where the sent information is not complete, the next packet uses its first information blocks to fill the incomplete initial packet which is then analyzed. This is obviously wrong, but we receive a nice output saying that we have a dropped packet instead of continuing with the failing process described above. This is because the feature Auto-ACK inside RF24 is enabled by default: **a signal passed between communicating processes, computers, or devices to signify acknowledgement, or receipt of message, as part of a communications protocol.** This lets us not worry about failing packets, but we then need to worry about re-sending failing data. Finally, we perceived some interference not only when separating the Arduinos far enough, but when covering the radios with our hands.
 
 This is a picture of the final hardware setup:
 
@@ -126,10 +122,6 @@ This code works the same as above with the only difference that it is now sendin
 **Yazhi's analysis goes here**
 
 #### Partial Conclusion
-In the following video, we can appreciate how the 2-D array (maze) was being sent successfully between the two Arduinos:
-
-**video**
-
 In this case, the Arduinos are interchanging information that is worth 25-byte of data. Although it is perfectly allowed to do since it falls within our range (~32-byte), this is a very dangerous tactic to use because of the huge size of the information. It can be easily fragmented due to interference and although the Auto-ACK feature helps us reject incomplete information, we then have to send it again and may lose a lot of time when providing a live status of the robot and the maze.
 
 ### Sending New Information Only
@@ -196,8 +188,9 @@ We used the *module %* operator in order to maintain the accessible indexes of t
 
 Please, see how the updating process behaved using this algorithm and the new data to be changed:
 
-**video**
-
+<div style="text-align: center">
+<iframe width="534" height="300" src="https://www.youtube.com/embed/4sRViZqCjYg" frameborder="0" gesture="media" allowfullscreen></iframe>
+</div>
 ### Updating the maze array, dependent only on the updated robot information
 To update the robot's position, we came up with a naming standard to use the different xy-coordinates of the 5x5 boxes of the grid to locate a corner position for the robot. We the decided on the following idea: the x-coordinate position of the robot in the intersection lines would be the same as the number of the immediate box to its left; the y-coordinate position of the robot in the intersection lines would be the same as the number of the immediate box to its north direction. Please, refer to the following picture to see what we mean by this:
 

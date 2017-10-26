@@ -92,7 +92,7 @@ assign PIXEL_COLOR = 8'b111_111_11; // White
 Then we tried to draw a box at the top corner of the screen following Team Alpha's example.
 
 ```C
-always @ (*) begin
+always @ (\*) begin
   if(PIXEL_COORD_X < 10'd64 && PIXEL_COORD_Y < 10'd64) begin
     PIXEL_COLOR = 8'b111_000_00;
   end
