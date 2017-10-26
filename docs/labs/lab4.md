@@ -323,7 +323,7 @@ Then we updated the color of the visited block using the formula
 pixel_colors[pixel_y][pixel_x] = pixel_y * 20 + pixel_x * 20;
 ```
 
-which we decided on just so that we could make sure each pixel was updating correctly. We got the display to work correctly using a for loop in verilog, however when we tried reading the information from the arduino in real-time, we ran into a few issues (as you can see from the grid above, which was generated using communication from the arduino). Our main issue was that we were accidentally using a GPIO pin twice in our Arduino code so when we tried our parallel communication protocol with the FPGA, not all the pins functioned as expected, and many of the values were incorrect. Unfortunately we only realized this at the end of lab, and didn't have time to debug any other issues. 
+which we decided on just so that we could make sure each pixel was updating correctly. We got the display to work correctly using a for loop in verilog, however when we tried reading the information from the arduino in real-time, we ran into a few issues (as you can see from the grid above, which was generated using communication from the arduino).
 
 ### Communicating maze information from the Arduino to the FPGA
 
