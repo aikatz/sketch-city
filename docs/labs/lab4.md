@@ -327,13 +327,9 @@ which we decided on just so that we could make sure each pixel was updating corr
 
 Below is a video showing successful parallel communication between the Arduino and FPGA. Because we could not get the display to update properly, we instead used the onboard LEDS to display the data values. The first two LEDs are the 2 bits that make up the row position and the next three LEDs are the 3 bits that make up the column position. Our Arduino code runs through each column and each row position by toggling the GPIO’s low and high according to the binary number that describes the position on the grid.
 
-<div><iframe width="854" height="480" src="https://www.youtube.com/embed/uNNZi9pUCf0" frameborder="0" gesture="media" allowfullscreen></iframe></div>
-
 ### Communicating maze information from the Arduino to the FPGA
 
 In order to communicate the radio-received data from the Arudino to the FPGA, we first attempted to transmit data via SPI. Our first step was to write Arduino code to transmit a byte of SPI using Arudino's SPI library. Then we confirmed the SPI output on the oscilloscope by checking the CLK, MOSI, and CS lines individually. Our SPI signal counted from 0-9 continously. The waveform on the oscilloscope correctly refelcted the data transmission. Then we began writing Verilog code to interpret the SPI signal on 3 GPIO pins. Below is our code for interpreting SPI that did not work correctly. Our main issue was flagging when the SPI_data_buffer was full, in order to know when to write the pixel to the display.
-
-INSERT SPI CODE HERE:
 
 ```V
 wire spi_sck;
@@ -378,10 +374,7 @@ After troubleshooting SPI for some more time unsuccessfully, we moved over to da
 
 In Verilog, we were simply able to read the GPIO pins' state and construct the appropriate x and y coordinates like so:
 
-```C
-pixel_x = {GPIO_1_D[5], GPIO_1_D[4], GPIO_1_D[3]};
-pixel_y = {GPIO_1_D[2], GPIO_1_D[1]};
-```
+<div><iframe width="854" height="480" src="https://www.youtube.com/embed/uNNZi9pUCf0" frameborder="0" gesture="media" allowfullscreen></iframe></div>
 
 We know that the Arduino -> FPGA communication was working properly, because on the FPGA we wired the LEDs to our GPIO lines from the Arduino, and they lined up exactly with what we expected.
 
@@ -390,6 +383,11 @@ We know that the Arduino -> FPGA communication was working properly, because on 
 Using our parallel method of data transmission, we were able to succesfully transmit the x and y position of the orbot and display it onthe screen by shanging the pixel color. We used the raw bit values bit shift the values to represent the x and y positions of the pixel as shown below.
 
 As an example:  01001 represents the row 1 column 2.
+
+```C
+pixel_x = {GPIO_1_D[5], GPIO_1_D[4], GPIO_1_D[3]};
+pixel_y = {GPIO_1_D[2], GPIO_1_D[1]};
+```
 
 Unfortunately, after spending a significant amount of time troubleshooting the problem, we were still not able to get the display to accurately reflect the robot’s position. We deduced that the problem existed in the Verilog code’s interpretation of the data and writing to the display. We know the data was being transferred to the GPIO’s properly because the LEDs accurately reflected the 5 bits as the position changed. Our code which took the 5 bits and converted the bits into an x and y position to write the display with a pixel was not behaving as expected. We could see the pixels changing colors on the screen, but not according to the position that were being sent. In other words, the pixels were changing  color somewhat randomly and not int the order assigned.
 
@@ -402,3 +400,4 @@ end
 ```
 
 ### Distinguish what sites have been visited and which haven’t on the screen
+We didn't get to this part, since we spent so much time debugging our issues with GPIO. If we had time to implement this, we would have just used two colors to mark visited/unvisited, and toggled the appropriate grid location when we visited a square. 
