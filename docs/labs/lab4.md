@@ -118,6 +118,7 @@ if ( role == role_pong_back )
     }
   }
 ```
+The receiver part of this code checks for available radio and fetch it if it is available. After we’ve gotten the last payload, the receiver stops listening and sends back a signal so that the transmitter knowns that the information has been sent successfully. After that, the receiver starts listening again for new radio signals.
 
 ### Sending the entire maze wirelessly
 In order to send the entire maze wirelessly to the other Arduino, we needed to come up with a system to clearly identify the different states of each box in the grid. We then agreed that there were *four* possible states for a box to be in: unvisited, no wall (but visited), wall, and treasure presence. Since we only have four, we assigned the following values of type ```char``` to them: unvisited = 0; no wall = 1; wall = 2; treasure = 3. We will the explain how four possibilities is a wonderful number after all. To send an entire grid, we created a 5x5 "space" composed of the types described above. Of course, this will be adjusted by the day of the final competition where the grid is 4x5, but for the sake of this lab, we wanted to create a square structure for easy visibility and operation. Such 2-dimensional array of unsigned characters was used to send in a single payload; since the size of a ```char``` is 1 byte, we then are sending 25 bytes worth of information. The default size of a payload is 32 bytes, so we can safely send this information in a single payload.
@@ -207,7 +208,7 @@ The important piece of information here is how bit shifting was used to transfor
 The value of x_coord is 2 or 010 in binary. The operation x_coord << 5 shifts the 3-bits of x_coord to the left times 5, obtaining the 8-bit number 01000000. A similar thing happens with y_coord which has a value of 3 or 011 and is shifted to the left 2 times. This results in the 5-bit number 01100; however, if we apply sign extension to it, we can get the 8-bit number 00001100, which is also equivalent to what we had before. The value of pos_state is 1 or 01, which is then sign extended to 8-bit 00000001. The final operation is to convert them all into a single 8-bit number containing the "sum" of their bits. This is accomplished by using a **OR \|** operator on them like **X \| Y \| Z**. The output of such operation assigns the bits in the order we want and creates a valid 8-bit number that represents the correct information.
 
 #### Receiver Side
-The receiver Arduino is responsible for getting the packet and interpreting it. 
+The receiver Arduino is responsible for getting the packet and breaking down the packet for useful information. 
 
 ```C
 if ( role == role_pong_back )
