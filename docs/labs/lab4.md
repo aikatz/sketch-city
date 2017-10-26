@@ -316,9 +316,14 @@ We modified our code from lab 3 to display a representation of the 4x5 grid maze
 PIXEL_COLOR = pixel_colors[PIXEL_COORD_X/8'd160][PIXEL_COORD_Y/8'd96]
 ```
 
-INSERT PICTURE HERE OF GRID
+<div style="text-align:center"><img src ="../pictures/lab4/20171025_225616.jpg" /></div>
 
-Then we were able to update each division the following the same procedure in the previous lab using by assigning ```pixel_colors[x][y]``` either red (8’b111_000_00) or white (8’b111_111_11) according to received packet.
+Then we updated the color of the visited block using the formula 
+```C
+pixel_colors[pixel_y][pixel_x] = pixel_y * 20 + pixel_x * 20;
+```
+
+which we decided on just so that we could make sure each pixel was updating correctly. We got the display to work correctly using a for loop in verilog, however when we tried reading the information from the arduino in real-time, we ran into a few issues (as you can see from the grid above, which was generated using communication from the arduino). Our main issue was that we were accidentally using a GPIO pin twice in our Arduino code so when we tried our parallel communication protocol with the FPGA, not all the pins functioned as expected, and many of the values were incorrect. Unfortunately we only realized this at the end of lab, and didn't have time to debug any other issues. 
 
 ### Communicating maze information from the Arduino to the FPGA
 
@@ -367,17 +372,27 @@ always @(posedge CLOCK_25) begin
   
 After troubleshooting SPI for some more time unsuccessfully, we moved over to data transmission via parallel GPIO lines. We used 5 wires to transmit the x-position (3 bits) and y-position (2 bits) of the robot. We wrote Arduino code to simulate the robot's position varying throughout the grid by toggling the x and y position bits. 
 
-In Verilog, we were simply able to read the GPIO pins' state 
+In Verilog, we were simply able to read the GPIO pins' state and construct the appropriate x and y coordinates like so:
 
+```C
+pixel_x = {GPIO_1_D[5], GPIO_1_D[4], GPIO_1_D[3]};
+pixel_y = {GPIO_1_D[2], GPIO_1_D[1]};
+```
 
+We know that the Arduino -> FPGA communication was working properly, because on the FPGA we wired the LEDs to our GPIO lines from the Arduino, and they lined up exactly with what we expected.
 
 ### Display the robot location on the screen
 
 Using our parallel method of data transmission, we were able to succesfully transmit the x and y position of the orbot and display it onthe screen by shanging the pixel color. WE used the raw bit values bit shift the values to represent the x and y positions of the pixel as shown below.
 
-INSERT VERILOG CODE HERE THAT WRITE PIXELS
+```C
+always @(posedge CLOCK_25) begin
+	pixel_x = {GPIO_1_D[5], GPIO_1_D[4], GPIO_1_D[3]};
+	pixel_y = {GPIO_1_D[2], GPIO_1_D[1]};
+	pixel_colors[pixel_y][pixel_x] = pixel_y * 20 + pixel_x * 20;
+end
+```
 
-INSERT VIDEO HERE
-
+<div><iframe width="854" height="480" src="https://www.youtube.com/embed/uNNZi9pUCf0" frameborder="0" gesture="media" allowfullscreen></iframe></div>
 
 ### Distinguish what sites have been visited and which haven’t on the screen
