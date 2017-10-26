@@ -325,8 +325,6 @@ pixel_colors[pixel_y][pixel_x] = pixel_y * 20 + pixel_x * 20;
 
 which we decided on just so that we could make sure each pixel was updating correctly. We got the display to work correctly using a for loop in verilog, however when we tried reading the information from the arduino in real-time, we ran into a few issues (as you can see from the grid above, which was generated using communication from the arduino). Our main issue was that we were accidentally using a GPIO pin twice in our Arduino code so when we tried our parallel communication protocol with the FPGA, not all the pins functioned as expected, and many of the values were incorrect. Unfortunately we only realized this at the end of lab, and didn't have time to debug any other issues. 
 
-Below is a video showing successful parallel communication between the Arduino and FPGA. Because we could not get the display to update properly, we instead used the onboard LEDS to display the data values. The first two LEDs are the 2 bits that make up the row position and the next three LEDs are the 3 bits that make up the column position. Our Arduino code runs through each column and each row position by toggling the GPIO’s low and high according to the binary number that describes the position on the grid.
-
 ### Communicating maze information from the Arduino to the FPGA
 
 In order to communicate the radio-received data from the Arudino to the FPGA, we first attempted to transmit data via SPI. Our first step was to write Arduino code to transmit a byte of SPI using Arudino's SPI library. Then we confirmed the SPI output on the oscilloscope by checking the CLK, MOSI, and CS lines individually. Our SPI signal counted from 0-9 continously. The waveform on the oscilloscope correctly refelcted the data transmission. Then we began writing Verilog code to interpret the SPI signal on 3 GPIO pins. Below is our code for interpreting SPI that did not work correctly. Our main issue was flagging when the SPI_data_buffer was full, in order to know when to write the pixel to the display.
@@ -372,7 +370,7 @@ always @(posedge CLOCK_25) begin
   
 After troubleshooting SPI for some more time unsuccessfully, we moved over to data transmission via parallel GPIO lines. We used 5 wires to transmit the x-position (3 bits) and y-position (2 bits) of the robot. We wrote Arduino code to simulate the robot's position varying throughout the grid by toggling the x and y position bits. 
 
-In Verilog, we were simply able to read the GPIO pins' state and construct the appropriate x and y coordinates like so:
+Below is a video showing successful parallel communication between the Arduino and FPGA. Because we could not get the display to update properly, we instead used the onboard LEDS to display the data values. The first two LEDs are the 2 bits that make up the row position and the next three LEDs are the 3 bits that make up the column position. Our Arduino code runs through each column and each row position by toggling the GPIO’s low and high according to the binary number that describes the position on the grid.
 
 <div><iframe width="854" height="480" src="https://www.youtube.com/embed/uNNZi9pUCf0" frameborder="0" gesture="media" allowfullscreen></iframe></div>
 
