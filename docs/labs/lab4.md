@@ -222,7 +222,7 @@ The important piece of information here is how bit shifting was used to transfor
 The value of x_coord is 2 or 010 in binary. The operation x_coord << 5 shifts the 3-bits of x_coord to the left times 5, obtaining the 8-bit number 01000000. A similar thing happens with y_coord which has a value of 3 or 011 and is shifted to the left 2 times. This results in the 5-bit number 01100; however, if we apply sign extension to it, we can get the 8-bit number 00001100, which is also equivalent to what we had before. The value of pos_state is 1 or 01, which is then sign extended to 8-bit 00000001. The final operation is to convert them all into a single 8-bit number containing the "sum" of their bits. This is accomplished by using a **OR \|** operator on them like **X \| Y \| Z**. The output of such operation assigns the bits in the order we want and creates a valid 8-bit number that represents the correct information.
 
 #### Receiver Side
-The receiver Arduino is responsible for getting the packet and breaking down the packet for useful information.
+The receiver Arduino is responsible for getting the packet and parse the packet for useful information.
 
 ```C
 if ( role == role_pong_back )
@@ -238,7 +238,7 @@ while (!done)
   // Fetch the payload, and see if this was the last one.
   done = radio.read( &got_data, sizeof(unsigned char) );
 
-  // Interpret new data
+  // Parse new data
   x_coord= (got_data & 0b11100000) >> 5;
   y_coord= (got_data & 0b00011100) >> 2;
   pos_data= (got_data & 0b00000011);
@@ -311,7 +311,11 @@ This idea enables to not only change the current state of the maze by providing 
 * Resistors
 
 ### Displaying a full 4-by-5 grid array on the screen
-
+We modified our code from lab 3 to display a representation of the 4x5 grid maze. The screen is 640 by 480 pixels so we divided the x coordinate by 160 to get 4 divisions and y coordinate by 96 to get 5 divisions.
+```C
+PIXEL_COLOR = pixel_colors[PIXEL_COORD_X/8'd160][PIXEL_COORD_Y/8'd96]
+```
+Then we were able to update each division the following the same procedure in the previous lab using by assigning ```pixel_colors[x][y]``` either red (8’b111_000_00) or white (8’b111_111_11) according to received packet.
 
 ### Communicating maze information from the Arduino to the FPGA
 
