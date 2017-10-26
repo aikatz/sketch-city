@@ -79,8 +79,42 @@ if (role == role_ping_out)
 According to the code above, the transmitter Arduino sends the current time -in order to have a variable output- to the receiver and stores the output of the process in a **bool** variable called *ok*. This variable, which has Auto-ACK enabled by default, sends confirmation that the information was sent correctly. Then, with the line ```radio.startListening();```, the receiver starts listening for the receiver's approval that it received the information on time. It then prints a message to the screen saying if the operation was successful or if it timed out due to different issues.
 
 #### Receiver Side
+```C
+if ( role == role_pong_back )
+  {
+    // if there is data ready
+    if ( radio.available() )
+    {
+      // Dump the payloads until we've gotten everything
+      unsigned long got_time;
+      bool done = false;
+      while (!done)
+      {
+        // Fetch the payload, and see if this was the last one.
+        done = radio.read( &got_time, sizeof(unsigned long) );
 
-**Yazhi's analysis goes here**
+        // Spew it
+        printf("Got payload %lu...",got_time);
+
+        // Delay just a little bit to let the other unit
+        // make the transition to receiver
+        delay(20);
+
+      }
+
+      // First, stop listening so we can talk
+      radio.stopListening();
+
+      // Send the final one back.
+      radio.write( &got_time, sizeof(unsigned long) );
+      printf("Sent response.\n\r");
+
+      // Now, resume listening so we catch the next packets.
+      radio.startListening();
+    }
+  }
+```
+The receiver part of this code checks for available radio and fetch it if it is available. After we’ve gotten the last payload, the receiver stops listening with ```radio.stopListening()```. While listening is paused, it sends back a signal so that the transmitter knowns that the information has been sent successfully. After that, the receiver starts listening again for new radio signals.
 
 ### Sending the entire maze wirelessly
 In order to send the entire maze wirelessly to the other Arduino, we needed to come up with a system to clearly identify the different states of each box in the grid. We then agreed that there were *four* possible states for a box to be in: unvisited, no wall (but visited), wall, and treasure presence. Since we only have four, we assigned the following values of type ```char``` to them: unvisited = 0; no wall = 1; wall = 2; treasure = 3. We will the explain how four possibilities is a wonderful number after all. To send an entire grid, we created a 5x5 "space" composed of the types described above. Of course, this will be adjusted by the day of the final competition where the grid is 4x5, but for the sake of this lab, we wanted to create a square structure for easy visibility and operation. Such 2-dimensional array of unsigned characters was used to send in a single payload; since the size of a ```char``` is 1 byte, we then are sending 25 bytes worth of information. The default size of a payload is 32 bytes, so we can safely send this information in a single payload.
@@ -166,8 +200,54 @@ The important piece of information here is how bit shifting was used to transfor
 The value of x_coord is 2 or 010 in binary. The operation x_coord << 5 shifts the 3-bits of x_coord to the left times 5, obtaining the 8-bit number 01000000. A similar thing happens with y_coord which has a value of 3 or 011 and is shifted to the left 2 times. This results in the 5-bit number 01100; however, if we apply sign extension to it, we can get the 8-bit number 00001100, which is also equivalent to what we had before. The value of pos_state is 1 or 01, which is then sign extended to 8-bit 00000001. The final operation is to convert them all into a single 8-bit number containing the "sum" of their bits. This is accomplished by using a **OR \|** operator on them like **X \| Y \| Z**. The output of such operation assigns the bits in the order we want and creates a valid 8-bit number that represents the correct information.
 
 #### Receiver Side
+The receiver Arduino is responsible for getting the packet and breaking down the packet for useful information. 
 
-**Yazhi's analysis goes here**
+```C
+if ( role == role_pong_back )
+{
+  unsigned char got_data;
+  bool done = false;
+  unsigned char x_coord;
+  unsigned char y_coord;
+  unsigned char pos_data;
+
+while (!done)
+{
+  // Fetch the payload, and see if this was the last one.
+  done = radio.read( &got_data, sizeof(unsigned char) );
+
+  // Interpret new data
+  x_coord= (got_data & 0b11100000) >> 5;
+  y_coord= (got_data & 0b00011100) >> 2;
+  pos_data= (got_data & 0b00000011);
+  got_maze[x_coord][y_coord] = pos_data;
+
+  // Delay just a little bit to let the other unit
+  // make the transition to receiver
+  delay(20);
+
+}
+// if there is data ready
+if ( radio.available() )
+{
+  // Print the maze
+  for (int i=0; i < 5; i++) {
+  for (int j=0; j < 5; j++) {
+  printf("%d ", got_maze[i][j]);
+}
+printf("\n");
+}
+
+// Delay just a little bit to let the other unit
+// make the transition to receiver
+delay(20);
+
+printf("\n");
+}
+}
+```
+
+The first step in converting the 8-bit packet to useful information about the maze is and operation. To get the x coordinate, we perform and operation on the 8-bit number with 11100000 to get the 3 most significant bits. Then we right shift it 5 times to get the 3-bit information. Then we perform similar operations on the next 3 bits to get the y coordinate, and the last 2 bits to get the position data. After getting all the information, we update the position in the maze matrix corresponding to the x and y coordinate with the position data using the line```got_maze[x_coord][y_coord] = pos_data;```. In the end, we print the state of the entire maze to make sure it is updated correctly. The updating result can been seen on the serial monitor. 
 
 #### Partial Conclusion
 To test our algorithm to update the maze, we created an array of data to be used. Such data contained 5 different x-coordinates, y-coordinates, and states. The final objective was to update the diagonals of the 5x5 maze -having a square array has its perks after all- using these values. Here is the code used:
