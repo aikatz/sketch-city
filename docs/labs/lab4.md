@@ -327,7 +327,7 @@ which we decided on just so that we could make sure each pixel was updating corr
 
 ### Communicating maze information from the Arduino to the FPGA
 
-In order to communicate the radio-received data from the Arudino to the FPGA, we first attempted to transmit data via SPI. Our first step was to write Arduino code to transmit a byte of SPI using Arudino's SPI library. Then we confirmed the SPI output on the oscilloscope by checking the CLK, MOSI, and CS lines individually. Our SPI signal counted from 0-9 continously. The waveform on the oscilloscope correctly refelcted the data transmission. Then we began writing Verilog code to interpret the SPI signal on 3 GPIO pins. Below is our code for interpreting SPI that did not work correctly. Our main issue was flagging when the SPI_data_buffer was full, in order to know when to write the pixel to the display.
+In order to communicate the radio-received data from the Arudino to the FPGA, we first attempted to transmit data via SPI. Our first step was to write Arduino code to transmit a byte of SPI using Arudino's SPI library. Then we confirmed the SPI output on the oscilloscope by checking the CLK, MOSI, and CS lines individually. Our SPI signal counted from 0-9 continously. The waveform on the oscilloscope correctly refelcted the data transmission. Then we began writing Verilog code to interpret the SPI signal on 3 GPIO pins. Below is our code for interpreting SPI that did not work correctly. Our main obstacle was communicating when the SPI transfer was done and it was safe to read the SPI buffer. We wanted to use a register as a flag, but had issues writing the register from multiple always blocks.
 
 ```V
 wire spi_sck;
