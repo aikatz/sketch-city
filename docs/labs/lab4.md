@@ -389,7 +389,7 @@ pixel_x = {GPIO_1_D[5], GPIO_1_D[4], GPIO_1_D[3]};
 pixel_y = {GPIO_1_D[2], GPIO_1_D[1]};
 ```
 
-Unfortunately, after spending a significant amount of time troubleshooting the problem, we were still not able to get the display to accurately reflect the robot’s position. We deduced that the problem existed in the Verilog code’s interpretation of the data and writing to the display. We know the data was being transferred to the GPIO’s properly because the LEDs accurately reflected the 5 bits as the position changed. Our code which took the 5 bits and converted the bits into an x and y position to write the display with a pixel was not behaving as expected. We could see the pixels changing colors on the screen, but not according to the position that were being sent. In other words, the pixels were changing  color somewhat randomly and not int the order assigned.
+Unfortunately, after spending a significant amount of time troubleshooting the problem, we were still not able to get the display to accurately reflect the robot’s position. We deduced that the problem existed in the Verilog code’s interpretation of the data and writing to the display. 
 
 ```C
 always @(posedge CLOCK_25) begin
@@ -398,6 +398,9 @@ always @(posedge CLOCK_25) begin
 	pixel_colors[pixel_y][pixel_x] = pixel_y * 20 + pixel_x * 20;
 end
 ```
+
+We know the data was being transferred to the GPIO’s properly because the LEDs accurately reflected the 5 bits as the position changed. Our code which took the 5 bits and converted the bits into an x and y position to write the display with a pixel was not behaving as expected. We could see the pixels changing colors on the screen, but not according to the position that were being sent. In other words, the pixels were changing  color somewhat randomly and not int the order assigned.
+
 
 ### Distinguish what sites have been visited and which haven’t on the screen
 We didn't get to this part, since we spent so much time debugging our issues with GPIO. If we had time to implement this, we would have just used two colors to mark visited/unvisited, and toggled the appropriate grid location when we visited a square. 
