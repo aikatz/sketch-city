@@ -302,6 +302,13 @@ This idea enables to not only change the current state of the maze by providing 
 
 ### FPGA Team: Eric Berg, Alex Katz
 
+### Materials
+* FPGA
+* 1 Arduino Uno
+* 1 VGA cable
+* 1 VGA connector
+* 1 VGA switch
+* Resistors
 
 ### Displaying a full 4-by-5 grid array on the screen
 
