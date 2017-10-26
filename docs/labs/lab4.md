@@ -25,7 +25,7 @@ Then we proceeded to program our Arduinos with the correct pipes and went on to 
 
 This is a picture of the final hardware setup:
 
-<div width=500 height = 500 style="text-align:center"><img src ="../pictures/lab4/setup.jpg" /></div>
+<div style="text-align:center"><img src ="../pictures/lab4/setup.jpg" /></div>
 
 #### Transmitter Side
 For the transmitter Arduino, we found the code inside *GettingStarted* very useful and we utilized it throughout the entire lab with a few modifications based on the task we were trying to accomplish. This is the initial setup we used to transmit packets to the receiver Arduino:
