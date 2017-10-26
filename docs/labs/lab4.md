@@ -315,14 +315,69 @@ We modified our code from lab 3 to display a representation of the 4x5 grid maze
 ```C
 PIXEL_COLOR = pixel_colors[PIXEL_COORD_X/8'd160][PIXEL_COORD_Y/8'd96]
 ```
+
+INSERT PICTURE HERE OF GRID
+
 Then we were able to update each division the following the same procedure in the previous lab using by assigning ```pixel_colors[x][y]``` either red (8’b111_000_00) or white (8’b111_111_11) according to received packet.
 
 ### Communicating maze information from the Arduino to the FPGA
 
-sdfasdhgfrefg
+In order to communicate the radio-received data from the Arudino to the FPGA, we first attempted to transmit data via SPI. Our first step was to write Arduino code to transmit a byte of SPI using Arudino's SPI library. Then we confirmed the SPI output on the oscilloscope by checking the CLK, MOSI, and CS lines individually. Our SPI signal counted from 0-9 continously. The waveform on the oscilloscope correctly refelcted the data transmission. Then we began writing Verilog code to interpret the SPI signal on 3 GPIO pins. Below is our code for interpreting SPI that did not work correctly. Our main issue was flagging when the SPI_data_buffer was full, in order to know when to write the pixel to the display.
+
+INSERT SPI CODE HERE:
+
+```V
+wire spi_sck;
+	wire spi_cs;
+	wire spi_mosi;
+	
+	assign spi_sck  = GPIO_1_D[1];
+	assign spi_cs   = GPIO_1_D[2];
+	assign spi_mosi = GPIO_1_D[3];
+	assign GPIO_1_D[4] = spi_mosi;
+ ```
+
+
+```V
+always @(posedge CLOCK_25) begin
+		if(spi_cs & spi_rx_done_writing) begin
+			spi_rx_done_reading = 1'b0;
+			pixel_x = (8'b11100000 & spi_rx_buf) >> 5;
+			pixel_y = (8'b00011100 & spi_rx_buf) >> 2;
+			pixel_colors[pixel_y][pixel_x] = pixel_x * 10 + pixel_y * 10;
+			spi_rx_done_reading = 1'b1;
+		end
+	end
+	
+	always @(negedge spi_sck or posedge spi_rx_done_reading) begin
+		if(!spi_cs) begin 
+			spi_rx_done_writing = 1'b0;
+			spi_rx_buf = spi_rx_buf | (spi_mosi << data_pos);
+			data_pos = data_pos - 3'd1;
+		end
+		else if(spi_rx_done_reading) begin
+			spi_rx_buf = 8'd0;
+			data_pos = 3'd7;
+		end
+		if(data_pos == 3'd0) begin
+			spi_rx_done_writing = 1'b1;
+		end
+	end
+  ```
+  
+After troubleshooting SPI for some more time unsuccessfully, we moved over to data transmission via parallel GPIO lines. We used 5 wires to transmit the x-position (3 bits) and y-position (2 bits) of the robot. We wrote Arduino code to simulate the robot's position varying throughout the grid by toggling the x and y position bits. 
+
+In Verilog, we were simply able to read the GPIO pins' state 
+
 
 
 ### Display the robot location on the screen
+
+Using our parallel method of data transmission, we were able to succesfully transmit the x and y position of the orbot and display it onthe screen by shanging the pixel color. WE used the raw bit values bit shift the values to represent the x and y positions of the pixel as shown below.
+
+INSERT VERILOG CODE HERE THAT WRITE PIXELS
+
+INSERT VIDEO HERE
 
 
 ### Distinguish what sites have been visited and which haven’t on the screen
