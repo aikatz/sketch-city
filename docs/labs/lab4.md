@@ -222,7 +222,7 @@ The important piece of information here is how bit shifting was used to transfor
 The value of x_coord is 2 or 010 in binary. The operation x_coord << 5 shifts the 3-bits of x_coord to the left times 5, obtaining the 8-bit number 01000000. A similar thing happens with y_coord which has a value of 3 or 011 and is shifted to the left 2 times. This results in the 5-bit number 01100; however, if we apply sign extension to it, we can get the 8-bit number 00001100, which is also equivalent to what we had before. The value of pos_state is 1 or 01, which is then sign extended to 8-bit 00000001. The final operation is to convert them all into a single 8-bit number containing the "sum" of their bits. This is accomplished by using a **OR \|** operator on them like **X \| Y \| Z**. The output of such operation assigns the bits in the order we want and creates a valid 8-bit number that represents the correct information.
 
 #### Receiver Side
-The receiver Arduino is responsible for getting the packet and breaking down the packet for useful information. 
+The receiver Arduino is responsible for getting the packet and breaking down the packet for useful information.
 
 ```C
 if ( role == role_pong_back )
@@ -269,7 +269,7 @@ printf("\n");
 }
 ```
 
-The first step in converting the 8-bit packet to useful information about the maze is and operation. To get the x coordinate, we perform and operation on the 8-bit number with 11100000 to get the 3 most significant bits. Then we right shift it 5 times to get the 3-bit information. Then we perform similar operations on the next 3 bits to get the y coordinate, and the last 2 bits to get the position data. After getting all the information, we update the position in the maze matrix corresponding to the x and y coordinate with the position data using the line```got_maze[x_coord][y_coord] = pos_data;```. In the end, we print the state of the entire maze to make sure it is updated correctly. The updating result can been seen on the serial monitor. 
+The first step in converting the 8-bit packet to useful information about the maze is and operation. To get the x coordinate, we perform and operation on the 8-bit number with 11100000 to get the 3 most significant bits. Then we right shift it 5 times to get the 3-bit information. Then we perform similar operations on the next 3 bits to get the y coordinate, and the last 2 bits to get the position data. After getting all the information, we update the position in the maze matrix corresponding to the x and y coordinate with the position data using the line```got_maze[x_coord][y_coord] = pos_data;```. In the end, we print the state of the entire maze to make sure it is updated correctly. The updating result can been seen on the serial monitor.
 
 #### Partial Conclusion
 To test our algorithm to update the maze, we created an array of data to be used. Such data contained 5 different x-coordinates, y-coordinates, and states. The final objective was to update the diagonals of the 5x5 maze -having a square array has its perks after all- using these values. Here is the code used:
