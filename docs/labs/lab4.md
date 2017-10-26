@@ -152,8 +152,30 @@ radio.startListening();
 This code works the same as above with the only difference that it is now sending a 25-byte array of data that is being analyzed by the receiver Arduino.
 
 #### Receiver Side
+The receiver side is responsible for reading the maze. Then it will print the maze on serial monitor so that we known it has received all the information successfully.
+```C
+unsigned char our_maze[5][5];
+bool done = false;
+while (!done)
+{
+  // Fetch the payload.
+  done = radio.read( our_maze, sizeof(got_maze) );
 
-**Yazhi's analysis goes here**
+  // Print the maze
+  for (int i=0; i < 5; i++) {
+    for (int j=0; j < 5; j++) {
+      printf("%d ", our_maze[i][j]);
+    }
+    printf("\n");
+  }
+
+  // Delay just a little bit to let the other unit
+  // make the transition to receiver
+  delay(20);
+
+}
+```
+The receiver code first declares a 5x5 array. After it fetches the payload, the information will be store in the **our_maze** array. Then it prints the array row by row onto serial monitor.
 
 #### Partial Conclusion
 In this case, the Arduinos are interchanging information that is worth 25-byte of data. Although it is perfectly allowed to do since it falls within our range (~32-byte), this is a very dangerous tactic to use because of the huge size of the information. It can be easily fragmented due to interference and although the Auto-ACK feature helps us reject incomplete information, we then have to send it again and may lose a lot of time when providing a live status of the robot and the maze.
