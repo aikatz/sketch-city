@@ -380,7 +380,7 @@ We know that the Arduino -> FPGA communication was working properly, because on 
 
 ### Display the robot location on the screen
 
-Using our parallel method of data transmission, we were able to succesfully transmit the x and y position of the orbot and display it onthe screen by shanging the pixel color. We used the raw bit values bit shift the values to represent the x and y positions of the pixel as shown below.
+Using our parallel method of data transmission, we were able to succesfully transmit the x and y position of the robot and display it onthe screen by changing the pixel color. We used the raw bit values bit shift the values to represent the x and y positions of the pixel as shown below.
 
 As an example:  01001 represents the row 1 column 2.
 
