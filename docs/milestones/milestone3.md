@@ -142,9 +142,13 @@ def maze_simulation(screen, start_x=1, start_y=1):
 curses.wrapper(maze_simulation)
 ```
 
-Below is a video of our DFS algorithm with backtracking traversing a maze.
+Below is a video of our DFS algorithm with backtracking traversing a very large maze.
+<div style="text-align: center">
+<iframe width="534" height="300" src="https://www.youtube.com/embed/8hhEQjia9S0" frameborder="0" allowfullscreen></iframe>
+</div>
 Unexplored territories are represented by question marks. Walls are represented by white squares. Explored areas are represented by green squares. The robot, or the current position of the robot is represented by a red square. After the algorithm is finished, the current position of the robot turns blue to indicate that all explorable areas are explored.
 <div style="text-align: center">
+Below is a video of our DFS algorithm with backtracking traversing a 4x5 maze.
 <iframe width="534" height="300" src="https://www.youtube.com/embed/DidsbgD-tjI" frameborder="0" allowfullscreen></iframe>
 </div>
 
