@@ -227,6 +227,6 @@ Please, refer to the following video to see how the robot detected the walls and
 ### Next task and improvements
 Due to limited time, we did not have our real life maze navigation run successfully. However, we are certain that our DFS algorithm works in various situations since we had a random maze generator and tested it many times. 
 
-We plan to upgrade our wall detector because they are very unaccurate. The readings from the wall sensor that we are currently using is a bell curve again distance. Also, we belive that the power left in the batteries are also affecting the sensitivity of the sensors and the servos. This created many problems and caused us to spend a lot of time on modifying the threshhold values for our sensors and the servos. We should figure our a way to fix this or make the tuning process easier.
+We plan to upgrade our wall detector because they are very unaccurate. The readings from the wall sensors that we are currently using form a bell curve against distance. Also, we believe that the battery voltage also affects the sensitivity of the sensors and the servos. This created many problems and caused us to spend a lot of time modifying the threshhold values for our sensors and the servos. We should figure out a way to fix this or make the tuning process easier.
 
 The most important task to finish implenmenting the DFS search with backtracking into our arduino C code. This should not be too difficult once our sensors are more reliable. Then we should add on the end of navigating indicator and treasure sensor.
