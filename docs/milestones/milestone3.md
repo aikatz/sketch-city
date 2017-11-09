@@ -163,7 +163,7 @@ Our robot has 3 wall sensors each installed on the front, left, and right side o
 Here is a picture of the most recent setup of our robot:
 <div style="text-align:center"><img src ="../pictures/20171108_223822(0).jpg" /></div>
 
-Once all sensors, were mounted, we wrote a simple Arduino program to test the sensor’s readings. We took the robot the maze and measured the average distance between the wall and the sensors in multiple orientations. Then we determined the range of sensor values that corresponded to this average distance. As seen below in the detectWalls() function: this range was used in the code to determine whether a wall had been detected or not. 
+Once all sensors, were mounted, we wrote a simple Arduino program to test the sensor’s readings. We took the robot to the maze and measured the average distance between the wall and the sensors in multiple orientations. Then we determined the range of sensor values that corresponded to this average distance (3-4 inches). As seen below in the detectWalls() function, this range was used in the code to determine whether a wall had been detected or not. 
 
 Here is our code for wall detection.
 ```c
