@@ -149,7 +149,8 @@ Please, refer to the following video to see how the robot detected the walls and
 ### Real Life
 Our robot has 3 wall sensors each installed on the front, left, and right side of the robot. During the navigation, the wall sensors are on average 3-4 inches away from the walls. 
 Here is a picture of the most recent setup of our robot:
-<div style="text-align:center"><img src ="../pictures/lab4/setup.jpg" /></div>
+<div style="text-align:center"><img src ="../pictures/20171108_223822(0).jpg" /></div>
+
 
 <div style="text-align: center">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/orYWxrE-BUk" frameborder="0" gesture="media" allowfullscreen></iframe>
