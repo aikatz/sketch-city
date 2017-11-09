@@ -145,6 +145,8 @@ Please, refer to the following video to see how the robot detected the walls and
 <iframe width="534" height="300" src="https://www.youtube.com/embed/DidsbgD-tjI" frameborder="0" allowfullscreen></iframe>
 </div>
 
-### Conclusions
 
 ### Real Life
+
+### Conclusions
+Due to limited time, we did not have our real life maze navigation run successfully. However, we are certain that our DFS algorithm works in various situations since we 
