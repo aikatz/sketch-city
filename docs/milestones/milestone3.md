@@ -148,5 +148,7 @@ Please, refer to the following video to see how the robot detected the walls and
 
 ### Real Life
 
-### Conclusions
-Due to limited time, we did not have our real life maze navigation run successfully. However, we are certain that our DFS algorithm works in various situations since we 
+
+### Next task and improvements
+Due to limited time, we did not have our real life maze navigation run successfully. However, we are certain that our DFS algorithm works in various situations since we had a random maze generator and tested it many times. 
+
