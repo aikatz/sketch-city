@@ -157,31 +157,6 @@ Here is a picture of the most recent setup of our robot:
 
 Once all sensors, were mounted, we wrote a simple Arduino program to test the sensor’s readings. We took the robot the maze and measured the average distance between the wall and the sensors in multiple orientations. Then we determined the range of sensor values that corresponded to this average distance. As seen below in the detectWalls() function: this range was used in the code to determine whether a wall had been detected or not. 
 
-Here is our code for intersection.
-```c
-case INTERSECTION:
-      if(center_sensor_value > LINE_THRESHOLD) {
-        detectWalls();
-        if (walls[1] == 0){
-          next_state = STRAIGHT; 
-        } else{
-           if(walls[0] == 1 && walls[2] == 1){
-              next_state = TURN_AROUND; 
-           }
-           else if(walls[0] == 1){
-              next_state = RIGHT;
-           }
-           else if(walls[2] == 1){
-              next_state = LEFT;
-           }
-        }
-        previousMillis = 0;
-      }
-      else next_state = INTERSECTION;
-      break;
-
-```
-
 Here is our code for wall detection and priority decision making.
 ```c
 void detectWalls() {
@@ -210,6 +185,33 @@ void detectWalls() {
 
 ```
 
+After confirming the sensors worked correctly, we began to brainstorm the high level structure. Before implementing a complete DFS algorithm, first we wanted to try a simpler approach at exploration, which prioritizes going straight. This algorithm makes the robot goes straight until it encounters a wall, then it makes a decision on whether to turn left, turn right, or turn around depending on the wall sensors values.  We started with the code we had used to perform a figure 8 on the grid. This code implemented a finite state machine with the following states: STRAIGHT, SLIGHT_LEFT, SLIGHT_RIGHT, INTERSECTION, LEFT, RIGHT, and TURN_AROUND. We decided to keep this same structure for our maze exploration algorithm. The main modifications were made in the INTERSECTION state. The detectWalls() function is called at every intersection, which reads the values from the sensors and updates an 3 bit array which correspond to the detection of left, center, and right walls. Once the function is called and the walls[] array is updated, the next state can be determined. This algorithm prioritizes going straight by always setting next_state to STRAIGHT unless the forward sensor is triggered. If a front wall is detected, the next condition checked is whether both left and right walls have been detected, in which case the next state will be set to TURN_AROUND.  Otherwise, if a right wall is detected, the robot will move left, and if a left wall is detected, the robot will move right.
+
+```c
+case INTERSECTION:
+      if(center_sensor_value > LINE_THRESHOLD) {
+        detectWalls();
+        if (walls[1] == 0){
+          next_state = STRAIGHT; 
+        } else{
+           if(walls[0] == 1 && walls[2] == 1){
+              next_state = TURN_AROUND; 
+           }
+           else if(walls[0] == 1){
+              next_state = RIGHT;
+           }
+           else if(walls[2] == 1){
+              next_state = LEFT;
+           }
+        }
+        previousMillis = 0;
+      }
+      else next_state = INTERSECTION;
+      break;
+
+```
+Given this basic algorithm, our robot was successfully able to traverse the perimeter of the maze, making appropriate turning decision at intersections.
+
 
 Please, refer to the following video to see how the robot detected the walls and turned around:
 
@@ -220,4 +222,6 @@ Please, refer to the following video to see how the robot detected the walls and
 ### Next task and improvements
 Due to limited time, we did not have our real life maze navigation run successfully. However, we are certain that our DFS algorithm works in various situations since we had a random maze generator and tested it many times. 
 
-We plan to upgrade our wall detector because they are very unaccurate. The readings from the wall sensor that we are currently using is a bell curve again distance. Also, we belive that the power left in the batteries are also affecting the sensitivity of the sensors and the servos. 
+We plan to upgrade our wall detector because they are very unaccurate. The readings from the wall sensor that we are currently using is a bell curve again distance. Also, we belive that the power left in the batteries are also affecting the sensitivity of the sensors and the servos. This created many problems and caused us to spend a lot of time on modifying the threshhold values for our sensors and the servos. We should figure our a way to fix this or make the tuning process easier.
+
+The most important task to finish implenmenting the DFS search with backtracking into our arduino C code. This should not be too difficult once our sensors are more reliable. Then we should add on the end of navigating indicator and treasure sensor.
