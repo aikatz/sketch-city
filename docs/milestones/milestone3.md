@@ -5,6 +5,11 @@ The goal for this milestone is to write a maze navigation algorithm that works i
 
 ### Simulation
 We have created a simulation with python. 
+#### Pure DFS
+The first implementation  of the simulation implemented pure DFS to explore the maze. The main problem with this approach, is that the position would "jump" to the next branch when the algorithm had reached the end of a branch, instead of backtracking to the correct position. 
+#### DFS With Backtracking
+We implemented our DFS algorithm iteratively due to constraints related to displaying the maze/using the curses library. Because of that, it was a bit complicated to add backtracking into the algorithm. In order to have the simulated robot backtrack once it reaches a dead end, I used a second stack to keep track of the robot’s history, and a third stack to keep track of each intersection. When the robot reaches a dead end, the most recent intersection is popped off the intersection stack, and then the history from the current point up until the intersection that was just popped is moved onto the main stack. It’s a bit ugly, but it works well for small mazes. For larger mazes the algorithm is extremely inefficient, and traverses a large amount of area twice.
+
 ```Python
 # coding=UTF-8
 from __future__ import print_function
@@ -136,11 +141,9 @@ def maze_simulation(screen, start_x=1, start_y=1):
 
 curses.wrapper(maze_simulation)
 ```
-Unexplored territories are represented by question marks. Walls are represented by white squares. Explored areas are represented by green squares. The robot, or the current position of the robot is represented by a red square. After the algorithm is finished, the current position of the robot turns blue to indicate that all explorable areas are explored
 
-
-Please, refer to the following video to see how the robot detected the walls and turned around:
-
+Below is a video of our DFS algorithm with backtracking traversing a maze.
+Unexplored territories are represented by question marks. Walls are represented by white squares. Explored areas are represented by green squares. The robot, or the current position of the robot is represented by a red square. After the algorithm is finished, the current position of the robot turns blue to indicate that all explorable areas are explored.
 <div style="text-align: center">
 <iframe width="534" height="300" src="https://www.youtube.com/embed/DidsbgD-tjI" frameborder="0" allowfullscreen></iframe>
 </div>
@@ -151,6 +154,8 @@ Our robot has 3 wall sensors each installed on the front, left, and right side o
 Here is a picture of the most recent setup of our robot:
 <div style="text-align:center"><img src ="../pictures/20171108_223822(0).jpg" /></div>
 
+
+Please, refer to the following video to see how the robot detected the walls and turned around:
 
 <div style="text-align: center">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/orYWxrE-BUk" frameborder="0" gesture="media" allowfullscreen></iframe>
