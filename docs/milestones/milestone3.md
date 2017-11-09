@@ -4,7 +4,7 @@ The goal for this milestone is to write a maze navigation algorithm that works i
 
 
 ### Simulation
-We have created a simulation with python. 
+
 #### Pure DFS
 The first implementation  of the simulation implemented pure DFS to explore the maze. The main problem with this approach, is that the position would "jump" to the next branch when the algorithm had reached the end of a branch, instead of backtracking to the correct position. 
 #### DFS With Backtracking
