@@ -139,7 +139,7 @@ curses.wrapper(maze_simulation)
 Unexplored territories are represented by question marks. Walls are represented by white squares. Explored areas are represented by green squares. The robot, or the current position of the robot is represented by a red square. After the algorithm is finished, the current position of the robot turns blue to indicate that all explorable areas are explored
 
 <div style="text-align: center">
-<iframe width="534" height="300" src="https://youtu.be/DidsbgD-tjI" frameborder="0" allowfullscreen></iframe>
+<iframe width="534" height="300" src="https://youtu.com/embed/DidsbgD-tjI" frameborder="0" allowfullscreen></iframe>
 </div>
 
 ### Real Life
