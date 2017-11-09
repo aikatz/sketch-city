@@ -150,9 +150,42 @@ Unexplored territories are represented by question marks. Walls are represented 
 
 
 ### Real Life
-Our robot has 3 wall sensors each installed on the front, left, and right side of the robot. During the navigation, the wall sensors are on average 3-4 inches away from the walls. 
+Our robot has 3 wall sensors each installed on the front, left, and right side of the robot. During the navigation, the wall sensors are on average 3-4 inches away from the walls. We 3D printed a mount for 3 long-range IR sensors. The mount was designed to position the sensors for left, front, and right wall detection all 90 degrees apart from each other. THe mount elevated all 3 sensors above the the height of the wheels to avoid obstructing the sensor reading.
+
+Once all sensors, were mounted, we wrote a simple Arduino program to test the sensor’s readings. We took the robot the maze and measured the average distance between the wall and the sensors in multiple orientations. Then we determined the range of sensor values that corresponded to this average distance. As seen below in the detectWalls() function: this range was used in the code to determine whether a wall had been detected or not. 
+
 Here is a picture of the most recent setup of our robot:
 <div style="text-align:center"><img src ="../pictures/20171108_223822(0).jpg" /></div>
+
+
+
+Here is our code for wall detection and priority decision making.
+```C
+void detectWalls() {
+  int lw_raw = analogRead(leftwall_sensor_pin);
+  int fw_raw = analogRead(forwardwall_sensor_pin);
+  int rw_raw = analogRead(rightwall_sensor_pin);
+  if (lw_raw > 400 && lw_raw < 600){
+    lw = 1;
+  } else{
+    lw = 0;
+  }
+   if (fw_raw > 500 && fw_raw < 600){
+    fw = 1;
+  } else{
+    fw = 0;
+  }
+   if (rw_raw > 400 && rw_raw <600){
+    rw = 1;
+  } else{
+    rw = 0;
+  }
+  walls[0] = lw;
+  walls[1] = fw;
+  walls[2] = rw;
+}
+
+```
 
 
 Please, refer to the following video to see how the robot detected the walls and turned around:
