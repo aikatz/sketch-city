@@ -152,6 +152,7 @@ Unexplored territories are represented by question marks. Walls are represented 
 
 
 Below is a video of our DFS algorithm with backtracking traversing a 4x5 maze.
+
 <div style="text-align: center">
 <iframe width="534" height="300" src="https://www.youtube.com/embed/DidsbgD-tjI" frameborder="0" allowfullscreen></iframe>
 </div>
