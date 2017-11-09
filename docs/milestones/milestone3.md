@@ -152,12 +152,35 @@ Unexplored territories are represented by question marks. Walls are represented 
 ### Real Life
 Our robot has 3 wall sensors each installed on the front, left, and right side of the robot. During the navigation, the wall sensors are on average 3-4 inches away from the walls. We 3D printed a mount for 3 long-range IR sensors. The mount was designed to position the sensors for left, front, and right wall detection all 90 degrees apart from each other. THe mount elevated all 3 sensors above the the height of the wheels to avoid obstructing the sensor reading.
 
-Once all sensors, were mounted, we wrote a simple Arduino program to test the sensor’s readings. We took the robot the maze and measured the average distance between the wall and the sensors in multiple orientations. Then we determined the range of sensor values that corresponded to this average distance. As seen below in the detectWalls() function: this range was used in the code to determine whether a wall had been detected or not. 
-
 Here is a picture of the most recent setup of our robot:
 <div style="text-align:center"><img src ="../pictures/20171108_223822(0).jpg" /></div>
 
+Once all sensors, were mounted, we wrote a simple Arduino program to test the sensor’s readings. We took the robot the maze and measured the average distance between the wall and the sensors in multiple orientations. Then we determined the range of sensor values that corresponded to this average distance. As seen below in the detectWalls() function: this range was used in the code to determine whether a wall had been detected or not. 
 
+Here is our code for intersection.
+```
+case INTERSECTION:
+      if(center_sensor_value > LINE_THRESHOLD) {
+        detectWalls();
+        if (walls[1] == 0){
+          next_state = STRAIGHT; 
+        } else{
+           if(walls[0] == 1 && walls[2] == 1){
+              next_state = TURN_AROUND; 
+           }
+           else if(walls[0] == 1){
+              next_state = RIGHT;
+           }
+           else if(walls[2] == 1){
+              next_state = LEFT;
+           }
+        }
+        previousMillis = 0;
+      }
+      else next_state = INTERSECTION;
+      break;
+
+```C
 
 Here is our code for wall detection and priority decision making.
 ```C
@@ -197,3 +220,4 @@ Please, refer to the following video to see how the robot detected the walls and
 ### Next task and improvements
 Due to limited time, we did not have our real life maze navigation run successfully. However, we are certain that our DFS algorithm works in various situations since we had a random maze generator and tested it many times. 
 
+We plan to upgrade our wall detector because they are very unaccurate. The readings from the wall sensor that we are currently using is a bell curve again distance. Also, we belive that the power left in the batteries are also affecting the sensitivity of the sensors and the servos. 
