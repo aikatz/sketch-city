@@ -158,7 +158,7 @@ Here is a picture of the most recent setup of our robot:
 Once all sensors, were mounted, we wrote a simple Arduino program to test the sensor’s readings. We took the robot the maze and measured the average distance between the wall and the sensors in multiple orientations. Then we determined the range of sensor values that corresponded to this average distance. As seen below in the detectWalls() function: this range was used in the code to determine whether a wall had been detected or not. 
 
 Here is our code for intersection.
-```
+```c
 case INTERSECTION:
       if(center_sensor_value > LINE_THRESHOLD) {
         detectWalls();
@@ -180,10 +180,10 @@ case INTERSECTION:
       else next_state = INTERSECTION;
       break;
 
-```C
+```
 
 Here is our code for wall detection and priority decision making.
-```C
+```c
 void detectWalls() {
   int lw_raw = analogRead(leftwall_sensor_pin);
   int fw_raw = analogRead(forwardwall_sensor_pin);
