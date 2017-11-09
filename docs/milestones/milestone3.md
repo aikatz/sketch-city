@@ -150,14 +150,14 @@ Unexplored territories are represented by question marks. Walls are represented 
 
 
 ### Real Life
-Our robot has 3 wall sensors each installed on the front, left, and right side of the robot. During the navigation, the wall sensors are on average 3-4 inches away from the walls. We 3D printed a mount for 3 long-range IR sensors. The mount was designed to position the sensors for left, front, and right wall detection all 90 degrees apart from each other. THe mount elevated all 3 sensors above the the height of the wheels to avoid obstructing the sensor reading.
+Our robot has 3 wall sensors each installed on the front, left, and right side of the robot. During the navigation, the wall sensors are on average 3-4 inches away from the walls. We 3D printed a mount for 3 long-range IR sensors. The mount was designed to position the sensors for left, front, and right wall detection all 90 degrees apart from each other. The mount elevated all 3 sensors above the height of the wheels to avoid obstructing the sensor readings.
 
 Here is a picture of the most recent setup of our robot:
 <div style="text-align:center"><img src ="../pictures/20171108_223822(0).jpg" /></div>
 
 Once all sensors, were mounted, we wrote a simple Arduino program to test the sensor’s readings. We took the robot the maze and measured the average distance between the wall and the sensors in multiple orientations. Then we determined the range of sensor values that corresponded to this average distance. As seen below in the detectWalls() function: this range was used in the code to determine whether a wall had been detected or not. 
 
-Here is our code for wall detection and priority decision making.
+Here is our code for wall detection.
 ```c
 void detectWalls() {
   int lw_raw = analogRead(leftwall_sensor_pin);
@@ -187,6 +187,7 @@ void detectWalls() {
 
 After confirming the sensors worked correctly, we began to brainstorm the high level structure. Before implementing a complete DFS algorithm, first we wanted to try a simpler approach at exploration, which prioritizes going straight. This algorithm makes the robot goes straight until it encounters a wall, then it makes a decision on whether to turn left, turn right, or turn around depending on the wall sensors values.  We started with the code we had used to perform a figure 8 on the grid. This code implemented a finite state machine with the following states: STRAIGHT, SLIGHT_LEFT, SLIGHT_RIGHT, INTERSECTION, LEFT, RIGHT, and TURN_AROUND. We decided to keep this same structure for our maze exploration algorithm. The main modifications were made in the INTERSECTION state. The detectWalls() function is called at every intersection, which reads the values from the sensors and updates an 3 bit array which correspond to the detection of left, center, and right walls. Once the function is called and the walls[] array is updated, the next state can be determined. This algorithm prioritizes going straight by always setting next_state to STRAIGHT unless the forward sensor is triggered. If a front wall is detected, the next condition checked is whether both left and right walls have been detected, in which case the next state will be set to TURN_AROUND.  Otherwise, if a right wall is detected, the robot will move left, and if a left wall is detected, the robot will move right.
 
+Here is our code for priority decision making.
 ```c
 case INTERSECTION:
       if(center_sensor_value > LINE_THRESHOLD) {
