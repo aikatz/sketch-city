@@ -83,7 +83,7 @@ case TURN_AROUND:
 Please, refer to the following video to see how the robot detected the walls and turned around:
 
 <div style="text-align: center">
-<iframe width="534" height="300" src="https://www.youtube.com/embed/C-fAJswnzsU" frameborder="0" allowfullscreen></iframe>
+<iframe width="534" height="300" src="https://www.youtube.com/embed/DidsbgD-tjI" frameborder="0" allowfullscreen></iframe>
 </div>
 
 ### Conclusions

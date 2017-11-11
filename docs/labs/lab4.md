@@ -152,8 +152,30 @@ radio.startListening();
 This code works the same as above with the only difference that it is now sending a 25-byte array of data that is being analyzed by the receiver Arduino.
 
 #### Receiver Side
+The receiver side is responsible for reading the maze. Then it will print the maze on serial monitor so that we known it has received all the information successfully.
+```C
+unsigned char our_maze[5][5];
+bool done = false;
+while (!done)
+{
+  // Fetch the payload.
+  done = radio.read( our_maze, sizeof(got_maze) );
 
-**Yazhi's analysis goes here**
+  // Print the maze
+  for (int i=0; i < 5; i++) {
+    for (int j=0; j < 5; j++) {
+      printf("%d ", our_maze[i][j]);
+    }
+    printf("\n");
+  }
+
+  // Delay just a little bit to let the other unit
+  // make the transition to receiver
+  delay(20);
+
+}
+```
+The receiver code first declares a 5x5 array. After it fetches the payload, the information will be store in the **our_maze** array. Then it prints the array row by row onto serial monitor.
 
 #### Partial Conclusion
 In this case, the Arduinos are interchanging information that is worth 25-byte of data. Although it is perfectly allowed to do since it falls within our range (~32-byte), this is a very dangerous tactic to use because of the huge size of the information. It can be easily fragmented due to interference and although the Auto-ACK feature helps us reject incomplete information, we then have to send it again and may lose a lot of time when providing a live status of the robot and the maze.
@@ -200,7 +222,7 @@ The important piece of information here is how bit shifting was used to transfor
 The value of x_coord is 2 or 010 in binary. The operation x_coord << 5 shifts the 3-bits of x_coord to the left times 5, obtaining the 8-bit number 01000000. A similar thing happens with y_coord which has a value of 3 or 011 and is shifted to the left 2 times. This results in the 5-bit number 01100; however, if we apply sign extension to it, we can get the 8-bit number 00001100, which is also equivalent to what we had before. The value of pos_state is 1 or 01, which is then sign extended to 8-bit 00000001. The final operation is to convert them all into a single 8-bit number containing the "sum" of their bits. This is accomplished by using a **OR \|** operator on them like **X \| Y \| Z**. The output of such operation assigns the bits in the order we want and creates a valid 8-bit number that represents the correct information.
 
 #### Receiver Side
-The receiver Arduino is responsible for getting the packet and breaking down the packet for useful information.
+The receiver Arduino is responsible for getting the packet and parse the packet for useful information.
 
 ```C
 if ( role == role_pong_back )
@@ -216,7 +238,7 @@ while (!done)
   // Fetch the payload, and see if this was the last one.
   done = radio.read( &got_data, sizeof(unsigned char) );
 
-  // Interpret new data
+  // Parse new data
   x_coord= (got_data & 0b11100000) >> 5;
   y_coord= (got_data & 0b00011100) >> 2;
   pos_data= (got_data & 0b00000011);
@@ -280,14 +302,105 @@ This idea enables to not only change the current state of the maze by providing 
 
 ### FPGA Team: Eric Berg, Alex Katz
 
+### Materials
+* FPGA
+* 1 Arduino Uno
+* 1 VGA cable
+* 1 VGA connector
+* 1 VGA switch
+* Resistors
 
 ### Displaying a full 4-by-5 grid array on the screen
+We modified our code from lab 3 to display a representation of the 4x5 grid maze. The screen is 640 by 480 pixels so we divided the x coordinate by 160 to get 4 divisions and y coordinate by 96 to get 5 divisions.
+```C
+PIXEL_COLOR = pixel_colors[PIXEL_COORD_X/8'd160][PIXEL_COORD_Y/8'd96]
+```
 
+<div style="text-align:center"><img src ="../pictures/lab4/20171025_225616.jpg" /></div>
+
+Then we updated the color of the visited block using the formula 
+```C
+pixel_colors[pixel_y][pixel_x] = pixel_y * 20 + pixel_x * 20;
+```
+
+which we decided on just so that we could make sure each pixel was updating correctly. We got the display to work correctly using a for loop in verilog, however when we tried reading the information from the arduino in real-time, we ran into a few issues (as you can see from the grid above, which was generated using communication from the arduino).
 
 ### Communicating maze information from the Arduino to the FPGA
 
+In order to communicate the radio-received data from the Arudino to the FPGA, we first attempted to transmit data via SPI. Our first step was to write Arduino code to transmit a byte of SPI using Arudino's SPI library. Then we confirmed the SPI output on the oscilloscope by checking the CLK, MOSI, and CS lines individually. 
+
+```V
+wire spi_sck;
+wire spi_cs;
+wire spi_mosi;
+
+assign spi_sck  = GPIO_1_D[1];
+assign spi_cs   = GPIO_1_D[2];
+assign spi_mosi = GPIO_1_D[3];
+assign GPIO_1_D[4] = spi_mosi;
+ ```
+
+Our SPI signal counted from 0-9 continously. The waveform on the oscilloscope correctly refelcted the data transmission. Then we began writing Verilog code to interpret the SPI signal on 3 GPIO pins. Below is our code for interpreting SPI that did not work correctly. Our main obstacle was communicating when the SPI transfer was done and it was safe to read the SPI buffer. We wanted to use a register as a flag, but had issues writing the register from multiple always blocks.
+
+
+```V
+always @(posedge CLOCK_25) begin
+		if(spi_cs & spi_rx_done_writing) begin
+			spi_rx_done_reading = 1'b0;
+			pixel_x = (8'b11100000 & spi_rx_buf) >> 5;
+			pixel_y = (8'b00011100 & spi_rx_buf) >> 2;
+			pixel_colors[pixel_y][pixel_x] = pixel_x * 10 + pixel_y * 10;
+			spi_rx_done_reading = 1'b1;
+		end
+	end
+	
+	always @(negedge spi_sck or posedge spi_rx_done_reading) begin
+		if(!spi_cs) begin 
+			spi_rx_done_writing = 1'b0;
+			spi_rx_buf = spi_rx_buf | (spi_mosi << data_pos);
+			data_pos = data_pos - 3'd1;
+		end
+		else if(spi_rx_done_reading) begin
+			spi_rx_buf = 8'd0;
+			data_pos = 3'd7;
+		end
+		if(data_pos == 3'd0) begin
+			spi_rx_done_writing = 1'b1;
+		end
+	end
+  ```
+  
+After troubleshooting SPI for some more time unsuccessfully, we moved over to data transmission via parallel GPIO lines. We used 5 wires to transmit the x-position (3 bits) and y-position (2 bits) of the robot. We wrote Arduino code to simulate the robot's position varying throughout the grid by toggling the x and y position bits. 
+
+Below is a video showing successful parallel communication between the Arduino and FPGA. Because we could not get the display to update properly, we instead used the onboard LEDS to display the data values. The first two LEDs are the 2 bits that make up the row position and the next three LEDs are the 3 bits that make up the column position. Our Arduino code runs through each column and each row position by toggling the GPIO’s low and high according to the binary number that describes the position on the grid.
+
+<div><iframe width="854" height="480" src="https://www.youtube.com/embed/uNNZi9pUCf0" frameborder="0" gesture="media" allowfullscreen></iframe></div>
+
+We know that the Arduino -> FPGA communication was working properly, because on the FPGA we wired the LEDs to our GPIO lines from the Arduino, and they lined up exactly with what we expected.
 
 ### Display the robot location on the screen
 
+Using our parallel method of data transmission, we were able to succesfully transmit the x and y position of the robot and display it onthe screen by changing the pixel color. We used the raw bit values bit shift the values to represent the x and y positions of the pixel as shown below.
+
+As an example:  01001 represents the row 1 column 2.
+
+```C
+pixel_x = {GPIO_1_D[5], GPIO_1_D[4], GPIO_1_D[3]};
+pixel_y = {GPIO_1_D[2], GPIO_1_D[1]};
+```
+
+Unfortunately, after spending a significant amount of time troubleshooting the problem, we were still not able to get the display to accurately reflect the robot’s position. We deduced that the problem existed in the Verilog code’s interpretation of the data and writing to the display. 
+
+```C
+always @(posedge CLOCK_25) begin
+	pixel_x = {GPIO_1_D[5], GPIO_1_D[4], GPIO_1_D[3]};
+	pixel_y = {GPIO_1_D[2], GPIO_1_D[1]};
+	pixel_colors[pixel_y][pixel_x] = pixel_y * 20 + pixel_x * 20;
+end
+```
+
+We know the data was being transferred to the GPIO’s properly because the LEDs accurately reflected the 5 bits as the position changed. Our code which took the 5 bits and converted the bits into an x and y position to write the display with a pixel was not behaving as expected. We could see the pixels changing colors on the screen, but not according to the position that were being sent. In other words, the pixels were changing  color somewhat randomly and not int the order assigned.
+
 
 ### Distinguish what sites have been visited and which haven’t on the screen
+We didn't get to this part, since we spent so much time debugging our issues with GPIO. If we had time to implement this, we would have just used two colors to mark visited/unvisited, and toggled the appropriate grid location when we visited a square. 
