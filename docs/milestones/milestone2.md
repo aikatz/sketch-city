@@ -11,7 +11,7 @@ In Lab 2, we had already calculated the bins in which each of the treasure frequ
 
 We had also written code during Lab 2 to distinguish between the 7 kHz and 12 kHz treasures by comparing the value in the bin for each of the treasures with the values in the surrounding bins. We expanded this code to also account for the 17 kHz treasure, using the same algorithm.
 
-```
+```C
 // Filtering for high magnitude in bin 47, 80, and 114
     bool top7 = (fft_log_out[47] - fft_log_out[43]) > gain;
     bool bottom7 = (fft_log_out[47] - fft_log_out[50]) > gain;
@@ -57,16 +57,33 @@ Please, refer to the following video to see how the circuit behaved according to
 
 This worked reasonably well however we noticed that when the sensor was very close to the wall, and ~30cm away, it would give the same value. Our threshold was higher than that value so that did not affect our robot significantly. We added our sensor to the robot and added it into the code by adding a state called TURN_AROUND, where the robot would turn 180 degrees if it sensed a wall in front of it.
 
-Below is a snippet of the Arduino code that performed the turn-around when detecing a wall:
-
-```c
-arduino code
+We incorporated our the wall detection code into our code frome milestone one. Below is the snippet where we check whether the sensor is detecting a wall. 
+```C
+// Wall ahead, turn around 
+if(wall_sensor_value > WALL_THRESHOlD)
+  next_state = TURN_AROUND;
+```
+This is the code for the TURN_AROUND state. 
+```C
+case TURN_AROUND:
+  right_servo.write(FULL_POWER_CW);
+  left_servo.write(FULL_POWER_CW);
+      
+  if(previousMillis == 0) {
+    previousMillis = millis();
+  }
+      
+  currentMillis = millis();
+      
+  if(currentMillis - previousMillis > FULL_TURN_LENGTH) next_state = STRAIGHT;
+  else next_state = TURN_AROUND;
+  break;
 ```
 
 Please, refer to the following video to see how the robot detected the walls and turned around:
 
 <div style="text-align: center">
-<iframe width="534" height="300" src="https://www.youtube.com/embed/C-fAJswnzsU" frameborder="0" allowfullscreen></iframe>
+<iframe width="534" height="300" src="https://www.youtube.com/embed/DidsbgD-tjI" frameborder="0" allowfullscreen></iframe>
 </div>
 
 ### Conclusions

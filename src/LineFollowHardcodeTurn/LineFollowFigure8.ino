@@ -11,6 +11,7 @@
 #define SERVO_STOP     90
 
 #define LINE_THRESHOLD 800
+
 // Declare two Servo objects - one to control each servo
 Servo right_servo;
 Servo left_servo; 
