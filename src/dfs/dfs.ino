@@ -116,15 +116,43 @@ bool* wallRobot(){
 
   // The output of this function is described as left-center-right
   // with reference to the robot
-  walls[0] = (left_wall_sensor > 400);
-  walls[1] = (center_wall_sensor > 400);
-  walls[2] = (right_wall_sensor > 400);
+  walls[0] = (left_wall_sensor > 380);
+  walls[1] = (center_wall_sensor > 550);
+  walls[2] = (right_wall_sensor > 380);
 
-  return walls;
+  return walls; // returning the walls for future analysis
+}
+
+// Function that updates the stack with possible paths, so make sure to call it only once!
+void updateStack(bool* walls){
+
+  // Pushing possible paths into the stack
+  switch(robotOrient){
+    case NORTH: 
+      if(walls[0] == false) { stack.push(inters[current_pos_x][current_pos_y--]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x][current_pos_y++]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x--][current_pos_y]); }
+      break;
+    case EAST: 
+      if(walls[0] == false) { stack.push(inters[current_pos_x--][current_pos_y]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x++][current_pos_y]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x][current_pos_y++]); }
+      break;
+    case SOUTH: 
+      if(walls[0] == false) { stack.push(inters[current_pos_x][current_pos_y++]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x][current_pos_y--]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x++][current_pos_y]); }
+      break;
+    case WEST: 
+      if(walls[0] == false) { stack.push(inters[current_pos_x++][current_pos_y]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x--][current_pos_y]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x][current_pos_y--]); }
+      break;
+  }
 }
 
 // Determining wall presence using the actual maze as orientation
-bool* wallMaze (Orientation orient, bool* wallsRobot) {
+bool* wallMaze (bool* wallsRobot) {
   
   bool* actualWalls = (bool*)malloc(sizeof(bool) * 4);
   
@@ -134,12 +162,11 @@ bool* wallMaze (Orientation orient, bool* wallsRobot) {
   }
   
   // The output of this function is described as left-up-right-down 
-  // with reference to the maze being outputted to the FPGA
   if (wallsRobot[0] == true) {
-   switch(orient) {
+    switch(robotOrient) {
       case NORTH: 
         actualWalls[0] = true;
-        break;
+          break;
       case EAST: 
         actualWalls[1] = true;
         break;
@@ -149,11 +176,11 @@ bool* wallMaze (Orientation orient, bool* wallsRobot) {
       case WEST: 
         actualWalls[3] = true;
         break;
-   }
+    }
   }
   
   if (wallsRobot[1] == true) {
-    switch(orient) {
+    switch(robotOrient) {
       case WEST: 
         actualWalls[0] = true;
         break;
@@ -166,11 +193,11 @@ bool* wallMaze (Orientation orient, bool* wallsRobot) {
       case SOUTH: 
         actualWalls[3] = true;
         break;
-     }
+    }
   }
   
   if (wallsRobot[2] == true) {
-    switch(orient) {
+    switch(robotOrient) {
       case SOUTH: 
         actualWalls[0] = true;
         break;
@@ -190,11 +217,11 @@ bool* wallMaze (Orientation orient, bool* wallsRobot) {
 }
 
 // Determining direction for the robot to move in reference to the robot
-State newDirection (Orientation orient, int x, int y, int go_x, int go_y) {
+State newDirection (int x, int y, int go_x, int go_y) {
   
   State newDirection;
   
-  switch (orient) {
+  switch (robotOrient) {
     case NORTH:
       if (x > go_x) { newDirection = RIGHT; }
       else if (x < go_x) { newDirection = LEFT; }
@@ -236,34 +263,31 @@ State newDirection (Orientation orient, int x, int y, int go_x, int go_y) {
 }
 
 // Function to determine the new orientation of the robot after a movement
-Orientation newOrient (Orientation currentOr, State dir) {
-
-  Orientation newOr; // orientation to return
-  
-  switch (dir) {
+void newOrient () {
+    
+  switch (goDirection) {
     case LEFT:
-      if (currentOr == NORTH) { newOr = WEST; }
-      else if (currentOr == EAST) { newOr = NORTH; }
-      else if (currentOr == SOUTH) { newOr = EAST; }
-      else { newOr = SOUTH; }
+      if (robotOrient == NORTH) { robotOrient = WEST; }
+      else if (robotOrient == EAST) { robotOrient = NORTH; }
+      else if (robotOrient == SOUTH) { robotOrient = EAST; }
+      else { robotOrient = SOUTH; }
       break;
     case RIGHT:
-      if (currentOr == NORTH) { newOr = EAST; }
-      else if (currentOr == EAST) { newOr = SOUTH; }
-      else if (currentOr == SOUTH) { newOr = WEST; }
-      else { newOr = NORTH; }
+      if (robotOrient == NORTH) { robotOrient = EAST; }
+      else if (robotOrient == EAST) { robotOrient = SOUTH; }
+      else if (robotOrient == SOUTH) { robotOrient = WEST; }
+      else { robotOrient = NORTH; }
       break;
     case TURN_AROUND:
-      if (currentOr == NORTH) { newOr = SOUTH; }
-      else if (currentOr == EAST) { newOr = WEST; }
-      else if (currentOr == SOUTH) { newOr = NORTH; }
-      else { newOr = EAST; }
+      if (robotOrient == NORTH) { robotOrient = SOUTH; }
+      else if (robotOrient == EAST) { robotOrient = WEST; }
+      else if (robotOrient == SOUTH) { robotOrient = NORTH; }
+      else { robotOrient = EAST; }
       break;
     default:
-      newOr = currentOr; // keeps current orientation in all the other cases
+      // keeps current orientation in all the other cases
       break;
   }
-  return newOr;
 }
 
 // Hardware algortihm to move the robot
@@ -273,10 +297,8 @@ void movement (State dir) {
   State next_state = STRAIGHT; // symbolizes next_state (set to STRAIGHT to enter loop)
 
   while(next_state != STOP) {
-    
-    updateSensors(); // updating the sensors
-    
-    // State Outputs
+        
+    // State Outputs depending on current state and sensor readings
     switch(current_state) {
       
       case STOP:
@@ -285,9 +307,13 @@ void movement (State dir) {
         break;
         
       case STRAIGHT:                                                         
-        right_servo.write(MID_POWER_CW);
-        left_servo.write(MID_POWER_CCW);
-        next_state = STRAIGHT;
+        if(right_sensor_value > LINE_THRESHOLD) { next_state = SLIGHT_RIGHT; }  
+        else if(left_sensor_value > LINE_THRESHOLD) { next_state = SLIGHT_LEFT; }  
+        else {                                                                      
+          right_servo.write(MID_POWER_CW);
+          left_servo.write(MID_POWER_CCW);
+          next_state = STRAIGHT;
+        }
         break;
         
       case SLIGHT_RIGHT:                                                              
@@ -356,36 +382,66 @@ void movement (State dir) {
         else next_state = TURN_AROUND;
         break;
   
-      default:
+      default: // not going to happen since it can only be one of the above
         right_servo.write(SERVO_STOP);
         left_servo.write(SERVO_STOP);
     }
     delay(15);
+    updateSensors(); // updating the sensors
   }
 }
 
-// Function to get every possible path on the stack
+// Function to get every possible path (not a wall) on the stack 
 bool* updateStack_getWalls(){
   
-  bool* possiblePaths = wallRobot();
-  bool* realWalls = wallMaze(robotOrient, possiblePaths);
+  bool* possiblePaths = wallRobot(); // gets possible paths
+  updateStack(possiblePaths); // updates the stack
+  bool* realWalls = wallMaze(possiblePaths); // wall detection in real path
   
-  // Update stack for possible intersections to go
-  if (realWalls[0] == false) {
-    stack.push(inters[current_pos_x][current_pos_y--]);
-  }
-  if (realWalls[1] == false) {
-    stack.push(inters[current_pos_x--][current_pos_y]);
-  } 
-  if (realWalls[2] == false) {
-    stack.push(inters[current_pos_x][current_pos_y++]);
-  }
-  if (realWalls[3] == false) {
-    stack.push(inters[current_pos_x++][current_pos_y]);
-  } 
-
   return realWalls;
+}
+
+// Function to check if the backpointer algorithm can exit the while loop and the robot can proceed
+bool notYet(){
+
+  // abs(current_pos_x - go_pos_x) > 1 || abs(current_pos_y - go_pos_y) > 1); // Just in case we determine walls do not need to be checked-off
   
+  bool* realWalls = wallMaze(wallRobot()); // getting the walls
+  
+  if (abs(current_pos_x - go_pos_x) > 1){
+    return true;
+  }
+  else if (current_pos_x - go_pos_x == 1){
+    if (current_pos_y == go_pos_y){
+      return realWalls[1];
+    }
+    else{
+      return true;
+    }
+  }
+  else if (current_pos_x - go_pos_x == -1){
+    if (current_pos_y == go_pos_y){
+      return realWalls[3];
+    }
+    else{
+      return true;
+    }
+  }
+  else{
+    if (abs(current_pos_y - go_pos_y) > 1){
+      return true;
+    }
+    else if (current_pos_y - go_pos_y == 1){
+      return realWalls[0];
+    }
+    else if (current_pos_y - go_pos_y == -1){
+      return realWalls[2];
+    }
+    else{
+      Serial.print("Check the code because this should never happen");
+      return true;
+    }
+  }
 }
 
 void setup() {  
@@ -406,18 +462,19 @@ void setup() {
   // -------------- DEVELOPING DFS HERE --------------
 
   // Create a while loop that runs until the 60Hz is heard and it lets it end
+  // Use an additional input in case it gets stuck
+
+  // Initialize the variables accordingly to the beginning of the maze traversal (lower-left corner)
+  current_pos_x = 4;
+  current_pos_y = 0;
   
-  // Updating initial intersection of the program
-  inters[4][0].visited = true;
+  // Updating initial intersection of the program (lower-left corner)
+  inters[current_pos_x][current_pos_y].visited = true;
   
   // Analyzing the possible paths and pushing them into the stack
   bool* realWalls = updateStack_getWalls();
 
   // Send information about the first intersection before starting  
-
-  // Initialize the variables accordingly to the beginning of the maze traversal (lower-left corner)
-  current_pos_x = 4;
-  current_pos_y = 0;
   
   // Starting the while loop to interact with the stack
   while(!stack.isEmpty()){
@@ -433,14 +490,14 @@ void setup() {
       go_pos_y = next_intersect.pos_y;
 
       // Perform back-pointer algorithm if neccesary
-      while (abs(current_pos_x - go_pos_x) > 1 || abs(current_pos_y - go_pos_y) > 1) {
+      while (notYet()) {
         
         // Back_pointer algorithm goes here
         back_pos_x = current_intersect.back_x;
         back_pos_y = current_intersect.back_y;
 
         // Moving the robot with new coordinates
-        goDirection = newDirection(robotOrient, current_pos_x, current_pos_y, back_pos_x, back_pos_y);
+        goDirection = newDirection(current_pos_x, current_pos_y, back_pos_x, back_pos_y);
         movement(goDirection);
 
         // Send robot position to the other Arduino (nothing else)
@@ -448,22 +505,24 @@ void setup() {
         // Updating current intersection variables
         current_pos_x = back_pos_x;
         current_pos_y = back_pos_y;
-        
+        current_intersect = inters[current_pos_x][current_pos_y];  
       }
        
       // Perform movement to intersection specified by the popped element from the stack
-      goDirection = newDirection(robotOrient, current_pos_x, current_pos_y, go_pos_x, go_pos_y);
+      goDirection = newDirection(current_pos_x, current_pos_y, go_pos_x, go_pos_y);
       movement(goDirection);
+
+      // Updating all neccesary values for this intersection
+      next_intersect.visited = true;
+      next_intersect.back_x = current_pos_x;
+      next_intersect.back_y = current_pos_y;
       
       // Update variables for next iteration
       current_pos_x = go_pos_x;
       current_pos_y = go_pos_y;
       current_intersect = next_intersect; // updating intersect after first intersection
-      robotOrient = newOrient(robotOrient, goDirection);
-
-      // Setting this intersection as visited
-      current_intersect.visited = true;
-
+      newOrient(); // updating orientation
+      
       // Update matrix of intersections with the new changes to popped intersection
       inters[current_pos_x][current_pos_y] = current_intersect;
       
