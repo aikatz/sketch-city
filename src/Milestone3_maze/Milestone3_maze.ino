@@ -48,12 +48,10 @@ enum state{
 
 volatile state current_state = STRAIGHT;
 volatile state next_state = STRAIGHT;
-const state moves[] = {STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT, STRAIGHT};     
-volatile int n_moves = 9;
-volatile int move_idx = 0;
 
 unsigned long previousMillis = 0;
 unsigned long currentMillis = 0;
+unsigned long intersectMillis = 0;
 
 void setup() {  
   pinMode(LED_BUILTIN, OUTPUT);
@@ -78,28 +76,29 @@ void detectWalls() {
   int lw_raw = analogRead(leftwall_sensor_pin);
   int fw_raw = analogRead(forwardwall_sensor_pin);
   int rw_raw = analogRead(rightwall_sensor_pin);
-  if (lw_raw > 400 && lw_raw < 600){
+    
+  if (lw_raw > 380 && lw_raw < 600){
     lw = 1;
   } else{
     lw = 0;
   }
-   if (fw_raw > 500 && fw_raw < 600){
+   if (fw_raw > 510 && fw_raw < 600){
     fw = 1;
   } else{
     fw = 0;
   }
-   if (rw_raw > 400 && rw_raw <600){
+   if (rw_raw > 380 && rw_raw < 600){
     rw = 1;
   } else{
     rw = 0;
   }
+  
   walls[0] = lw;
   walls[1] = fw;
   walls[2] = rw;
 }
 
 void loop() {
-  if(move_idx > n_moves - 1) move_idx = 0;
   current_state = next_state;
 
   updateSensors();
@@ -122,6 +121,8 @@ void loop() {
         left_servo.write(MID_POWER_CCW);
         next_state = STRAIGHT;
       }
+      
+      intersectMillis = 0;
       break;
       
     case SLIGHT_RIGHT:                                                              // Drifting left, correct right
@@ -132,6 +133,8 @@ void loop() {
         next_state = INTERSECTION;
       else if(right_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_RIGHT;
       else next_state = STRAIGHT;
+      
+      intersectMillis = 0;
       break;
       
     case SLIGHT_LEFT:                                                               // Drifting right, correct left
@@ -142,27 +145,38 @@ void loop() {
         next_state = INTERSECTION;
       else if(left_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_LEFT;
       else next_state = STRAIGHT;
+      
+      intersectMillis = 0;
       break;
       
     case INTERSECTION:
-      if(center_sensor_value > LINE_THRESHOLD) {
+      //if(center_sensor_value > LINE_THRESHOLD) {
         detectWalls();
         if (walls[1] == 0){
+          //Serial.println("Going Straight");
           next_state = STRAIGHT; 
-        } else{
-           if(walls[0] == 1 && walls[2] == 1){
-              next_state = TURN_AROUND; 
-           }
-           else if(walls[0] == 1){
-              next_state = RIGHT;
-           }
-           else if(walls[2] == 1){
-              next_state = LEFT;
-           }
+        } else {
+          
+          if(walls[0] == 1 && walls[2] == 1){
+            //Serial.println("Turning Around");
+            next_state = TURN_AROUND; 
+          } else if(walls[0] == 1){
+            if(intersectMillis == 0) {
+              intersectMillis = millis();
+            }
+            currentMillis = millis();
+            if(currentMillis - intersectMillis > 200)  {/*Serial.println("RIGHT");*/ next_state = RIGHT;}
+            else next_state = INTERSECTION;
+          } else {
+            if(intersectMillis == 0) {
+              intersectMillis = millis();
+            }
+            currentMillis = millis();
+            if(currentMillis - intersectMillis > 200) {/*Serial.println("LEFT");*/ next_state = LEFT;}
+            else next_state = INTERSECTION;
+          }
         }
         previousMillis = 0;
-      }
-      else next_state = INTERSECTION;
       break;
       
     case RIGHT:
@@ -175,11 +189,11 @@ void loop() {
       
       currentMillis = millis();
       
-      if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
+      if(currentMillis - previousMillis > 420) next_state = STRAIGHT;
       else next_state = RIGHT;
       break;
       
-    case LEFT:
+    case LEFT:    
       right_servo.write(FULL_POWER_CW);
       left_servo.write(FULL_POWER_CW);
 
@@ -189,7 +203,7 @@ void loop() {
       
       currentMillis = millis();
       
-      if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
+      if(currentMillis - previousMillis > 420) next_state = STRAIGHT;
       else next_state = LEFT;
       break;
 
@@ -203,7 +217,7 @@ void loop() {
       
       currentMillis = millis();
       
-      if(currentMillis - previousMillis > 1000) next_state = STRAIGHT;
+      if(currentMillis - previousMillis > 1100) next_state = STRAIGHT;
       else next_state = TURN_AROUND;
       break;
 
