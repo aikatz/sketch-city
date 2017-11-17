@@ -20,6 +20,8 @@
 // include stack library header.
 #include <StackArray.h>
 #include <Servo.h>
+#include <orientation.h>
+#include <state.h>
 
 #define FULL_POWER_CCW   180
 #define MID_POWER_CCW    95
@@ -33,30 +35,24 @@
 
 #define LINE_THRESHOLD 800
 
-// Orientation of the robot
-typedef enum orientation{
-  NORTH,
-  SOUTH,
-  WEST,
-  EAST
-} Orientation;
-
 // defining a struct to hold information about each intersection
-typedef struct intersect {
+typedef struct {
   int pos_x; // x-coordinate
   int pos_y; // y-coordinate
   int back_x; // back-coordinate x-coordinate
   int back_y; // back-coordinate y-coordinate
   bool visited; // visited state
-} intersect
+} intersect;
 
 // Create a matrix with all intersections
-intersect[5][4] inters;
+intersect* inters = (intersect*)malloc(5 * 4 * sizeof(intersect));
 
 // Initializing all the intersections of the maze
-for (int i = 0; i < 5; i++) {
-  for (int j = 0; j < 4; j++) {
-    inters[i][j] = {.pos_x = i; .pos_y = j; .back_x = null; .back_y = null; .visited = false};
+void initMaze (intersect* inters) {
+  for (int i = 0; i < 5; i++) {
+    for (int j = 0; j < 4; j++) {
+      inters[i][j] = {.pos_x = i; .pos_y = j; .back_x = null; .back_y = null; .visited = false};
+    }
   }
 }
 
@@ -82,17 +78,6 @@ int center_sensor_value;
 int left_wall_sensor;
 int center_wall_sensor;
 int right_wall_sensor;
-
-typedef enum state{
-  STOP,
-  STRAIGHT,
-  SLIGHT_RIGHT,
-  SLIGHT_LEFT,
-  INTERSECTION,
-  RIGHT,
-  LEFT,
-  TURN_AROUND
-} Direction;
 
 unsigned long previousMillis = 0;
 unsigned long currentMillis = 0;
@@ -188,7 +173,192 @@ bool* wallMaze (Orientation orient, bool* wallsRobot) {
   return actualWalls;
 }
 
-// Reading from sensors and 
+// Determining direction for the robot to move in reference to the robot
+State newDirection (Orientation orient, int x, int y, int go_x, int go_y) {
+  State newDirection;
+  
+  switch (orient) {
+    case NORTH:
+      if (x > go_x) { newDirection = RIGHT; }
+      else if (x < go_x) { newDirection = LEFT; }
+      else {
+        if (y > go_y) { newDirection = STRAIGHT; }
+        else if (y < go_y) { newDirection = TURN_AROUND; }
+        else { newDirection = STOP; }
+      }
+      break;
+    case EAST:
+      if (x > go_x) { newDirection = STRAIGHT; }
+      else if (x < go_x) { newDirection = TURN_AROUND; }
+      else {
+        if (y > go_y) { newDirection = LEFT; }
+        else if (y < go_y) { newDirection = RIGHT; }
+        else { newDirection = STOP; }
+      }
+      break;
+    case SOUTH:
+      if (x > go_x) { newDirection = LEFT; }
+      else if (x < go_x) { newDirection = RIGHT; }
+      else {
+        if (y > go_y) { newDirection = TURN_AROUND; }
+        else if (y < go_y) { newDirection = STRAIGHT; }
+        else { newDirection = STOP; }
+      }
+      break;
+    case WEST:
+      if (x > go_x) { newDirection = TURN_AROUND; }
+      else if (x < go_x) { newDirection = STRAIGHT; }
+      else {
+        if (y > go_y) { newDirection = RIGHT; }
+        else if (y < go_y) { newDirection = LEFT; }
+        else { newDirection = STOP; }
+      }
+      break;
+  }
+  return newDirection;
+}
+
+// Function to determine the new orientation of the robot after a movement
+Orientation newOrient (orientation currentOr, state dir) {
+
+  orientation newOr; // orientation to return
+  
+  switch (dir) {
+    case LEFT:
+      if (currentOr == NORTH) { newOr = WEST; }
+      else if (currentOr == EAST) { newOr = NORTH; }
+      else if (currentOr == SOUTH) { newOr = EAST; }
+      else { newOr = SOUTH; }
+      break;
+    case RIGHT:
+      if (currentOr == NORTH) { newOr = EAST; }
+      else if (currentOr == EAST) { newOr = SOUTH; }
+      else if (currentOr == SOUTH) { newOr = WEST; }
+      else { newOr = NORTH; }
+      break;
+    case TURN_AROUND:
+      if (currentOr == NORTH) { newOr = SOUTH; }
+      else if (currentOr == EAST) { newOr = WEST; }
+      else if (currentOr == SOUTH) { newOr = NORTH; }
+      else { newOr = EAST; }
+      break;
+    default:
+      newOr = currentOr; // keeps current orientation in all the other cases
+      break;
+  }
+  return newOr;
+}
+
+// Hardware algortihm to move the robot
+void movement (state dir) {
+  
+  state current_state = dir; // symbolizes current_state
+  state next_state = STRAIGHT; // symbolizes next_state (set to STRAIGHT to enter loop)
+
+  while(next_state != INTERSECTION) {
+    
+    updateSensors(); // updating the sensors
+    
+    // State Outputs
+    switch(current_state) {
+      case STOP:
+        right_servo.write(SERVO_STOP);
+        left_servo.write(SERVO_STOP);
+        delay(5000);
+        break;
+        
+      case STRAIGHT:
+        if(wall_sensor_value > 400)                                                   // Wall ahead, turn around
+          next_state = TURN_AROUND;
+        else if(right_sensor_value > 850 && left_sensor_value > 850)                  // At intersection, do next turn
+          next_state = INTERSECTION;
+        else if(right_sensor_value > LINE_THRESHOLD)  next_state = SLIGHT_RIGHT;      // Drifting left, correct right
+        else if(left_sensor_value > LINE_THRESHOLD)   next_state = SLIGHT_LEFT;       // Drifting right, correct left
+        else {                                                                        // Go striaght
+          right_servo.write(MID_POWER_CW);
+          left_servo.write(MID_POWER_CCW);
+          next_state = STRAIGHT;
+        }
+        break;
+        
+      case SLIGHT_RIGHT:                                                              // Drifting left, correct right
+        right_servo.write(LOW_POWER_CW);
+        left_servo.write(MID_POWER_CCW);
+        
+        if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD) // At intersection, do next turn
+          next_state = INTERSECTION;
+        else if(right_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_RIGHT;
+        else next_state = STRAIGHT;
+        break;
+        
+      case SLIGHT_LEFT:                                                               // Drifting right, correct left
+        right_servo.write(MID_POWER_CW);
+        left_servo.write(LOW_POWER_CCW);
+        
+        if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD) // At intersection, do next turn
+          next_state = INTERSECTION;
+        else if(left_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_LEFT;
+        else next_state = STRAIGHT;
+        break;
+        
+      case INTERSECTION:
+        if(center_sensor_value > LINE_THRESHOLD) {
+          next_state = moves[move_idx];
+          move_idx += 1;
+          previousMillis = 0;
+        }
+        else next_state = INTERSECTION;
+        break;
+        
+      case RIGHT:
+        right_servo.write(FULL_POWER_CCW);
+        left_servo.write(FULL_POWER_CCW);
+  
+        if(previousMillis == 0) {
+           previousMillis = millis();
+        }
+        
+        currentMillis = millis();
+        
+        if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
+        else next_state = RIGHT;
+        break;
+        
+      case LEFT:
+        right_servo.write(FULL_POWER_CW);
+        left_servo.write(FULL_POWER_CW);
+  
+        if(previousMillis == 0) {
+           previousMillis = millis();
+        }
+        
+        currentMillis = millis();
+        
+        if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
+        else next_state = LEFT;
+        break;
+  
+      case TURN_AROUND:
+        right_servo.write(FULL_POWER_CW);
+        left_servo.write(FULL_POWER_CW);
+        
+        if(previousMillis == 0) {
+           previousMillis = millis();
+        }
+        
+        currentMillis = millis();
+        
+        if(currentMillis - previousMillis > 700) next_state = STRAIGHT;
+        else next_state = TURN_AROUND;
+        break;
+  
+      default:
+        right_servo.write(SERVO_STOP);
+        left_servo.write(SERVO_STOP);
+    }
+    delay(15);
+  }
+}
 
 void setup() {  
   pinMode(LED_BUILTIN, OUTPUT);
@@ -199,7 +369,16 @@ void setup() {
   
   right_servo.write(SERVO_STOP);
   left_servo.write(SERVO_STOP);
+
+  // Initializing maze
+  initMaze(inters);
   
+  // Creating an orientation variable to use for the robot's current direction
+  orientation robotOrient = NORTH;
+
+  // Creating a direction variable for the robot to be sent so it can move
+  state goDirection;
+
   Serial.begin(9600);
 
   // -------------- DEVELOPING DFS HERE --------------
@@ -219,12 +398,15 @@ void setup() {
 
   // Updating value sensors right before starting 
   updateSensors();
+
+  // Creating variables for the current and next intersects of the system
+  intersect current_intersect, next_intersect;
   
   // Starting the while loop to interact with the stack
   while(!stack.isEmpty()){
 
     // Popping the top of the stack
-    intersect current_intersect = stack.pop();
+    intersect next_intersect = stack.pop();
     
     if (init) { // if initial intersection is the current intersection
 
@@ -234,7 +416,7 @@ void setup() {
       
       // Read from sensors and update variables to be sent in next iteration
       bool* possiblePaths = wallRobot();
-      bool* realWalls = wallMaze(current_intersect.orient);
+      bool* realWalls = wallMaze(robotOrient);
       
       // Update stack for possible intersections to go
       if (possiblePaths[0] == false) {
@@ -248,29 +430,18 @@ void setup() {
       } 
    
       init = false; // it will never see the first intersection again
+      
+      current_intersect = next_intersect; // updating intersect after first intersection
     }
     // Mark this element visited if it is not visited already. If it is, continue to the next iteration of DFS
-    else if (!current_intersect.visited) {
+    else if (!next_intersect.visited) {
 
       // Setting this intersection as visited
       current_intersect.visited = true;
 
-      // Update variables of next destination
-      go_pos_x = current_intersect.pos_x;
-      go_pos_y = current_intersect.pos_y;
-
-      // Perform back-pointer algorithm if neccesary
-      if (abs(current_pos_x - go_pos_x) > 1 || abs(current_pos_y - go_pos_y) > 1) {
-        // Back_pointer algorithm
-      }
-      
-      // Send information to the other Arduino
-      
-      // Perform movement to intersection specified by the popped element from the stack
-      
       // Read from sensors and update variables to be sent in next iteration
       bool* possiblePaths = wallRobot();
-      bool* realWalls = wallMaze(current_intersect.orient);
+      bool* realWalls = wallMaze(robotOrient);
       
       // Update stack for possible intersections to go
       if (possiblePaths[0] == false) {
@@ -285,117 +456,32 @@ void setup() {
       
       // Update matrix of intersections with the new changes to popped intersection
       inters[current_pos_x][current_pos_y] = current_intersect;
+
+      // Send information to the other Arduino
+      
+      // Update variables of next destination
+      go_pos_x = next_intersect.pos_x;
+      go_pos_y = next_intersect.pos_y;
+
+      // Perform back-pointer algorithm if neccesary
+      if (abs(current_pos_x - go_pos_x) > 1 || abs(current_pos_y - go_pos_y) > 1) {
+        // Back_pointer algorithm
+      }
+       
+      // Perform movement to intersection specified by the popped element from the stack
+      goDirection = newDirection(robotOrient, current_pos_x, current_pos_y, go_pos_x, go_pos_y);
+      movement(goDirection);
       
       // Update variables for next iteration
       current_pos_x = go_pos_x;
       current_pos_y = go_pos_y;
-      
+      current_intersect = next_intersect; // updating intersect after first intersection
+      robotOrient = newOrient(robotOrient, goDirection);  
     }
   } 
 }
 
 void loop() {
-
-  updateSensors();
-  
-  // State Outputs
-  switch(current_state) {
-    case STOP:
-      right_servo.write(SERVO_STOP);
-      left_servo.write(SERVO_STOP);
-      delay(5000);
-      break;
-      
-    case STRAIGHT:
-      if(wall_sensor_value > 400)                                                   // Wall ahead, turn around
-        next_state = TURN_AROUND;
-      else if(right_sensor_value > 850 && left_sensor_value > 850)                  // At intersection, do next turn
-        next_state = INTERSECTION;
-      else if(right_sensor_value > LINE_THRESHOLD)  next_state = SLIGHT_RIGHT;      // Drifting left, correct right
-      else if(left_sensor_value > LINE_THRESHOLD)   next_state = SLIGHT_LEFT;       // Drifting right, correct left
-      else {                                                                        // Go striaght
-        right_servo.write(MID_POWER_CW);
-        left_servo.write(MID_POWER_CCW);
-        next_state = STRAIGHT;
-      }
-      break;
-      
-    case SLIGHT_RIGHT:                                                              // Drifting left, correct right
-      right_servo.write(LOW_POWER_CW);
-      left_servo.write(MID_POWER_CCW);
-      
-      if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD) // At intersection, do next turn
-        next_state = INTERSECTION;
-      else if(right_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_RIGHT;
-      else next_state = STRAIGHT;
-      break;
-      
-    case SLIGHT_LEFT:                                                               // Drifting right, correct left
-      right_servo.write(MID_POWER_CW);
-      left_servo.write(LOW_POWER_CCW);
-      
-      if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD) // At intersection, do next turn
-        next_state = INTERSECTION;
-      else if(left_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_LEFT;
-      else next_state = STRAIGHT;
-      break;
-      
-    case INTERSECTION:
-      if(center_sensor_value > LINE_THRESHOLD) {
-        next_state = moves[move_idx];
-        move_idx += 1;
-        previousMillis = 0;
-      }
-      else next_state = INTERSECTION;
-      break;
-      
-    case RIGHT:
-      right_servo.write(FULL_POWER_CCW);
-      left_servo.write(FULL_POWER_CCW);
-
-      if(previousMillis == 0) {
-         previousMillis = millis();
-      }
-      
-      currentMillis = millis();
-      
-      if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
-      else next_state = RIGHT;
-      break;
-      
-    case LEFT:
-      right_servo.write(FULL_POWER_CW);
-      left_servo.write(FULL_POWER_CW);
-
-      if(previousMillis == 0) {
-         previousMillis = millis();
-      }
-      
-      currentMillis = millis();
-      
-      if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
-      else next_state = LEFT;
-      break;
-
-    case TURN_AROUND:
-      right_servo.write(FULL_POWER_CW);
-      left_servo.write(FULL_POWER_CW);
-      
-      if(previousMillis == 0) {
-         previousMillis = millis();
-      }
-      
-      currentMillis = millis();
-      
-      if(currentMillis - previousMillis > 700) next_state = STRAIGHT;
-      else next_state = TURN_AROUND;
-      break;
-
-    default:
-      right_servo.write(SERVO_STOP);
-      left_servo.write(SERVO_STOP);
-  }
-  delay(15);
+  // nothing runs here
 }
-
 
