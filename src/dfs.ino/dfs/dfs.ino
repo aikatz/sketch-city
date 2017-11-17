@@ -175,6 +175,7 @@ bool* wallMaze (Orientation orient, bool* wallsRobot) {
 
 // Determining direction for the robot to move in reference to the robot
 State newDirection (Orientation orient, int x, int y, int go_x, int go_y) {
+  
   State newDirection;
   
   switch (orient) {
