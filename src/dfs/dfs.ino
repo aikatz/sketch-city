@@ -86,7 +86,7 @@ unsigned long currentMillis = 0;
 
 // ------------------------ Global variables needed for setup --------------------------------
 
-Orientation robotOrient = NORTH; // Creating an orientation variable to use for the robot's current direction
+Orientation robotOrient; // Creating an orientation variable to use for the robot's current direction
 
 State goDirection; // Creating a direction variable for the robot to be sent so it can move
 
@@ -105,48 +105,57 @@ void updateSensors() {
   right_sensor_value = analogRead(right_sensor_pin);
   left_sensor_value = analogRead(left_sensor_pin);
   center_sensor_value = analogRead(center_sensor_pin); 
-  left_wall_sensor = analogRead(left_wall_pin); 
-  center_wall_sensor = analogRead(center_wall_pin); 
-  right_wall_sensor = analogRead(right_wall_pin); 
 }
 
 // Determining wall presence using surroundings (robot orientation)
 bool* wallRobot(){
+  
   bool* walls = (bool*)malloc(sizeof(bool) * 3);
 
+  // Reading sensors
+  left_wall_sensor = analogRead(left_wall_pin); 
+  center_wall_sensor = analogRead(center_wall_pin); 
+  right_wall_sensor = analogRead(right_wall_pin); 
+
+Serial.print(left_wall_sensor);
+Serial.print("-");
+Serial.print(center_wall_sensor);
+Serial.print("-");
+Serial.println(right_wall_sensor);
+  
   // The output of this function is described as left-center-right
   // with reference to the robot
-  walls[0] = (left_wall_sensor > 380);
-  walls[1] = (center_wall_sensor > 550);
-  walls[2] = (right_wall_sensor > 380);
+  walls[0] = (left_wall_sensor > 280);
+  walls[1] = (center_wall_sensor > 120);
+  walls[2] = (right_wall_sensor > 280);
 
   return walls; // returning the walls for future analysis
 }
 
 // Function that updates the stack with possible paths, so make sure to call it only once!
 void updateStack(bool* walls){
-
+      
   // Pushing possible paths into the stack
   switch(robotOrient){
     case NORTH: 
-      if(walls[0] == false) { stack.push(inters[current_pos_x][current_pos_y--]); }
-      if(walls[2] == false) { stack.push(inters[current_pos_x][current_pos_y++]); }
-      if(walls[1] == false) { stack.push(inters[current_pos_x--][current_pos_y]); }
+      if(walls[0] == false) { stack.push(inters[current_pos_x][current_pos_y - 1]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x][current_pos_y + 1]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x - 1][current_pos_y]); }
       break;
     case EAST: 
-      if(walls[0] == false) { stack.push(inters[current_pos_x--][current_pos_y]); }
-      if(walls[2] == false) { stack.push(inters[current_pos_x++][current_pos_y]); }
-      if(walls[1] == false) { stack.push(inters[current_pos_x][current_pos_y++]); }
+      if(walls[0] == false) { stack.push(inters[current_pos_x - 1][current_pos_y]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x + 1][current_pos_y]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x][current_pos_y + 1]); }
       break;
     case SOUTH: 
-      if(walls[0] == false) { stack.push(inters[current_pos_x][current_pos_y++]); }
-      if(walls[2] == false) { stack.push(inters[current_pos_x][current_pos_y--]); }
-      if(walls[1] == false) { stack.push(inters[current_pos_x++][current_pos_y]); }
+      if(walls[0] == false) { stack.push(inters[current_pos_x][current_pos_y + 1]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x][current_pos_y - 1]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x + 1][current_pos_y]); }
       break;
     case WEST: 
-      if(walls[0] == false) { stack.push(inters[current_pos_x++][current_pos_y]); }
-      if(walls[2] == false) { stack.push(inters[current_pos_x--][current_pos_y]); }
-      if(walls[1] == false) { stack.push(inters[current_pos_x][current_pos_y--]); }
+      if(walls[0] == false) { stack.push(inters[current_pos_x + 1][current_pos_y]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x - 1][current_pos_y]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x][current_pos_y - 1]); }
       break;
   }
 }
@@ -212,26 +221,16 @@ bool* wallMaze (bool* wallsRobot) {
         break;
      }
   }
-
   return actualWalls;
 }
 
 // Determining direction for the robot to move in reference to the robot
-State newDirection (int x, int y, int go_x, int go_y) {
+State newDir (int x, int y, int go_x, int go_y) {
   
   State newDirection;
   
   switch (robotOrient) {
     case NORTH:
-      if (x > go_x) { newDirection = RIGHT; }
-      else if (x < go_x) { newDirection = LEFT; }
-      else {
-        if (y > go_y) { newDirection = STRAIGHT; }
-        else if (y < go_y) { newDirection = TURN_AROUND; }
-        else { newDirection = STOP; }
-      }
-      break;
-    case EAST:
       if (x > go_x) { newDirection = STRAIGHT; }
       else if (x < go_x) { newDirection = TURN_AROUND; }
       else {
@@ -240,7 +239,7 @@ State newDirection (int x, int y, int go_x, int go_y) {
         else { newDirection = STOP; }
       }
       break;
-    case SOUTH:
+    case EAST:
       if (x > go_x) { newDirection = LEFT; }
       else if (x < go_x) { newDirection = RIGHT; }
       else {
@@ -249,12 +248,21 @@ State newDirection (int x, int y, int go_x, int go_y) {
         else { newDirection = STOP; }
       }
       break;
-    case WEST:
+    case SOUTH:
       if (x > go_x) { newDirection = TURN_AROUND; }
       else if (x < go_x) { newDirection = STRAIGHT; }
       else {
         if (y > go_y) { newDirection = RIGHT; }
         else if (y < go_y) { newDirection = LEFT; }
+        else { newDirection = STOP; }
+      }
+      break;
+    case WEST:
+      if (x > go_x) { newDirection = RIGHT; }
+      else if (x < go_x) { newDirection = LEFT; }
+      else {
+        if (y > go_y) { newDirection = STRAIGHT; }
+        else if (y < go_y) { newDirection = TURN_AROUND; }
         else { newDirection = STOP; }
       }
       break;
@@ -292,52 +300,83 @@ void newOrient () {
 
 // Hardware algortihm to move the robot
 void movement (State dir) {
-  
-  State current_state = dir; // symbolizes current_state
-  State next_state = STRAIGHT; // symbolizes next_state (set to STRAIGHT to enter loop)
+
+  State current_state; // symbolizes current_state
+  State next_state = dir; // symbolizes next_state (set to STRAIGHT to enter loop)
 
   while(next_state != STOP) {
-        
+    current_state = next_state; // updating state
+
+    updateSensors(); // updating the sensors
+
+//    Serial.print(left_sensor_value);
+//    Serial.print("-");
+//    Serial.print(center_sensor_value);
+//    Serial.print("-");
+//    Serial.println(right_sensor_value);
+    
     // State Outputs depending on current state and sensor readings
     switch(current_state) {
       
       case STOP:
-        right_servo.write(SERVO_STOP);
-        left_servo.write(SERVO_STOP);
         break;
         
-      case STRAIGHT:                                                         
-        if(right_sensor_value > LINE_THRESHOLD) { next_state = SLIGHT_RIGHT; }  
-        else if(left_sensor_value > LINE_THRESHOLD) { next_state = SLIGHT_LEFT; }  
+      case STRAIGHT: 
+
+        if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
+          while(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
+            updateSensors();
+            // stays going straight
+          }
+          next_state = INTERSECTION;
+        } 
+        else if(right_sensor_value > LINE_THRESHOLD) { next_state = SLIGHT_RIGHT; }  
+        else if(left_sensor_value > LINE_THRESHOLD) { next_state = SLIGHT_LEFT; }
+       
         else {                                                                      
           right_servo.write(MID_POWER_CW);
           left_servo.write(MID_POWER_CCW);
           next_state = STRAIGHT;
         }
+      
         break;
         
       case SLIGHT_RIGHT:                                                              
         right_servo.write(LOW_POWER_CW);
         left_servo.write(MID_POWER_CCW);
         
-        if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD) 
+        if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
+          while(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
+            right_servo.write(MID_POWER_CW);
+            left_servo.write(MID_POWER_CCW);
+            updateSensors();
+          }
           next_state = INTERSECTION;
-        else if(right_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_RIGHT;
-        else next_state = STRAIGHT;
+        }
+        else if(right_sensor_value > LINE_THRESHOLD) { next_state = SLIGHT_RIGHT; }
+        else { next_state = STRAIGHT; }
         break;
         
       case SLIGHT_LEFT:                                                              
         right_servo.write(MID_POWER_CW);
         left_servo.write(LOW_POWER_CCW);
         
-        if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD) 
+        if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
+          while(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
+            right_servo.write(MID_POWER_CW);
+            left_servo.write(MID_POWER_CCW);
+            updateSensors();
+          }
           next_state = INTERSECTION;
-        else if(left_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_LEFT;
+        }
+        else if(left_sensor_value > LINE_THRESHOLD) { next_state = SLIGHT_LEFT; }
         else next_state = STRAIGHT;
         break;
         
       case INTERSECTION:
-        next_state = STOP;
+        left_servo.write(SERVO_STOP);
+        right_servo.write(SERVO_STOP);
+        next_state = STOP;        
         break;
         
       case RIGHT:
@@ -364,7 +403,7 @@ void movement (State dir) {
         
         currentMillis = millis();
         
-        if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
+        if(currentMillis - previousMillis > 300) next_state = STRAIGHT;
         else next_state = LEFT;
         break;
   
@@ -387,7 +426,6 @@ void movement (State dir) {
         left_servo.write(SERVO_STOP);
     }
     delay(15);
-    updateSensors(); // updating the sensors
   }
 }
 
@@ -461,6 +499,9 @@ void setup() {
 
   // -------------- DEVELOPING DFS HERE --------------
 
+  // Initial direction
+  robotOrient = EAST;
+  
   // Create a while loop that runs until the 60Hz is heard and it lets it end
   // Use an additional input in case it gets stuck
 
@@ -472,8 +513,11 @@ void setup() {
   inters[current_pos_x][current_pos_y].visited = true;
   
   // Analyzing the possible paths and pushing them into the stack
-  bool* realWalls = updateStack_getWalls();
-
+  updateStack(wallRobot()); // updates the stack
+      
+  // Update matrix of intersections with the new changes to popped intersection
+  inters[current_pos_x][current_pos_y] = current_intersect;
+      
   // Send information about the first intersection before starting  
   
   // Starting the while loop to interact with the stack
@@ -489,15 +533,21 @@ void setup() {
       go_pos_x = next_intersect.pos_x;
       go_pos_y = next_intersect.pos_y;
 
+      Serial.print(go_pos_x);
+      Serial.print("-");
+      Serial.print(go_pos_y);
+      Serial.print(": direction ");
+
+      
       // Perform back-pointer algorithm if neccesary
-      while (notYet()) {
+      while (abs(current_pos_x - go_pos_x) > 1 || abs(current_pos_y - go_pos_y) > 1) {
         
         // Back_pointer algorithm goes here
         back_pos_x = current_intersect.back_x;
         back_pos_y = current_intersect.back_y;
 
         // Moving the robot with new coordinates
-        goDirection = newDirection(current_pos_x, current_pos_y, back_pos_x, back_pos_y);
+        goDirection = newDir(current_pos_x, current_pos_y, back_pos_x, back_pos_y);
         movement(goDirection);
 
         // Send robot position to the other Arduino (nothing else)
@@ -509,7 +559,8 @@ void setup() {
       }
        
       // Perform movement to intersection specified by the popped element from the stack
-      goDirection = newDirection(current_pos_x, current_pos_y, go_pos_x, go_pos_y);
+      goDirection = newDir(current_pos_x, current_pos_y, go_pos_x, go_pos_y);
+      Serial.println(goDirection);
       movement(goDirection);
 
       // Updating all neccesary values for this intersection
@@ -527,7 +578,7 @@ void setup() {
       inters[current_pos_x][current_pos_y] = current_intersect;
       
       // Analyzing the possible paths and pushing them into the stack
-      bool* realWalls = updateStack_getWalls();
+      updateStack(wallRobot()); // updates the stack
 
       // Send information to the other Arduino
       
@@ -535,12 +586,24 @@ void setup() {
     
   }
   
+  Serial.println("Stack is empty");
+
   // Play victorious tone here
   
 }
 
 void loop() {
   // nothing runs here
+
+    left_wall_sensor = analogRead(left_wall_pin); 
+  center_wall_sensor = analogRead(center_wall_pin); 
+  right_wall_sensor = analogRead(right_wall_pin); 
+  
+  Serial.print(left_wall_sensor);
+Serial.print("-");
+Serial.print(center_wall_sensor);
+Serial.print("-");
+Serial.println(right_wall_sensor);
 }
 
 
