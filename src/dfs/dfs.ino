@@ -98,6 +98,12 @@ intersect current_intersect, next_intersect; // current and next intersections
 
 int back_pos_x, back_pos_y; // variables to be used in back_pointer
 
+bool walls[3]; // walls from the point of view of the robot
+
+bool actualWalls[4]; // actual walls from the point of view of a 5x4 maze
+
+State current_state, next_state; // symbolizes current and next state 
+
 // -------------------HELPER FUNCTIONS TO HELP SMOOTH THE PROCESS ------------------------------
 
 // Code to update the value of the sensors
@@ -108,32 +114,22 @@ void updateSensors() {
 }
 
 // Determining wall presence using surroundings (robot orientation)
-bool* wallRobot(){
+void wallRobot(){
   
-  bool* walls = (bool*)malloc(sizeof(bool) * 3);
-
   // Reading sensors
   left_wall_sensor = analogRead(left_wall_pin); 
   center_wall_sensor = analogRead(center_wall_pin); 
   right_wall_sensor = analogRead(right_wall_pin); 
 
-Serial.print(left_wall_sensor);
-Serial.print("-");
-Serial.print(center_wall_sensor);
-Serial.print("-");
-Serial.println(right_wall_sensor);
-  
   // The output of this function is described as left-center-right
   // with reference to the robot
-  walls[0] = (left_wall_sensor > 280);
-  walls[1] = (center_wall_sensor > 120);
-  walls[2] = (right_wall_sensor > 280);
-
-  return walls; // returning the walls for future analysis
+  walls[0] = (left_wall_sensor > 200);
+  walls[1] = (center_wall_sensor > 110);
+  walls[2] = (right_wall_sensor > 200);
 }
 
 // Function that updates the stack with possible paths, so make sure to call it only once!
-void updateStack(bool* walls){
+void updateStack(){
       
   // Pushing possible paths into the stack
   switch(robotOrient){
@@ -161,17 +157,15 @@ void updateStack(bool* walls){
 }
 
 // Determining wall presence using the actual maze as orientation
-bool* wallMaze (bool* wallsRobot) {
-  
-  bool* actualWalls = (bool*)malloc(sizeof(bool) * 4);
-  
+void wallMaze () {
+    
   // Initializing array to all false
   for (int i = 0; i < 4; i++) {
     actualWalls[i] = false;
   }
   
   // The output of this function is described as left-up-right-down 
-  if (wallsRobot[0] == true) {
+  if (walls[0] == true) {
     switch(robotOrient) {
       case NORTH: 
         actualWalls[0] = true;
@@ -188,9 +182,9 @@ bool* wallMaze (bool* wallsRobot) {
     }
   }
   
-  if (wallsRobot[1] == true) {
+  if (walls[1] == true) {
     switch(robotOrient) {
-      case WEST: 
+      case WEST:  
         actualWalls[0] = true;
         break;
       case NORTH: 
@@ -205,7 +199,7 @@ bool* wallMaze (bool* wallsRobot) {
     }
   }
   
-  if (wallsRobot[2] == true) {
+  if (walls[2] == true) {
     switch(robotOrient) {
       case SOUTH: 
         actualWalls[0] = true;
@@ -221,7 +215,6 @@ bool* wallMaze (bool* wallsRobot) {
         break;
      }
   }
-  return actualWalls;
 }
 
 // Determining direction for the robot to move in reference to the robot
@@ -301,13 +294,11 @@ void newOrient () {
 // Hardware algortihm to move the robot
 void movement (State dir) {
 
-  State current_state; // symbolizes current_state
-  State next_state = dir; // symbolizes next_state (set to STRAIGHT to enter loop)
-
+  next_state = dir;
+  
   while(next_state != STOP) {
+    
     current_state = next_state; // updating state
-
-    updateSensors(); // updating the sensors
 
 //    Serial.print(left_sensor_value);
 //    Serial.print("-");
@@ -403,7 +394,7 @@ void movement (State dir) {
         
         currentMillis = millis();
         
-        if(currentMillis - previousMillis > 300) next_state = STRAIGHT;
+        if(currentMillis - previousMillis > 250) next_state = STRAIGHT;
         else next_state = LEFT;
         break;
   
@@ -425,18 +416,16 @@ void movement (State dir) {
         right_servo.write(SERVO_STOP);
         left_servo.write(SERVO_STOP);
     }
+    updateSensors(); // updating the sensors
     delay(15);
   }
 }
 
 // Function to get every possible path (not a wall) on the stack 
-bool* updateStack_getWalls(){
-  
-  bool* possiblePaths = wallRobot(); // gets possible paths
-  updateStack(possiblePaths); // updates the stack
-  bool* realWalls = wallMaze(possiblePaths); // wall detection in real path
-  
-  return realWalls;
+void updateStack_getWalls(){
+  wallRobot(); // gets possible paths
+  updateStack(); // updates the stack
+  wallMaze(); // wall detection in real path
 }
 
 // Function to check if the backpointer algorithm can exit the while loop and the robot can proceed
@@ -444,14 +433,15 @@ bool notYet(){
 
   // abs(current_pos_x - go_pos_x) > 1 || abs(current_pos_y - go_pos_y) > 1); // Just in case we determine walls do not need to be checked-off
   
-  bool* realWalls = wallMaze(wallRobot()); // getting the walls
+  wallRobot();
+  wallMaze(); // getting the walls
   
   if (abs(current_pos_x - go_pos_x) > 1){
     return true;
   }
   else if (current_pos_x - go_pos_x == 1){
     if (current_pos_y == go_pos_y){
-      return realWalls[1];
+      return actualWalls[1];
     }
     else{
       return true;
@@ -459,7 +449,7 @@ bool notYet(){
   }
   else if (current_pos_x - go_pos_x == -1){
     if (current_pos_y == go_pos_y){
-      return realWalls[3];
+      return actualWalls[3];
     }
     else{
       return true;
@@ -470,10 +460,10 @@ bool notYet(){
       return true;
     }
     else if (current_pos_y - go_pos_y == 1){
-      return realWalls[0];
+      return actualWalls[0];
     }
     else if (current_pos_y - go_pos_y == -1){
-      return realWalls[2];
+      return actualWalls[2];
     }
     else{
       Serial.print("Check the code because this should never happen");
@@ -500,20 +490,21 @@ void setup() {
   // -------------- DEVELOPING DFS HERE --------------
 
   // Initial direction
-  robotOrient = EAST;
+  robotOrient = NORTH;
   
   // Create a while loop that runs until the 60Hz is heard and it lets it end
   // Use an additional input in case it gets stuck
 
   // Initialize the variables accordingly to the beginning of the maze traversal (lower-left corner)
   current_pos_x = 4;
-  current_pos_y = 0;
+  current_pos_y = 3;
   
-  // Updating initial intersection of the program (lower-left corner)
+  // Updating initial intersection of the program (lower-right corner)
   inters[current_pos_x][current_pos_y].visited = true;
   
   // Analyzing the possible paths and pushing them into the stack
-  updateStack(wallRobot()); // updates the stack
+  wallRobot(); // updating the walls at current intersection
+  updateStack(); // updates the stack for available paths
       
   // Update matrix of intersections with the new changes to popped intersection
   inters[current_pos_x][current_pos_y] = current_intersect;
@@ -532,12 +523,6 @@ void setup() {
       // Update variables of next destination
       go_pos_x = next_intersect.pos_x;
       go_pos_y = next_intersect.pos_y;
-
-      Serial.print(go_pos_x);
-      Serial.print("-");
-      Serial.print(go_pos_y);
-      Serial.print(": direction ");
-
       
       // Perform back-pointer algorithm if neccesary
       while (abs(current_pos_x - go_pos_x) > 1 || abs(current_pos_y - go_pos_y) > 1) {
@@ -560,7 +545,6 @@ void setup() {
        
       // Perform movement to intersection specified by the popped element from the stack
       goDirection = newDir(current_pos_x, current_pos_y, go_pos_x, go_pos_y);
-      Serial.println(goDirection);
       movement(goDirection);
 
       // Updating all neccesary values for this intersection
@@ -578,8 +562,9 @@ void setup() {
       inters[current_pos_x][current_pos_y] = current_intersect;
       
       // Analyzing the possible paths and pushing them into the stack
-      updateStack(wallRobot()); // updates the stack
-
+      wallRobot(); // getting the walls
+      updateStack(); // updates the stack
+ 
       // Send information to the other Arduino
       
     }
@@ -594,16 +579,6 @@ void setup() {
 
 void loop() {
   // nothing runs here
-
-    left_wall_sensor = analogRead(left_wall_pin); 
-  center_wall_sensor = analogRead(center_wall_pin); 
-  right_wall_sensor = analogRead(right_wall_pin); 
-  
-  Serial.print(left_wall_sensor);
-Serial.print("-");
-Serial.print(center_wall_sensor);
-Serial.print("-");
-Serial.println(right_wall_sensor);
 }
 
 
