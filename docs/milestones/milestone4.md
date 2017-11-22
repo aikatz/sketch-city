@@ -15,6 +15,8 @@ The picture below shows what our robot currently looks like with new wall sensor
 <div style="text-align:center"><img src ="../pictures/IMG_5643.JPG" /></div>
 
 
-### "Done" Signal on Screen
+<div style="text-align:center"><img src ="../pictures/20171121_211721.jpg" /></div>
 
-### "Done" Signal Sound
+### Done Signal
+Since we were not able to successfully communicate between arduino and FPGA, and maze exploration is not done either, we were not able to implement a done signal. 
+
