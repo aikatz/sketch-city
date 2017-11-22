@@ -2,6 +2,7 @@
 
 ### Milestone 3 Update
 We have worked on finishing the tasks in Milestone 3 and made some significant progress. 
+The picture below shows what we get when we tested the alogrithm on a small 2x2 maze.
 <div style="text-align:center"><img src ="../pictures/dfsposition.jpg" /></div>
 
 ### Wall Detection and Display
