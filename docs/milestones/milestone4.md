@@ -1,19 +1,18 @@
 # Milestone 4: Display of Maze Information
 
 ### Milestone 3 Update
-We have worked on finishing the tasks in Milestone 3 and made some significant progress. 
+We have worked on finishing the tasks in Milestone 3 and made some significant progress. Our DFS code is complete but stills needs debugging. We tested extensively and believe that the back-pointer is working.
 The picture below shows what we get when we tested the alogrithm on a small 2x2 maze.
 <div style="text-align:center"><img src ="../pictures/dfsposition.jpg" /></div>
 
-### Wall Detection and Display
-We had upgraded to new wall detection sensor that are much are accurate and reliable. 
+### Wall Detection and Treasure Detection
+We had upgraded to new wall detection sensor that are much are accurate and reliable. We were also able to read from multiple I2C sensors on the same bus. So that now we do not have to use a MUX or schmist trigger because we have 5 analog inputs left: 3 for line sensors, 1 for IR, and 1 for the microphone. We tuned the range thresholds and updated our code according to the new sensors. 
 
-
-### Treasure Detection and Display
-We copued the circuit from Lab 2 to a soldered board and mounted it on the top of our robot. 
-The picture below shows what our robot currently looks like with new wall sensors and 
+We copied the circuit from Lab 2 to a soldered board and mounted it on the top of our robot. 
+The picture below shows what our robot currently looks like with new wall sensors and the tresure sensors.
 <div style="text-align:center"><img src ="../pictures/IMG_5643.JPG" /></div>
 
+### Display
 
 In the follwoing display, the walls are represented by the white stripes. Pink squares represent unexplored regions and green square represents current position. The red, green, and blue T represents treasures.
 <div style="text-align:center"><img src ="../pictures/20171121_211721.jpg" /></div>
