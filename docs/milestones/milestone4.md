@@ -18,7 +18,7 @@ We further divided each black we drew in previous labs into a 12 by 12 array and
 wire [7:0] treasure_color;
 	 assign treasure_color = (treasure_sel == 1) ? 8'b111_000_00 : 
 	                         (treasure_sel == 2) ? 8'b000_111_00: 
-										       (treasure_sel == 3) ? 8'b000_000_11: 8'b000_000_00;
+				 (treasure_sel == 3) ? 8'b000_000_11: 8'b000_000_00;
 ```
 In the follwoing display, the walls are represented by the white stripes. Pink squares represent unexplored regions and green square represents current position. The red, green, and blue T represents treasures.
 <div style="text-align:center"><img src ="../pictures/20171121_211721.jpg" /></div>
