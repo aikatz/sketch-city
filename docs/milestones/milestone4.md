@@ -15,6 +15,7 @@ The picture below shows what our robot currently looks like with new wall sensor
 <div style="text-align:center"><img src ="../pictures/IMG_5643.JPG" /></div>
 
 
+In the follwoing display, the walls are represented by the white stripes. Pink squares represent unexplored regions and green square represents current position. The red, green, and blue T represents treasures.
 <div style="text-align:center"><img src ="../pictures/20171121_211721.jpg" /></div>
 
 ### Done Signal
