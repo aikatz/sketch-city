@@ -8,8 +8,12 @@ The picture below shows what we get when we tested the alogrithm on a small 2x2 
 ### Wall Detection and Display
 We had upgraded to new wall detection sensor that are much are accurate and reliable. 
 
+
 ### Treasure Detection and Display
 We copued the circuit from Lab 2 to a soldered board and mounted it on the top of our robot. 
+The picture below shows what our robot currently looks like with new wall sensors and 
+<div style="text-align:center"><img src ="../pictures/IMG_5643.JPG" /></div>
+
 
 ### "Done" Signal on Screen
 
