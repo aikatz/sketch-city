@@ -9,3 +9,4 @@
 #### 3. [Labs](labs.md)
 #### 4. [Tutorials](tutorials.md)
 #### 5. [Meeting Minutes](minutes.md)
+#### 6. [Ethics Assignment](ethics.md)
