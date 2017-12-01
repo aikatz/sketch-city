@@ -476,8 +476,8 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   
   // Connect right servo to pin 9, left servo to pin 10
-  right_servo.attach(10);
-  left_servo.attach(9);
+  right_servo.attach(11);
+  left_servo.attach(10);
   
   right_servo.write(SERVO_STOP);
   left_servo.write(SERVO_STOP);
