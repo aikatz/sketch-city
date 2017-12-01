@@ -123,9 +123,9 @@ void wallRobot(){
 
   // The output of this function is described as left-center-right
   // with reference to the robot
-  walls[0] = (left_wall_sensor > 200);
-  walls[1] = (center_wall_sensor > 110);
-  walls[2] = (right_wall_sensor > 200);
+  walls[0] = (left_wall_sensor <10);
+  walls[1] = (center_wall_sensor < 50);
+  walls[2] = (right_wall_sensor < 10);
 }
 
 // Function that updates the stack with possible paths, so make sure to call it only once!
