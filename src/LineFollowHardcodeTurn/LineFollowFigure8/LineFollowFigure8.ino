@@ -1,25 +1,25 @@
 #include <Servo.h>
 
 #define FULL_POWER_CCW   180
-#define MID_POWER_CCW    95
+#define MID_POWER_CCW    99
 #define LOW_POWER_CCW    91
 
 #define FULL_POWER_CW  0
-#define MID_POWER_CW   85
+#define MID_POWER_CW   81
 #define LOW_POWER_CW   89
 
 #define SERVO_STOP     90
 
-#define LINE_THRESHOLD 800
+#define LINE_THRESHOLD 600
 
 // Declare two Servo objects - one to control each servo
 Servo right_servo;
 Servo left_servo; 
 
 // Stores the pin # that is connected to the IR sensor
-const int right_sensor_pin = 0;
-const int left_sensor_pin = 1;
-const int center_sensor_pin = 2;
+const int right_sensor_pin = 3;
+const int center_sensor_pin = 4;
+const int left_sensor_pin = 5;
 
 // Will use this to store the value from the ADC
 int right_sensor_value;
@@ -43,6 +43,7 @@ volatile int n_moves = 9;
 volatile int move_idx = 0;
 
 unsigned long previousMillis = 0;
+unsigned long intersectMillis = 0;
 unsigned long currentMillis = 0;
 
 void setup() {  
@@ -98,6 +99,8 @@ void loop() {
         next_state = INTERSECTION;
       else if(right_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_RIGHT;
       else next_state = STRAIGHT;
+
+      intersectMillis = 0;
       break;
       
     case SLIGHT_LEFT:                                                               // Drifting right, correct left
@@ -108,10 +111,14 @@ void loop() {
         next_state = INTERSECTION;
       else if(left_sensor_value > LINE_THRESHOLD) next_state = SLIGHT_LEFT;
       else next_state = STRAIGHT;
+
+      intersectMillis = 0;
       break;
       
     case INTERSECTION:
       if(center_sensor_value > LINE_THRESHOLD) {
+        currentMillis = millis();
+        while(millis() - currentMillis < 300);
         next_state = moves[move_idx];
         move_idx += 1;
         previousMillis = 0;
@@ -129,8 +136,10 @@ void loop() {
       
       currentMillis = millis();
       
-      if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
+      if(currentMillis - previousMillis > 300) next_state = STRAIGHT;
       else next_state = RIGHT;
+
+      intersectMillis = 0;
       break;
       
     case LEFT:
@@ -143,8 +152,10 @@ void loop() {
       
       currentMillis = millis();
       
-      if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
+      if(currentMillis - previousMillis > 300) next_state = STRAIGHT;
       else next_state = LEFT;
+
+      intersectMillis = 0;
       break;
       
     default:
