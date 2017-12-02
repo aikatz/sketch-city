@@ -123,9 +123,9 @@ void wallRobot(){
 
   // The output of this function is described as left-center-right
   // with reference to the robot
-  walls[0] = (left_wall_sensor > 200);
-  walls[1] = (center_wall_sensor > 110);
-  walls[2] = (right_wall_sensor > 200);
+  walls[0] = (left_wall_sensor <10);
+  walls[1] = (center_wall_sensor < 50);
+  walls[2] = (right_wall_sensor < 10);
 }
 
 // Function that updates the stack with possible paths, so make sure to call it only once!
@@ -476,8 +476,8 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   
   // Connect right servo to pin 9, left servo to pin 10
-  right_servo.attach(10);
-  left_servo.attach(9);
+  right_servo.attach(11);
+  left_servo.attach(10);
   
   right_servo.write(SERVO_STOP);
   left_servo.write(SERVO_STOP);
