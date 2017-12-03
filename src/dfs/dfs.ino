@@ -25,15 +25,15 @@
 
 #define FULL_POWER_CCW   180
 #define MID_POWER_CCW    95
-#define LOW_POWER_CCW    91
+#define LOW_POWER_CCW    93
 
 #define FULL_POWER_CW  0
 #define MID_POWER_CW   85
-#define LOW_POWER_CW   89
+#define LOW_POWER_CW   87
 
 #define SERVO_STOP     90
 
-#define LINE_THRESHOLD 800
+#define LINE_THRESHOLD 850
 
 // defining a struct to hold information about each intersection
 typedef struct {
@@ -65,12 +65,12 @@ Servo left_servo;
 
 // ------------------------ Stores the pin # that is connected to the IR sensor --------------------------------
 
-const int right_sensor_pin = 0;
-const int left_sensor_pin = 1;
-const int center_sensor_pin = 2;
-const int left_wall_pin = 3;
-const int center_wall_pin = 4;
-const int right_wall_pin = 5;
+const int right_sensor_pin = 3;
+const int left_sensor_pin = 5;
+const int center_sensor_pin = 4;
+const int left_wall_pin = 1;
+const int center_wall_pin = 2;
+const int right_wall_pin = 0;
 
 // ------------------------ Will use this to store the value from the ADC --------------------------------
 
@@ -123,9 +123,9 @@ void wallRobot(){
 
   // The output of this function is described as left-center-right
   // with reference to the robot
-  walls[0] = (left_wall_sensor <10);
-  walls[1] = (center_wall_sensor < 50);
-  walls[2] = (right_wall_sensor < 10);
+  walls[0] = (left_wall_sensor > 200);
+  walls[1] = (center_wall_sensor > 100);
+  walls[2] = (right_wall_sensor > 200);
 }
 
 // Function that updates the stack with possible paths, so make sure to call it only once!
@@ -295,9 +295,12 @@ void newOrient () {
 void movement (State dir) {
 
   next_state = dir;
+  current_state = next_state;
+  previousMillis = 0;
+
   
-  while(next_state != STOP) {
-    
+  while(current_state != STOP) {
+    updateSensors(); // updating the sensors
     current_state = next_state; // updating state
 
 //    Serial.print(left_sensor_value);
@@ -310,10 +313,11 @@ void movement (State dir) {
     switch(current_state) {
       
       case STOP:
+        left_servo.write(SERVO_STOP);
+        right_servo.write(SERVO_STOP);
         break;
         
       case STRAIGHT: 
-
         if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
           while(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
             updateSensors();
@@ -332,32 +336,24 @@ void movement (State dir) {
       
         break;
         
-      case SLIGHT_RIGHT:                                                              
+      case SLIGHT_RIGHT:
+        //Serial.println("SLIGHT RIGHT");                                                      
         right_servo.write(LOW_POWER_CW);
         left_servo.write(MID_POWER_CCW);
         
         if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
-          while(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
-            right_servo.write(MID_POWER_CW);
-            left_servo.write(MID_POWER_CCW);
-            updateSensors();
-          }
           next_state = INTERSECTION;
         }
         else if(right_sensor_value > LINE_THRESHOLD) { next_state = SLIGHT_RIGHT; }
         else { next_state = STRAIGHT; }
         break;
         
-      case SLIGHT_LEFT:                                                              
+      case SLIGHT_LEFT:             
+        //Serial.println("SLIGHT LEFT");                                                                                                       
         right_servo.write(MID_POWER_CW);
         left_servo.write(LOW_POWER_CCW);
         
         if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
-          while(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
-            right_servo.write(MID_POWER_CW);
-            left_servo.write(MID_POWER_CCW);
-            updateSensors();
-          }
           next_state = INTERSECTION;
         }
         else if(left_sensor_value > LINE_THRESHOLD) { next_state = SLIGHT_LEFT; }
@@ -365,12 +361,17 @@ void movement (State dir) {
         break;
         
       case INTERSECTION:
-        left_servo.write(SERVO_STOP);
-        right_servo.write(SERVO_STOP);
+        //Serial.println("INTERSECT");
+        right_servo.write(MID_POWER_CW);
+        left_servo.write(MID_POWER_CCW);
+        int currentMillis;
+        currentMillis = millis();
+        while(millis() - currentMillis < 500);
         next_state = STOP;        
         break;
         
       case RIGHT:
+        //Serial.println("RIGHT");
         right_servo.write(FULL_POWER_CCW);
         left_servo.write(FULL_POWER_CCW);
   
@@ -380,11 +381,12 @@ void movement (State dir) {
         
         currentMillis = millis();
         
-        if(currentMillis - previousMillis > 380) next_state = STRAIGHT;
+        if(currentMillis - previousMillis > 570) next_state = STRAIGHT;
         else next_state = RIGHT;
         break;
         
       case LEFT:
+        //Serial.println("LEFT");
         right_servo.write(FULL_POWER_CW);
         left_servo.write(FULL_POWER_CW);
   
@@ -394,11 +396,12 @@ void movement (State dir) {
         
         currentMillis = millis();
         
-        if(currentMillis - previousMillis > 250) next_state = STRAIGHT;
+        if(currentMillis - previousMillis > 570) next_state = STRAIGHT;
         else next_state = LEFT;
         break;
   
       case TURN_AROUND:
+        //Serial.println("Turn Around");
         right_servo.write(FULL_POWER_CW);
         left_servo.write(FULL_POWER_CW);
         
@@ -408,7 +411,7 @@ void movement (State dir) {
         
         currentMillis = millis();
         
-        if(currentMillis - previousMillis > 700) next_state = STRAIGHT;
+        if(currentMillis - previousMillis > 1150) next_state = STRAIGHT;
         else next_state = TURN_AROUND;
         break;
   
@@ -416,7 +419,6 @@ void movement (State dir) {
         right_servo.write(SERVO_STOP);
         left_servo.write(SERVO_STOP);
     }
-    updateSensors(); // updating the sensors
     delay(15);
   }
 }
@@ -476,8 +478,8 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   
   // Connect right servo to pin 9, left servo to pin 10
-  right_servo.attach(11);
-  left_servo.attach(10);
+  right_servo.attach(10);
+  left_servo.attach(9);
   
   right_servo.write(SERVO_STOP);
   left_servo.write(SERVO_STOP);
@@ -571,10 +573,21 @@ void setup() {
     
   }
   
-  Serial.println("Stack is empty");
+  //Serial.println("Stack is empty");
 
   // Play victorious tone here
-  
+/*
+    movement(STRAIGHT);
+    movement(STRAIGHT);
+    movement(LEFT);
+    movement(RIGHT);
+    movement(RIGHT);
+    movement(LEFT);
+    movement(LEFT);
+    movement(STRAIGHT);
+    movement(TURN_AROUND);
+    movement(STRAIGHT);
+*/
 }
 
 void loop() {
