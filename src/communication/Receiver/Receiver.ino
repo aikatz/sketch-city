@@ -1,3 +1,11 @@
+#include <nRF24L01.h>
+#include <RF24.h>
+#include <RF24_config.h>
+
+#include <nRF24L01.h>
+#include <RF24.h>
+#include <RF24_config.h>
+
 /*
  Copyright (C) 2011 J. Coliz <maniacbug@ymail.com>
 
@@ -29,8 +37,9 @@
 // Set up nRF24L01 radio on SPI bus plus pins 9 & 10
 
 RF24 radio(9,10);
-unsigned char got_treasure[4][5];
-unsigned char got_wall[4][5];
+unsigned char got_treasure[4][6];
+unsigned char got_wall[4][6];
+unsigned char got_done[4][6];
 //
 // Topology
 //
@@ -129,37 +138,32 @@ void loop(void)
   if ( role == role_pong_back )
   {
     
-    unsigned char got_data;
+    unsigned short got_data;
     bool done = false;
     unsigned char x_coord;
-    unsigned char y_coord;
+    unsigned short y_coord;
     unsigned char treasure;
-    unsigned char wall;
-    unsigned char done_signal;
-    
-    
+    unsigned short wall;
+    unsigned char done_signal;  
+
     
 
      while (!done)
     {
       // Fetch the payload, and see if this was the last one.
-      done = radio.read( &got_data, sizeof(unsigned char) );
+      done = radio.read( &got_data, sizeof(unsigned short) );
     
       // Interpret new data
-      // first payload
-      if (got_data & 0b00000001 == 0b00000001){
-        x_coord= (got_data & 0b11000000) >> 6; //2 bits x coordinate data
-        y_coord= (got_data & 0b00111000) >> 3; //3 bits y coordinate data
-        treasure= (got_data & 0b00000110) >> 1; //2 bits treasure data
-      }
-      //second payload
-      if (got_data & 0b00000001 == 0b00000000){
-        wall= (got_data & 0b11110000) >> 4; //4 bits wall data
-        done_signal= (got_data & 0b00001000) >> 3; //1 bit done signal
-        got_wall[x_coord][y_coord] = wall;
-      }
+      x_coord= (got_data & 0b1100000000000000) >> 14; //2 bits x coordinate data
+      y_coord= (got_data & 0b0011100000000000) >> 11; //3 bits y coordinate data
+      y_coord= y_coord-1;
+      treasure= (got_data & 0b0000011000000000) >> 9; //2 bits treasure data
+      wall= (got_data & 0b0000000111100000 ) >> 5; //4 bits wall data
+      done_signal= (got_data & 0b0000000000010000) >> 4; //1 bit done signal
+
       got_treasure[x_coord][y_coord] = treasure;
       got_wall[x_coord][y_coord] = wall;
+      got_done[x_coord][y_coord] = done_signal;
       
       // Delay just a little bit to let the other unit
       // make the transition to receiver
@@ -172,10 +176,11 @@ void loop(void)
     {
       // Print the treasure
       for (int i=0; i < 5; i++) {
-        for (int j=0; j < 5; j++) {
-          printf("%d ", got_treasure[i][j]);
-          printf("%d ", got_wall[i][j]);
-          printf("%d ", done_signal);
+        for (int j=0; j < 4; j++) {
+          printf("%d ", got_treasure[j][i]);
+          printf("%d ", got_wall[j][i]);
+          printf("%d ", got_done[j][i]);
+          printf("|");
         }
         printf("\n");
       }
