@@ -1,0 +1,4 @@
+* Open lab tomorrow to work on Milestone 3 and wrap up previous works
+* Discussed how to implement DFS for maze exploration
+* Plan to switch from Arduino IDE to C++
+  * Standard library will make implementing stack in DFS easier
