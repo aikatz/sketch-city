@@ -9,15 +9,15 @@ The range readings are in units of mm. */
 VL6180X sensor1;
 VL6180X sensor2;
 VL6180X sensor3;
-int enable1 = 2;
-int enable2 = 4;
-int enable3 = 5;
+int enable1 = 42;
+int enable2 = 44;
+int enable3 = 46;
 
 void setup() ///lots of setup, but while loop is simple
 {
-  pinMode (enable1,OUTPUT);
-  pinMode (enable2,OUTPUT);
-  pinMode (enable3,OUTPUT);
+  pinMode(enable1,OUTPUT);
+  pinMode(enable2,OUTPUT);
+  pinMode(enable3,OUTPUT);
   Serial.begin(9600);
   Wire.begin();
 
@@ -77,4 +77,5 @@ void loop()
   Serial.print("\tSensor 3: ");
   Serial.print(sensor3.readRangeContinuousMillimeters());
   Serial.println();
+  Serial.print(analogRead(A3));
 }
