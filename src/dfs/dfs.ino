@@ -23,6 +23,9 @@
 #include <orientation.h>
 #include <state.h>
 
+#include <Wire.h>
+#include <VL6180X.h>
+
 #define FULL_POWER_CCW   180
 #define MID_POWER_CCW    95
 #define LOW_POWER_CCW    93
@@ -33,7 +36,15 @@
 
 #define SERVO_STOP     90
 
-#define LINE_THRESHOLD 850
+#define LINE_THRESHOLD 750
+
+
+VL6180X sensor1;
+VL6180X sensor2;
+VL6180X sensor3;
+int enable1 = 42;
+int enable2 = 44;
+int enable3 = 46;
 
 // defining a struct to hold information about each intersection
 typedef struct {
@@ -68,9 +79,9 @@ Servo left_servo;
 const int right_sensor_pin = 3;
 const int left_sensor_pin = 5;
 const int center_sensor_pin = 4;
-const int left_wall_pin = 1;
-const int center_wall_pin = 2;
-const int right_wall_pin = 0;
+//const int left_wall_pin = 1;
+//const int center_wall_pin = 2;
+//const int right_wall_pin = 0;
 
 // ------------------------ Will use this to store the value from the ADC --------------------------------
 
@@ -117,15 +128,15 @@ void updateSensors() {
 void wallRobot(){
   
   // Reading sensors
-  left_wall_sensor = analogRead(left_wall_pin); 
-  center_wall_sensor = analogRead(center_wall_pin); 
-  right_wall_sensor = analogRead(right_wall_pin); 
+  left_wall_sensor = sensor3.readRangeContinuousMillimeters(); 
+  center_wall_sensor = sensor2.readRangeContinuousMillimeters(); 
+  right_wall_sensor = sensor1.readRangeContinuousMillimeters(); 
 
   // The output of this function is described as left-center-right
   // with reference to the robot
-  walls[0] = (left_wall_sensor > 200);
-  walls[1] = (center_wall_sensor > 100);
-  walls[2] = (right_wall_sensor > 200);
+  walls[0] = (left_wall_sensor > 25);
+  walls[1] = (center_wall_sensor > 60);
+  walls[2] = (right_wall_sensor > 25);
 }
 
 // Function that updates the stack with possible paths, so make sure to call it only once!
@@ -320,6 +331,8 @@ void movement (State dir) {
       case STRAIGHT: 
         if(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
           while(right_sensor_value > LINE_THRESHOLD && left_sensor_value > LINE_THRESHOLD){
+            right_servo.write(MID_POWER_CW);
+            left_servo.write(MID_POWER_CCW);
             updateSensors();
             // stays going straight
           }
@@ -476,6 +489,60 @@ bool notYet(){
 
 void setup() {  
   pinMode(LED_BUILTIN, OUTPUT);
+
+  //TOF wall sensors setup
+  pinMode(enable1,OUTPUT);
+  pinMode(enable2,OUTPUT);
+  pinMode(enable3,OUTPUT);
+  Serial.begin(9600);
+  Wire.begin();
+
+  digitalWrite(enable1,HIGH);//turn on sensor1
+  digitalWrite(enable2,LOW);//turn off sensor2
+  digitalWrite(enable2,LOW);//turn off sensor3
+  sensor1.init();
+  sensor1.configureDefault();
+  sensor1.setTimeout(500);
+  delay(500);
+  sensor1.setAddress(0b1111011);//change I2C address
+
+  digitalWrite(enable2,HIGH); //turn on sensor2
+  sensor2.init();
+  sensor2.configureDefault();
+  sensor2.setTimeout(500);
+  delay(500);
+  sensor2.setAddress(0b1011011); //change I2C address
+
+  digitalWrite(enable3,HIGH); //turn on sensor3
+  sensor3.init();
+  sensor3.configureDefault();
+  sensor3.setTimeout(500);
+  delay(500);
+
+  sensor1.setScaling(1);
+  sensor2.setScaling(1);
+  sensor3.setScaling(1);
+
+  //set convergence time and integration values for all sensors
+  sensor1.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
+  sensor1.writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
+  sensor2.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
+  sensor2.writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
+  sensor3.writeReg(VL6180X::SYSRANGE__MAX_CONVERGENCE_TIME, 30);
+  sensor3.writeReg16Bit(VL6180X::SYSALS__INTEGRATION_PERIOD, 50);
+  
+  //stop continous readings
+  sensor1.stopContinuous();
+  sensor2.stopContinuous();
+  sensor3.stopContinuous();
+  delay(300);
+  
+  //start continous ranging for all sensors
+  sensor1.startInterleavedContinuous(100);
+  sensor2.startInterleavedContinuous(100);
+  sensor3.startInterleavedContinuous(100);
+
+  //WALL SENSORS SETUP END
   
   // Connect right servo to pin 9, left servo to pin 10
   right_servo.attach(10);
@@ -512,7 +579,7 @@ void setup() {
   inters[current_pos_x][current_pos_y] = current_intersect;
       
   // Send information about the first intersection before starting  
-  
+  /*
   // Starting the while loop to interact with the stack
   while(!stack.isEmpty()){
 
@@ -571,12 +638,12 @@ void setup() {
       
     }
     
-  }
+  }*/
   
   //Serial.println("Stack is empty");
 
   // Play victorious tone here
-/*
+
     movement(STRAIGHT);
     movement(STRAIGHT);
     movement(LEFT);
@@ -587,7 +654,6 @@ void setup() {
     movement(STRAIGHT);
     movement(TURN_AROUND);
     movement(STRAIGHT);
-*/
 }
 
 void loop() {
