@@ -134,24 +134,26 @@ void loop(void)
     radio.stopListening();
 
     //Hard coded values
-    unsigned char x_coord = 3;
-    unsigned short y_coord = 4; 
-    unsigned char treasure = 2;
-    unsigned short wall = 15;
-    unsigned char done_signal = 1;
+    unsigned char x_coord[21] = {0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,3,3,3,0};
+    unsigned short y_coord[21] = {0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,2,3,4,0}; 
+    unsigned char treasure[21] = {0,1,2,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,0};
+    unsigned short wall[21] = {1,2,3,3,3,4,7,8,3,5,1,2,3,3,4,1,1,6,0};
+    unsigned char done_signal[21] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};
 
     //Intergrate into 2 bytes payload
     //because unable to send position (0,0), y will start at 1 and be subtracted by one on the receiver side
-    unsigned short new_data = x_coord << 14 | y_coord+1 << 11 | treasure << 9 | wall << 5 | done_signal << 4;
+    unsigned short new_data = x_coord[count] << 14 | y_coord[count]+1 << 11 | treasure[count] << 9 | wall[count] << 5 | done_signal[count] << 4;
+    unsigned short done = x_coord[count+1] << 14 | y_coord[count+1]+1 << 11 | treasure[count+1] << 9 | wall[count+1] << 5 | 1 << 4;
     
     
+    if(count < 20){
     printf("Now sending new map data (%d)\n", new_data);
     bool ok = radio.write( &new_data, sizeof(unsigned short));
+    
     if (ok)
       printf("Payload Received!");
     else
       printf("Failed!,\n\r");
-
       
     // Now, continue listening
     radio.startListening();
@@ -159,6 +161,12 @@ void loop(void)
     
     // Try again 1s later
     delay(1000);
+    
+    }else{
+      bool ok = radio.write( &done, sizeof(unsigned short));
+    }
+
+      
   }
 
   //
