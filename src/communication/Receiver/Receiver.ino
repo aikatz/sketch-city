@@ -37,9 +37,16 @@
 // Set up nRF24L01 radio on SPI bus plus pins 9 & 10
 
 RF24 radio(9,10);
+
+byte position_load;
+byte data_load;
 unsigned char got_treasure[4][6];
 unsigned char got_wall[4][6];
 unsigned char got_done[4][6];
+unsigned char data_array[4][6];
+unsigned char position_array[4][6];
+
+
 //
 // Topology
 //
@@ -67,7 +74,14 @@ void setup(void)
 {
   //
   // Print preamble
-  //
+  // Serial communication
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(7, OUTPUT);
+  pinMode(8, OUTPUT);
 
   Serial.begin(57600);
   printf_begin();
@@ -138,7 +152,7 @@ void loop(void)
   if ( role == role_pong_back )
   {
     
-    unsigned short got_data;
+    volatile unsigned short got_data;
     bool done = false;
     unsigned char x_coord;
     unsigned short y_coord;
@@ -152,18 +166,37 @@ void loop(void)
     {
       // Fetch the payload, and see if this was the last one.
       done = radio.read( &got_data, sizeof(unsigned short) );
-    
       // Interpret new data
-      x_coord= (got_data & 0b1100000000000000) >> 14; //2 bits x coordinate data
-      y_coord= (got_data & 0b0011100000000000) >> 11; //3 bits y coordinate data
+      x_coord= (got_data & 0xC000) >> 14; //2 bits x coordinate data
+      y_coord= (got_data & 0x3800) >> 11; //3 bits y coordinate data
       y_coord= y_coord-1;
-      treasure= (got_data & 0b0000011000000000) >> 9; //2 bits treasure data
-      wall= (got_data & 0b0000000111100000 ) >> 5; //4 bits wall data
-      done_signal= (got_data & 0b0000000000010000) >> 4; //1 bit done signal
+      treasure= (got_data & 0x0600) >> 9; //2 bits treasure data
+      wall= (got_data & 0x01E0 ) >> 5; //4 bits wall data
+      done_signal= (got_data & 0x0010) >> 4; //1 bit done signal
+  
+      position_load= y_coord << 4 | x_coord << 2; 
+      data_load= wall << 4 | treasure << 2;
 
+      printf("%02X ", position_load);
+      printf("%02X\n", data_load);
+       if (done_signal == 1){  
+        digitalWrite(8, HIGH);
+        PORTD = B11111100;
+       } else {
+        digitalWrite(8, LOW);
+       PORTD = position_load;
+       delay(500);  
+       digitalWrite(8, HIGH);
+       PORTD = data_load;
+       delay(500);
+       }
+      
       got_treasure[x_coord][y_coord] = treasure;
       got_wall[x_coord][y_coord] = wall;
       got_done[x_coord][y_coord] = done_signal;
+
+      position_array[x_coord][y_coord] = position_load;
+      data_array[x_coord][y_coord] = data_load;
       
       // Delay just a little bit to let the other unit
       // make the transition to receiver
@@ -175,16 +208,24 @@ void loop(void)
     if ( radio.available() )
     {
       // Print the treasure
-      for (int i=0; i < 5; i++) {
-        for (int j=0; j < 4; j++) {
-          printf("%d ", got_treasure[j][i]);
-          printf("%d ", got_wall[j][i]);
-          printf("%d ", got_done[j][i]);
-          printf("|");
-        }
-        printf("\n");
-      }
-    
+     // for (int i=0; i < 5; i++) {
+        //for (int j=0; j < 4; j++) {
+          //printf("%02X ", position_array[j][i]);
+          //printf("%02X ", data_array[j][i]);
+          //printf("%d ", got_treasure[j][i]);
+          //printf("%d ", got_wall[j][i]);
+          //printf("%d ", got_done[j][i]);
+          //printf("|");
+       // }
+        //printf("\n");
+      //}
+
+      //communicate to FPGA
+
+       
+      
+      //printf("position: %02X, data: %02X\n", position_load, data_load);
+
       // Delay just a little bit to let the other unit
       // make the transition to receiver
       delay(20);
