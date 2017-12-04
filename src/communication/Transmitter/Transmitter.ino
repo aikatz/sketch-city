@@ -133,26 +133,26 @@ void loop(void)
     // First, stop listening so we can talk.
     radio.stopListening();
 
-    unsigned char x_coord[5] = {0, 1, 2, 3, 4};
-    unsigned char y_coord[5] = {1, 1, 2, 3, 4};
-    unsigned char treasure[5] = {1, 2, 1, 2, 3};
-    unsigned char new_data1 = x_coord[count % 5] << 6 | y_coord[count % 5] << 3 | treasure[count % 5] << 1 | 1;
-    unsigned char wall[5] = {1, 4, 6, 2, 3};
-    unsigned char done_signal[5] = {0, 0, 0, 0, 1};
-    unsigned char new_data2 = wall[count % 5] << 4 | done_signal[count % 5] << 3;
-    
+    //Hard coded values
+    unsigned char x_coord = 3;
+    unsigned short y_coord = 4; 
+    unsigned char treasure = 2;
+    unsigned short wall = 15;
+    unsigned char done_signal = 1;
 
-    printf("Now sending new map data (%d)\n", new_data1);
-    bool ok1 = radio.write( &new_data1, sizeof(unsigned char));
-    bool ok2 = radio.write( &new_data2, sizeof(unsigned char));
+    //Intergrate into 2 bytes payload
+    //because unable to send position (0,0), y will start at 1 and be subtracted by one on the receiver side
+    unsigned short new_data = x_coord << 14 | y_coord+1 << 11 | treasure << 9 | wall << 5 | done_signal << 4;
     
-    if (ok1)
-      printf("First payload Received!");
-    else if (ok2)
-      printf("Second payload Received!");
+    
+    printf("Now sending new map data (%d)\n", new_data);
+    bool ok = radio.write( &new_data, sizeof(unsigned short));
+    if (ok)
+      printf("Payload Received!");
     else
-      printf("Failed!\n\r");
+      printf("Failed!,\n\r");
 
+      
     // Now, continue listening
     radio.startListening();
     count++;
