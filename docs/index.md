@@ -10,4 +10,4 @@
 #### 4. [Tutorials](tutorials.md)
 #### 5. [Meeting Minutes](minutes.md)
 #### 6. [Ethics Assignment](ethics.md)
-#### 7. [Final Robot Design](Final Robot Design.md)
+#### 7. [Final Robot Design](finalrobotdesign.md)
