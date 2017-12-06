@@ -156,13 +156,13 @@ With a valid stack, we were left with a very important aspect of maze-solving: b
  
  Before the final competition, our treasure detection system was almsot perfect, having a detection ragne of amlmost four inches, and a very high success rate in distinguishing freqwuncies. Below is the amplfier cuirt we used:
  
- INSERT amplifier SCHEMATIC HERE
+<div style="text-align:center"><img src ="pictures/finalwebsite/diagram.html" /></div> 
  
  This circuit invovles inptu votlage biasing, a lowe pass filter, and very high gain The vtoalge biasing on the non inverting input stabliized te input signal to be set inthe middle of the poewr supply rails at 2.5V. The low pass filter prevertns and high  frequecnies from gettgin amplified. The circuit employs a very high gain, >100 which causes the signal to rail to the positive ovtlage rail even from very far distances. When first deisning the amplifier, I used a funciton gerneartor as the input siganl as opposed to the IR photidoe to elmiinate any niose and isolate the test at hand. Then I used the oscilloscope to map display the amplified output. I was able to vary the amplitude of the function generator signal to simulate the distance between the treasure and the IR sensor. I used different gain resistors until my amplfied output was still sginficant given an input siganl with a 300mV pk to pk. The amplified outut necessary for the Arduino's analog read function is between 0 and 5V.
  
  The main code imporvemetn afer lab 4 had to do with how we checked for bins with large magnitudes. Orignally, in lab 2, we determined the bin for 7, 11, and 17 khZ to be bins 47, 80, and 114 respectively. After FFT anlaysis is performed on the input signal, those 3 bins were compared to the surrounding bins to see if the difference between them and the surrounding bins was high, meaning there is a peak. The result was the often incorrect frequcies would be detected. Next we tried checking to see whether the bin magnitude was above a certain absolute threshold as opposed to comparing it to the neighboring bins' magnitudes. This seems to work very well and consistently correctly determinging the treasure frequency.
  
- '''c
+ ```c
  
  if (fft_log_out[47] > thresh){ // 7khz
       digitalWrite(led1, HIGH);   // turn the LED on (HIGH is the voltage level)
@@ -196,7 +196,7 @@ With a valid stack, we were left with a very important aspect of maze-solving: b
       digitalWrite(freq2, LOW);
       }
       
-      '''
+  ```
  
 When testing out microhone circuit, our oringial code from Lab2 was no longer working. We believe this has to do with changing the clock prescalar for the ADV. Eventually, we used the treasure dection code to determine the 660hz tone the microphone needs to hear. Passing the anlaog input from the microphone, and processing the Foruier transforms make it eay to identify the tone frequecny by seeing which bin has the largest magnitude. 
 
