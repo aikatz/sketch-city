@@ -156,7 +156,7 @@ With a valid stack, we were left with a very important aspect of maze-solving: b
  
  Before the final competition, our treasure detection system was almsot perfect, having a detection ragne of amlmost four inches, and a very high success rate in distinguishing freqwuncies. Below is the amplfier cuirt we used:
  
-<div style="text-align:center"><img src ="pictures/finalwebsite/diagram.html" /></div> 
+<div style="text-align:center"><img src ="pictures/screenshot.png" /></div> 
  
  This circuit invovles inptu votlage biasing, a lowe pass filter, and very high gain The vtoalge biasing on the non inverting input stabliized te input signal to be set inthe middle of the poewr supply rails at 2.5V. The low pass filter prevertns and high  frequecnies from gettgin amplified. The circuit employs a very high gain, >100 which causes the signal to rail to the positive ovtlage rail even from very far distances. When first deisning the amplifier, I used a funciton gerneartor as the input siganl as opposed to the IR photidoe to elmiinate any niose and isolate the test at hand. Then I used the oscilloscope to map display the amplified output. I was able to vary the amplitude of the function generator signal to simulate the distance between the treasure and the IR sensor. I used different gain resistors until my amplfied output was still sginficant given an input siganl with a 300mV pk to pk. The amplified outut necessary for the Arduino's analog read function is between 0 and 5V.
  
