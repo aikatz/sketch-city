@@ -30,7 +30,7 @@ if (done_signal == 1){
      PORTD = data_load;
      delay(500);
 }
-```c
+```
 The position data are being sent in the first payload. The wall and treasure data are being sent in the second payload. If done signal is one, a signal of all ones is being sent. 
 We have achieved successful real time transmission of full maze data from the main arduino to the second arduino and to the FPGA. However, an upgrade to arduino mega from arduino nano caused unexpected problems. The SPI ports on the arduino mega are different from the arduino nano which caused our failure of radio transmission on the final competition.
 # Final Robot Design
