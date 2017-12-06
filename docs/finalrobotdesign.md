@@ -1,10 +1,6 @@
 
 # Final Robot Design
-# NOTE: Some of us have finals Wednesday morning, if at all possible, please grade this report Wednesday night! (if you're seeing this message it's probably Wednesday morning and the report probably isn't done yet)
 ### CAD and Mechanical Design
-
-
-GUYS WE NEED MORE PICS AND VIDS ON THIS PAGE
 
 Mechanical Design Overview:
 - Custom Laser-cut Chassis
@@ -256,6 +252,6 @@ To display the maze, we use a series of select signals representing the north, e
 
 For the done audio signal, if the done signal is high, the code will run through the audio signal data array, updating the signal on the clock edge. If the robot is not done, it should not output anything. Below is a video of the FPGA displaying a maze on a screen, the messages are simulated, and not coming from a real robot, which is why the robots position simply scrolls from left to right. 
 
-# put video of fpga here
+# The video of the FPGA is uploading right now, when it's done I will replcae this text with the video
 
 ### Total Robot Cost
