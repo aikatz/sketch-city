@@ -1,8 +1,7 @@
 
 # Final Robot Design
 # NOTE: Some of us have finals Wednesday morning, if at all possible, please grade this report Wednesday night! (if you're seeing this message it's probably Wednesday morning and the report probably isn't done yet)
-### Chassis Design and Custom CAD Work
-
+### CAD and Mechanical Design
 
 Mechanical Design Overview:
 - Custom Laser-cut Chassis
@@ -18,7 +17,9 @@ Mechanical Design Overview:
 
 The entire robot was CADed using Autodesk Inventor Professional CAD software. Below is a picture of the final robot CAD. 
 
-<div style="text-align:center"><img src ="/pictures/finalwebsite/FullRobotCAD.PNG" /></div>
+<div style="text-align:center"><img src ="/pictures/finalwebsite/FullRobotCAD.PNG" /></div> INSERT PIC HERE
+
+The first step is designing a cutom robot where to choose a new chassis and drivetrain. For the chassis frame, we dicided to use a symmetric hexagonal shape, to accomodate for the the orthogonal symmetery of the maze structure. The inteniton was to design a robot that was a long as it was wide considringt the robot would have to make 90 and 180 degree turns ina confiened maze width. Next for our drivtrain, we choose high speed continuos rotation servos, whic hhad 3x the top RPM as the original servos. Additionally, 3D printed custom wheels for large diameter but lightweight.  
 
 
 
