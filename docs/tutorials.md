@@ -1,1 +1,1 @@
-# TO BE WRITTEN YET. PLEASE, WAIT
+[Generating a sine table in Python](tutorials/sinetable.md)
