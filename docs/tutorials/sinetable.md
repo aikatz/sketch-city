@@ -43,7 +43,7 @@ str = "My name is {} and the current year is {}".format("Alex", 2017)
 print(str)
 ```
 
-Applying this to our sine function and Verilog syntax, we get the expression: `127*math.sin(n*2*math.pi/N)+127`. Due to the way that Python handles types the output of this function is actually between 0 and 256, if we truncate the first part of the expression by converting it to an int, we have `int(127*math.sin(n*2*math.pi/N))+127`, and now the output is between 0 and 255. Now we need to to generate the values of n, so we can just use a loop, right? Well, if you use a loop the code looks like this:
+Applying this to our sine function and Verilog syntax, we get the expression: `127*math.sin(n*2*math.pi/N)+127`. The output of this expression is actually between 0 and 256, if we truncate the first part of the expression by converting it to an int, we have `int(127*math.sin(n*2*math.pi/N))+127`, and now the output is between 0 and 255. Now we need to to generate the values of n, so we can just use a loop, right? Well, if you use a loop the code looks like this:
 
 ```python
 for n in xrange(N):
