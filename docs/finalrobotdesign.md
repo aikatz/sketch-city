@@ -7,8 +7,10 @@ Even though we had three line sensors on our final robot design, our line follow
 # put picture of robot with line sensors showing
 
 ### Wall Detection
+Initially we were using the provided wall sensors, however since we had three wall sensors on our robot, that used up three possible inputs to our ADC, which we needed for other things. To free up pins on the ADC, and in order to get more accurate wall sensing, we ordered three [VL6180X time-of-flight](https://www.pololu.com/product/2489) sensors from Pololu. These sensors used i2c to communicate, and were more complex to set up than our previous sensors. However the gains in accuracy, stability and free ADC ports were worth it. We had a mysterious bug where our robot's processor would deadlock seemingly randomly, attemps to debug the issue were fruitless, until we learned that the Arduino Uno's built-in i2c SCL and SDA lines were actually tied to analog pins A4 and A5, which we were using. This was causing the crashing behavior. Once we freed up A4 and A5, the wall sensors worked wonderfully, however since we couldn't use A4 and A5, our net gain was only one analog pin. Eventually we moved to an Arduino Mega so we could have more Analog pins, however we ended up moving treasure and sound detection to a separate Arduino so we actually ended up not needing the extra pins the Mega offered. 
+
 ### Maze-Solving Algorithm
-### Treasure Detection
+### Treasure Detection and Start Tone Detection
 ### Radio Communication
 
 ### FPGA: FPGA + Arduino Communication
@@ -23,3 +25,5 @@ To display the maze, we use a series of select signals representing the north, e
 For the done audio signal, if the done signal is high, the code will run through the audio signal data array, updating the signal on the clock edge. If the robot is not done, it should not output anything. Below is a video of the FPGA displaying a maze on a screen, the messages are simulated, and not coming from a real robot, which is why the robots position simply scrolls from left to right. 
 
 # put video of fpga here
+
+### Total Robot Cost
