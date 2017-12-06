@@ -56,13 +56,7 @@ But that's two lines, not one! Yes, you could just move the second line up to th
 [print("sine[{}] <= 8'd{};".format(n, int(127*math.sin(n*math.pi/N)+127))) for n in xrange(N)]
 ```
 
-One _very_ important note is that since `print` is a statement, not a function, in Python 2.7.x, you need to add the following line of code to the top of your file:
-
-```
-from __future__ import print_function
-```
-
-Which will import the version of `print` that is a function, not a statement, which will allow you to use the list comprehension syntax above. If you are curious about using list-comprehension in more complex scenarios, take a look at the link above! Here is the full code including the imports, assuming `N=256`.
+One _very_ important note is that since `print` is a statement, not a function, in Python 2.7.x, you need to add the following line of code to the top of your file: `from __future__ import print_function` Which will import the version of `print` that is a function, not a statement, which will allow you to use the list comprehension syntax above. If you are curious about using list-comprehension in more complex scenarios, take a look at the link above! Here is the full code including the imports, assuming `N=256`.
 
 ```
 from __future__ import print_function
