@@ -5,16 +5,16 @@
 
 
 Mechanical Design Overview:
--Custom Laser-cut Chassis
--Custom 3D Printed Wheels
--Drivetrain with indepent 5V power supply
--Faster Continous Rotation Servos
--Time of Flight Wall Sensors via I2C
--Power Distribution/ I2C Proto Board
--Treasure Sensor Amplifier Protoboard with singaling LEDs
--Embedded Microphone
--Treasure Sensor Adjustable Extension Arms
--Dedicated FFT Arduino
+- Custom Laser-cut Chassis
+- Custom 3D Printed Wheels
+- Drivetrain with indepent 5V power supply
+- Faster Continous Rotation Servos
+- Time of Flight Wall Sensors via I2C
+- Power Distribution/ I2C Proto Board
+- Treasure Sensor Amplifier Protoboard with singaling LEDs
+- Embedded Microphone
+- Treasure Sensor Adjustable Extension Arms
+- Dedicated FFT Arduino
 
 The entire robot was CADed using Autodesk Inventor Professional CAD software. Below is a picutre of the final robot CAD. 
 
