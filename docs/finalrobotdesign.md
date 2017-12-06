@@ -21,7 +21,7 @@ Mechanical Design Overview:
 
 The entire robot was CADed using Autodesk Inventor Professional CAD software. Below is a picture of the final robot CAD. 
 
-<div style="text-align:center"><img src ="pictures/finalwebsite/FullRobotCAD.PNG" /></div> INSERT PIC HERE
+<div style="text-align:center"><img src ="pictures/finalwebsite/FullRobotCAD.PNG" /></div>
 
 The first step is designing a cutom robot where to choose a new chassis and drivetrain. For the chassis frame, we dicided to use a symmetric hexagonal shape, to accomodate for the the orthogonal symmetery of the maze structure. The intention was to design a robot that was a long as it was wide considringt the robot would have to make 90 and 180 degree turns ina confiened maze width. Next for our drivetrain, we knew we wanted a fast robot, which meant faster servos/acutarors or larger wheels. Orginially, we 3D pritned large, lightwerigth cusotm wheels for the original servos. Eventually we bought high speed continuos rotation servos, whic had 3x the top RPM as the original servos. After having linefollwoing code with the old servos, when switching to the fast servos line following became very difficulto to tune due to the lwo resolution of the servo speed. Essentially, the servos combined with the large wheels were to fast and thr obot would overreact and move off the line. Ine the end we stuck with our orignial servos and the large wheels, in order to not have to deal more servo control resolution. Custom 3D printed servo mounts were used to fix the servos between two laser0cutt chassis plates.
 
@@ -29,7 +29,7 @@ Once we had a custom chassis down, we created an indepent power supply for the d
 
 After seeing the poor quality and performance of the mid-range IR sensors for wall detection, we chose to buy more accruate sensors. The orginial IR sensors outputted analog values whose range was not directly proportional to the distance. In fact, tow different ranges could output the same analog value. For this reason as well as our limited number of analog input pins, we choose the VL6180X Time of Flight Distance Ranging Sensor for wall detection. These sensors resulted in much higher accruacy and freed up analog pins for treasure detection and line following. We 3D printed a mount to hold all three ranging sensors above the plane of the wheels 90 degrees apart. This sensor stand was specially designed for integration of the wall sensors, IR sensors, microhpone, and power distritbution and IR amplifier protoboards. The stand has a pocket for the microphone to be embedded above all other sensors to easily hear the starting tone. It also has arms that extend below the wall sensors to hold the IR photodiodes used for treasure detection as close to thre walls as possible without falsely trigering the wall sensors. Finally, the stand was supported by two posts, which had rails in them to hold protoboards for I2C, power distribution, and treasure sensors amplifcation. The treause sensors extension arms were designed to place the IR photodiodes at the same height as other treasures, 4cm above the ground. Additonally the extension arms are able to pivot to properly align the IR sensors to face the treasure.
 
-<div style="text-align:center"><img src ="pictures/finalwebsite/Treasure ExtensionArms.PNG" /></div> INSERT picture HERE
+<div style="text-align:center"><img src ="pictures/finalwebsite/Treasure ExtensionArms.PNG" /></div> 
 
 Our robot used two Arduinos, one which ran the drivetrain, line follwoing, and DFS algortihm, and the other which detected treasures and the starting tone via FFT analysis on sensor inputs. This was done because we were warned that the FFT library we used in lab to distinguish between sound tones and treasure frequencies was causing bugs in working code once intregrated with other code such as line following. This was partially due to the the fact the interupts were turend off and pwm signals were distorted in the FFT library. 
 
@@ -202,10 +202,11 @@ With a valid stack, we were left with a very important aspect of maze-solving: b
       
       '''
  
-When testing out microhone circuit, our oringial code from Lab2 was no longer working. We believe this has to do with changing the clock prescalar for the ADV. Eventually, we used the treasure dection code to determine the 660hz tone the microphone needs to hear. Passing the anlaog input from the microphone, and processing the Foruier transforms make it eay to identify the tone frequecny by seeing which bin has the largest magnitude.
- 
- 
+When testing out microhone circuit, our oringial code from Lab2 was no longer working. We believe this has to do with changing the clock prescalar for the ADV. Eventually, we used the treasure dection code to determine the 660hz tone the microphone needs to hear. Passing the anlaog input from the microphone, and processing the Foruier transforms make it eay to identify the tone frequecny by seeing which bin has the largest magnitude. 
+
  After protoying the circuit on a breadboard and determining tis consitinent ability to ditsiugish betwene different frequency treasures, we moved the entire eamplifier circuit to a protoboard.Insert code here
+
+Here's a link to a video of our robot detecting a treasure (note the white LED flashing). In the competition we successfully detected all but one of the treasures. https://drive.google.com/file/d/1KSAKfEoOMPxYLgtcHFr16oRDtnY1DGQH/view?usp=sharing
 
 ### Radio Communication
 Two arduinos are involved in radio transmission. The arduino on the robot is responsible for sending maze information to the arduino that is serially connected to the FPGA. This information  was coded in 2 bytes: 5 bits for current position (2 bites for x and 3 bits for y), 2 bits for the 3 possible treasures, 1 bit for wall on each side, and 1 bit for done signal. 
