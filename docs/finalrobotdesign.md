@@ -252,6 +252,6 @@ To display the maze, we use a series of select signals representing the north, e
 
 For the done audio signal, if the done signal is high, the code will run through the audio signal data array, updating the signal on the clock edge. If the robot is not done, it should not output anything. Below is a video of the FPGA displaying a maze on a screen, the messages are simulated, and not coming from a real robot, which is why the robots position simply scrolls from left to right. 
 
-# The video of the FPGA is uploading right now, when it's done I will replcae this text with the video
+Here's a video of the fpga: https://drive.google.com/file/d/1dwliuZWNAZF4N7iY1FQmOscHm5BTccEp/view?usp=sharing
 
 ### Total Robot Cost
