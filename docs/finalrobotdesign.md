@@ -21,7 +21,7 @@ enum Orientation{
   WEST,
   EAST
 };
-```c
+```
 
 Given these possible orientations, we were able to easily convert wall detection from robot to maze perspective:
 
@@ -85,7 +85,7 @@ void wallMaze () {
      }
   }
 }
-```c
+```
 
 With actual walls taken care of, we had to use robot-perspective wall detection and orientation to update the stack appropriately with the possible paths:
 
@@ -116,7 +116,7 @@ void updateStack(){
       break;
   }
 }
-```c
+```
 
 With a valid stack, we were left with a very important aspect of maze-solving: back-tracking. Sadly, after spending a lot of time of this algorithm, it was constantly encountering new and more devastating bugs every time, therefore it did not perform properly at **Competition Day**. We based this algorithm as a simple loop condition that would be trigerred once true: if the position you want to go is at a distance greater than 1 intersection -either in the x or the y axis-, start back-tracking. We made this possible by creating a struct *inters* for every intersection that would hold the previous intersection the robot visited before getting there. Additionally, we checked that in the case of having our to-go intersection at a reachable distance of 1, we also checked for walls to avoid crashing. Although it could not get it done sometimes, we definitely experienced previous mappings where the robot behaved as intended. However, the only times it failed, it was because of erroneous back-pointer analysis, since we did some solid testing on the stack implementation.
 
