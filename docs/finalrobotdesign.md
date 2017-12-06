@@ -16,9 +16,11 @@ Mechanical Design Overview:
 - Treasure Sensor Adjustable Extension Arms
 - Dedicated FFT Arduino
 
-The entire robot was CADed using Autodesk Inventor Professional CAD software. Below is a picutre of the final robot CAD. 
+The entire robot was CADed using Autodesk Inventor Professional CAD software. Below is a picture of the final robot CAD. 
 
 <div style="text-align:center"><img src ="/pictures/finalwebsite/FullRobotCAD.PNG" /></div>
+
+
 
 
 ### Line Following
