@@ -1,24 +1,38 @@
 
 # Final Robot Design
 # NOTE: Some of us have finals Wednesday morning, if at all possible, please grade this report Wednesday night! (if you're seeing this message it's probably Wednesday morning and the report probably isn't done yet)
-### Chassis Design and Custom CAD Work
-
+### CAD and Mechanical Design
 
 Mechanical Design Overview:
--Custom Laser-cut Chassis
--Custom 3D Printed Wheels
--Drivetrain with indepent 5V power supply
--Faster Continous Rotation Servos
--Time of Flight Wall Sensors via I2C
--Power Distribution/ I2C Proto Board
--Treasure Sensor Amplifier Protoboard with singaling LEDs
--Embedded Microphone
--Treasure Sensor Adjustable Extension Arms
--Dedicated FFT Arduino
+- Custom Laser-cut Chassis
+- Custom 3D Printed Wheels
+- Drivetrain with indepent 5V power supply
+- Faster Continous Rotation Servos
+- Time of Flight Wall Sensors via I2C
+- Power Distribution/ I2C Proto Board
+- Treasure Sensor Amplifier Protoboard with singaling LEDs
+- Embedded Microphone
+- Treasure Sensor Adjustable Extension Arms
+- Dedicated FFT Arduino
+- Optimized wiring, no breadboards
 
-The entire robot was CADed using Autodesk Inventor Professional CAD software. Below is a picutre of the final robot CAD. 
+The entire robot was CADed using Autodesk Inventor Professional CAD software. Below is a picture of the final robot CAD. 
 
-<div style="text-align:center"><img src ="../pictures/finalwebsite/FullRobotCAD.PNG" /></div>
+<div style="text-align:center"><img src ="../pictures/finalwebsite/FullRobotCAD.PNG" /></div> INSERT PIC HERE
+
+The first step is designing a cutom robot where to choose a new chassis and drivetrain. For the chassis frame, we dicided to use a symmetric hexagonal shape, to accomodate for the the orthogonal symmetery of the maze structure. The intention was to design a robot that was a long as it was wide considringt the robot would have to make 90 and 180 degree turns ina confiened maze width. Next for our drivetrain, we knew we wanted a fast robot, which meant faster servos/acutarors or larger wheels. Orginially, we 3D pritned large, lightwerigth cusotm wheels for the original servos. Eventually we bought high speed continuos rotation servos, whic had 3x the top RPM as the original servos. After having linefollwoing code with the old servos, when switching to the fast servos line following became very difficulto to tune due to the lwo resolution of the servo speed. Essentially, the servos combined with the large wheels were to fast and thr obot would overreact and move off the line. Ine the end we stuck with our orignial servos and the large wheels, in order to not have to deal more servo control resolution. Custom 3D printed servo mounts were used to fix the servos between two laser0cutt chassis plates.
+
+Once we had a custom chassis down, we created an indepent power supply for the driveline usinga  9V battery and 5V linear regualtor. This was necessary because throughout the first few labs we ahd a recurrign issue of the arudino restarting in the middle of its movemetn. We later deduced this was dudeo to high back-emfs cause by the servos quick acceleartions. BY providing the servos with a power supply indepentenf othe arudino's the voltage spike cannot cause the arudino to restart. As a result. We used the folowing ciruit to establish an indendent power supply for our drivetrain.
+
+After seeing the poor quality and performance of the mid-range IR sensors for wall detection, we chose to buy more accruate sensors. The orginial IR sensors outputted analog values whose range was not directly proportional to the distance. In fact, tow different ranges could output the same analog value. For this reason as well as our limited number of analog input pins, we choose the VL6180X Time of Flight Distance Ranging Sensor for wall detection. These sensors resulted in much higher accruacy and freed up analog pins for treasure detection and line following. We 3D printed a mount to hold all three ranging sensors above the plane of the wheels 90 degrees apart. This sensor stand was specially designed for integration of the wall sensors, IR sensors, microhpone, and power distritbution and IR amplifier protoboards. The stand has a pocket for the microphone to be embedded above all other sensors to easily hear the starting tone. It also has arms that extend below the wall sensors to hold the IR photodiodes used for treasure detection as close to thre walls as possible without falsely trigering the wall sensors. Finally, the stand was supported by two posts, which had rails in them to hold protoboards for I2C, power distribution, and treasure sensors amplifcation. The treause sensors extension arms were designed to place the IR photodiodes at the same height as other treasures, 4cm above the ground. Additonally the extension arms are able to pivot to properly align the IR sensors to face the treasure.
+
+<div style="text-align:center"><img src ="../pictures/finalwebsite/TreasureExtensionArms.PNG" /></div> INSERT picture HERE
+
+Our robot used two Arduinos, one which ran the drivetrain, line follwoing, and DFS algortihm, and the other which detected treasures and the starting tone via FFT analysis on sensor inputs. This was done because we were warned that the FFT library we used in lab to distinguish between sound tones and treasure frequencies was causing bugs in working code once intregrated with other code such as line following. This was partially due to the the fact the interupts were turend off and pwm signals were distorted in the FFT library. 
+
+Finally, in order to minimze wiring confusion or failure due to bad wiring connections, we elimnated all breadboards and jumper cables. All circuits on the roboy with the exception of the IR photodiodes are permanently soldered. A protoboard was created in order to distribue power to all sensors on the sensors stand, including the IR photodiodes, microphone, and wall sensors, as well as host the I2C bus SDA and SCL lines. Another protobaord was used for the amplifier ciruit that enabled treasure to be detected up to 4 inches away. Both of these protoboards were installed vertically directly into the stand rails so as to minimize wire length. 
+
+
 
 
 ### Line Following
@@ -139,6 +153,9 @@ void updateStack(){
 With a valid stack, we were left with a very important aspect of maze-solving: back-tracking. Sadly, after spending a lot of time of this algorithm, it was constantly encountering new and more devastating bugs every time, therefore it did not perform properly at **Competition Day**. We based this algorithm as a simple loop condition that would be trigerred once true: if the position you want to go is at a distance greater than 1 intersection -either in the x or the y axis-, start back-tracking. We made this possible by creating a struct *inters* for every intersection that would hold the previous intersection the robot visited before getting there. Additionally, we checked that in the case of having our to-go intersection at a reachable distance of 1, we also checked for walls to avoid crashing. Although it could not get it done sometimes, we definitely experienced previous mappings where the robot behaved as intended. However, the only times it failed, it was because of erroneous back-pointer analysis, since we did some solid testing on the stack implementation.
 
 ### Treasure Detection and Start Tone Detection
+
+Insert code here
+
 ### Radio Communication
 Two arduinos are involved in radio transmission. The arduino on the robot is responsible for sending maze information to the arduino that is serially connected to the FPGA. This information  was coded in 2 bytes: 5 bits for current position (2 bites for x and 3 bits for y), 2 bits for the 3 possible treasures, 1 bit for wall on each side, and 1 bit for done signal. 
 ```c
