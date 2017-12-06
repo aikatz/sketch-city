@@ -1,3 +1,38 @@
+Two arduinos are involved in radio transmission. The arduino on the robot is responsible for sending maze information to the arduino that is serially connected to the FPGA. This information  was coded in 2 bytes: 5 bits for current position (2 bites for x and 3 bits for y), 2 bits for the 3 possible treasures, 1 bit for wall on each side, and 1 bit for done signal. 
+```c
+//Intergrate into 2 bytes payload
+//because unable to send position (0,0), y will start at 1 and be subtracted by one on the receiver side
+   unsigned short new_data = x_coord[count] << 14 | y_coord[count]+1 << 11 | treasure[count] << 9 | wall[count] << 5 | done_signal[count] << 4;
+   unsigned short done = x_coord[count+1] << 14 | y_coord[count+1]+1 << 11 | treasure[count+1] << 9 | wall[count+1] << 5 | 1 << 4;
+```
+On the receiver side, the arduino will parse this data into important information. Then it will integrate the information into two payloads of 7 bits and send it to the FPGA.
+```c
+// Fetch the payload, and see if this was the last one.
+done = radio.read( &got_data, sizeof(unsigned short) );
+// Interpret new data
+x_coord= (got_data & 0xC000) >> 14; //2 bits x coordinate data
+y_coord= (got_data & 0x3800) >> 11; //3 bits y coordinate data
+y_coord= y_coord-1;
+treasure= (got_data & 0x0600) >> 9; //2 bits treasure data
+wall= (got_data & 0x01E0 ) >> 5; //4 bits wall data
+done_signal= (got_data & 0x0010) >> 4; //1 bit done signal
+//Two loads are being sent to the FPGA
+position_load= y_coord << 4 | x_coord << 2;
+data_load= wall << 4 | treasure << 2;
+if (done_signal == 1){ 
+    digitalWrite(8, HIGH);
+    PORTD = B11111100;
+    } else {
+     digitalWrite(8, LOW);
+     PORTD = position_load;
+     delay(500); 
+     digitalWrite(8, HIGH);
+     PORTD = data_load;
+     delay(500);
+}
+```c
+The position data are being sent in the first payload. The wall and treasure data are being sent in the second payload. If done signal is one, a signal of all ones is being sent. 
+We have achieved successful real time transmission of full maze data from the main arduino to the second arduino and to the FPGA. However, an upgrade to arduino mega from arduino nano caused unexpected problems. The SPI ports on the arduino mega are different from the arduino nano which caused our failure of radio transmission on the final competition.
 # Final Robot Design
 # NOTE: Some of us have finals Wednesday morning, if at all possible, please grade this report Wednesday night! (if you're seeing this message it's probably Wednesday morning and the report probably isn't done yet)
 ### Chassis Design and Custom CAD Work
