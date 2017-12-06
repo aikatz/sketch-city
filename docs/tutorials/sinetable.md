@@ -1,6 +1,6 @@
 # Create a Sine Table in One* Line of Python
 
-*The generation happens in on line, but it also needs a couple of imports.
+*The generation happens in one line, but it also needs a couple of imports.
 
 NOTE: This tutorial uses Python 2.7.x
 
