@@ -3,6 +3,19 @@
 # NOTE: Some of us have finals Wednesday morning, if at all possible, please grade this report Wednesday night! (if you're seeing this message it's probably Wednesday morning and the report probably isn't done yet)
 ### Chassis Design and Custom CAD Work
 
+
+Deisgn Overview:
+New Chassis
+- Drivetrain with indepent power supply
+- Faster Continous Rotation Servos
+Time of Flight Wall Sensors via I2C
+Dedicated FFT Arduino
+Power Distribution/ I2C Proto Board
+Treasure Sensor Amplifier Protoboard with singaling LEDs
+Embedded Microphone
+Treasure Sensor Adjustable Extension Arms
+
+
 ### Line Following
 Even though we had three line sensors on our final robot design, our line following algorithm only really used two of them. The sensors we used were the provided line sensors we got in Lab 1, and we read their values using `analogRead()`. The plan was to move the third back to be inline with the middle of the robot in order to allow us to stop exactly on intersections without using millis(). The line sensing algorithm for following a straight line was extremely basic, and we implemented it using an FSM with the following states: `STRAIGHT, SLIGHT_RIGHT, SLIGHT_LEFT, RIGHT, LEFT, INTERSECTION, TURN_AROUND`. For example while the right sensor's value was above the threshold (higher value -> darker), the robot moved the right servo slightly faster, and the left servo slightly slower (that's the SLIGHT_LEFT state). This moved the robot back onto the line and was far smoother than having one wheel stop completely, or running the wheels in opposite directions. At an intersection, signaled by both of the line sensors being on a line, the robot would continue forward an amount of time based on the speed of the servos, and then stop in the middle of the intersection. If the robot stopped as soon as it detected an intersection, the robot would actually be behind the intersection, which would hinder turning and cripple treasure detection. Below is a picture of our final robot design, note the three line sensors in the front. The center line sensor is the one we don't use.
 
