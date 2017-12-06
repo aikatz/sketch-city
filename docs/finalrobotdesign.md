@@ -198,9 +198,9 @@ With a valid stack, we were left with a very important aspect of maze-solving: b
       
   ```
  
-When testing out microhone circuit, our oringial code from Lab2 was no longer working. We believe this has to do with changing the clock prescalar for the ADV. Eventually, we used the treasure dection code to determine the 660hz tone the microphone needs to hear. Passing the anlaog input from the microphone, and processing the Foruier transforms make it eay to identify the tone frequecny by seeing which bin has the largest magnitude. 
+When testing out microphone circuit, our original code from Lab 2 was no longer working. We believe this has to do with changing the clock prescalar for the ADC. Eventually, we used the treasure detection code to determine the 660hz tone the microphone needs to recogniize. Passing in the analog input from the microphone, and processing the Fourier transform make it easy to identify the tone frequency by seeing which bin has the largest magnitude. 
 
- After protoying the circuit on a breadboard and determining tis consitinent ability to ditsiugish betwene different frequency treasures, we moved the entire eamplifier circuit to a protoboard.Insert code here
+ After protoying the circuit on a breadboard and determining its ability to distinguish between different frequency treasures, we moved the entire eamplifier circuit to a protoboard.
 
 Here's a link to a video of our robot detecting a treasure (note the white LED flashing). In the competition we successfully detected all but one of the treasures. 
 Video of treasure detection: https://drive.google.com/file/d/1KSAKfEoOMPxYLgtcHFr16oRDtnY1DGQH/view?usp=sharing
