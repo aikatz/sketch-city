@@ -1,9 +1,12 @@
 # Final Robot Design
 ### Chassis Design and Custom CAD Work
+
 ### Line Following
+Even though we had three line sensors on our final robot design, our line following algorithm only really used two of them. The sensors we used were the provided line sensors we got in Lab 1, and we read their values using `analogRead()`. The plan was to move the third back to be inline with the middle of the robot in order to allow us to stop exactly on intersections without using millis(). The line sensing algorithm for following a straight line was extremely basic. For example while the right sensor's value was above the threshold (higher value -> darker), the robot moved the right servo slightly faster, and the left servo slightly slower. This moved the robot back onto the line and was far smoother than having one wheel stop completel, or running the wheels in opposite directions. At an intersection, signaled by both of the line sensors being on a line, the robot would continue forward an amount of time based on the speed of the servos, and then stop in the middle of the intersection. If the robot stopped as soon as it detected an intersection, the robot would actually be behind the intersection, which would hinder turning and cripple treasure detection.
+
 ### Wall Detection
-### Treasure Detection
 ### Maze-Solving Algorithm
+### Treasure Detection
 ### Radio Communication
 
 ### FPGA: FPGA + Arduino Communication
