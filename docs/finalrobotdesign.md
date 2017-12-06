@@ -35,9 +35,6 @@ Our robot used two Arduinos, one which ran the drivetrain, line follwoing, and D
 
 Finally, in order to minimze wiring confusion or failure due to bad wiring connections, we elimnated all breadboards and jumper cables. All circuits on the roboy with the exception of the IR photodiodes are permanently soldered. A protoboard was created in order to distribue power to all sensors on the sensors stand, including the IR photodiodes, microphone, and wall sensors, as well as host the I2C bus SDA and SCL lines. Another protobaord was used for the amplifier ciruit that enabled treasure to be detected up to 4 inches away. Both of these protoboards were installed vertically directly into the stand rails so as to minimize wire length. 
 
-
-
-
 ### Line Following
 Even though we had three line sensors on our final robot design, our line following algorithm only really used two of them. The sensors we used were the provided line sensors we got in Lab 1, and we read their values using `analogRead()`. The plan was to move the third back to be inline with the middle of the robot in order to allow us to stop exactly on intersections without using millis(). The line sensing algorithm for following a straight line was extremely basic, and we implemented it using an FSM with the following states: `STRAIGHT, SLIGHT_RIGHT, SLIGHT_LEFT, RIGHT, LEFT, INTERSECTION, TURN_AROUND`. For example while the right sensor's value was above the threshold (higher value -> darker), the robot moved the right servo slightly faster, and the left servo slightly slower (that's the SLIGHT_LEFT state). This moved the robot back onto the line and was far smoother than having one wheel stop completely, or running the wheels in opposite directions. At an intersection, signaled by both of the line sensors being on a line, the robot would continue forward an amount of time based on the speed of the servos, and then stop in the middle of the intersection. If the robot stopped as soon as it detected an intersection, the robot would actually be behind the intersection, which would hinder turning and cripple treasure detection. Below is a picture of our final robot design, note the three line sensors in the front. The center line sensor is the one we don't use.
 
@@ -155,7 +152,7 @@ void updateStack(){
 
 With a valid stack, we were left with a very important aspect of maze-solving: back-tracking. Sadly, after spending a lot of time of this algorithm, it was constantly encountering new and more devastating bugs every time, therefore it did not perform properly at **Competition Day**. We based this algorithm as a simple loop condition that would be trigerred once true: if the position you want to go is at a distance greater than 1 intersection -either in the x or the y axis-, start back-tracking. We made this possible by creating a struct *inters* for every intersection that would hold the previous intersection the robot visited before getting there. Additionally, we checked that in the case of having our to-go intersection at a reachable distance of 1, we also checked for walls to avoid crashing. Although it could not get it done sometimes, we definitely experienced previous mappings where the robot behaved as intended. However, the only times it failed, it was because of erroneous back-pointer analysis, since we did some solid testing on the stack implementation.
 
-INSERT VIDEO HERE
+<div><iframe width="854" height="480" src="https://www.youtube.com/embed/drOelYBmBuw" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe></div>
 
 ### Treasure Detection and Start Tone Detection
 
