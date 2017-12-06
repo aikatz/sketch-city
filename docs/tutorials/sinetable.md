@@ -1,5 +1,7 @@
 # Create a Sine Table in One* Line of Python
 
+#### By: Alex Katz, Sketch City (Team 9)
+
 *The generation happens in one line, but it also needs a couple of imports.
 
 NOTE: This tutorial uses Python 2.7.x
