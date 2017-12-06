@@ -3,6 +3,9 @@
 # NOTE: Some of us have finals Wednesday morning, if at all possible, please grade this report Wednesday night! (if you're seeing this message it's probably Wednesday morning and the report probably isn't done yet)
 ### CAD and Mechanical Design
 
+
+GUYS WE NEED MORE PICS AND VIDS ON THIS PAGE
+
 Mechanical Design Overview:
 - Custom Laser-cut Chassis
 - Custom 3D Printed Wheels
