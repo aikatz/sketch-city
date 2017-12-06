@@ -1,5 +1,5 @@
 # Final Robot Design
-### Physical Design and Custom CAD Work
+### Chassis Design and Custom CAD Work
 ### Line Following
 ### Wall Detection
 ### Treasure Detection
