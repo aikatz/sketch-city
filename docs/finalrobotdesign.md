@@ -22,7 +22,7 @@ The entire robot was CADed using Autodesk Inventor Professional CAD software. Be
 
 The first step is designing a cutom robot where to choose a new chassis and drivetrain. For the chassis frame, we dicided to use a symmetric hexagonal shape, to accomodate for the the orthogonal symmetery of the maze structure. The intention was to design a robot that was a long as it was wide considringt the robot would have to make 90 and 180 degree turns ina confiened maze width. Next for our drivetrain, we knew we wanted a fast robot, which meant faster servos/acutarors or larger wheels. Orginially, we 3D pritned large, lightwerigth cusotm wheels for the original servos. Eventually we bought high speed continuos rotation servos, whic had 3x the top RPM as the original servos. After having linefollwoing code with the old servos, when switching to the fast servos line following became very difficulto to tune due to the lwo resolution of the servo speed. Essentially, the servos combined with the large wheels were to fast and thr obot would overreact and move off the line. Ine the end we stuck with our orignial servos and the large wheels, in order to not have to deal more servo control resolution. Custom 3D printed servo mounts were used to fix the servos between two laser0cutt chassis plates.
 
-Once we had a custom chassis down, we created an indepent power supply for the driveline usinga  9V battery and 5V linear regualtor. This was necessary because throughout the first few labs we ahd a recurrign issue of the arudino restarting in the middle of its movemetn. We later deduced this was dudeo to high back-emfs cause by the servos quick acceleartions. BY providing the servos with a power supply indepentenf othe arudino's the voltage spike cannot cause the arudino to restart. As a result. We used the folowing ciruit to establish an indendent power supply for our drivetrain.
+Once we had a custom chassis down, we created an indepent power supply for the driveline usinga  9V battery and 5V linear regualtor. This was necessary because throughout the first few labs we ahd a recurrign issue of the arudino restarting in the middle of its movement. We later deduced this was due to high back-emmfs caused by the servo's quick accelearations. By providing the servos with a power supply indepentent of the Arduino's, the voltage spike cannot cause the Arduino to restart. As a result, we used the following circuit to establish an indendent power supply for our drivetrain.
 
 After seeing the poor quality and performance of the mid-range IR sensors for wall detection, we chose to buy more accruate sensors. The orginial IR sensors outputted analog values whose range was not directly proportional to the distance. In fact, tow different ranges could output the same analog value. For this reason as well as our limited number of analog input pins, we choose the VL6180X Time of Flight Distance Ranging Sensor for wall detection. These sensors resulted in much higher accruacy and freed up analog pins for treasure detection and line following. We 3D printed a mount to hold all three ranging sensors above the plane of the wheels 90 degrees apart. This sensor stand was specially designed for integration of the wall sensors, IR sensors, microhpone, and power distritbution and IR amplifier protoboards. The stand has a pocket for the microphone to be embedded above all other sensors to easily hear the starting tone. It also has arms that extend below the wall sensors to hold the IR photodiodes used for treasure detection as close to thre walls as possible without falsely trigering the wall sensors. Finally, the stand was supported by two posts, which had rails in them to hold protoboards for I2C, power distribution, and treasure sensors amplifcation. The treause sensors extension arms were designed to place the IR photodiodes at the same height as other treasures, 4cm above the ground. Additonally the extension arms are able to pivot to properly align the IR sensors to face the treasure.
 
@@ -152,9 +152,60 @@ void updateStack(){
 
 With a valid stack, we were left with a very important aspect of maze-solving: back-tracking. Sadly, after spending a lot of time of this algorithm, it was constantly encountering new and more devastating bugs every time, therefore it did not perform properly at **Competition Day**. We based this algorithm as a simple loop condition that would be trigerred once true: if the position you want to go is at a distance greater than 1 intersection -either in the x or the y axis-, start back-tracking. We made this possible by creating a struct *inters* for every intersection that would hold the previous intersection the robot visited before getting there. Additionally, we checked that in the case of having our to-go intersection at a reachable distance of 1, we also checked for walls to avoid crashing. Although it could not get it done sometimes, we definitely experienced previous mappings where the robot behaved as intended. However, the only times it failed, it was because of erroneous back-pointer analysis, since we did some solid testing on the stack implementation.
 
+INSERT VIDEO HERE
+
 ### Treasure Detection and Start Tone Detection
 
-Insert code here
+ After Lab 2, we were able to detec treasure from a little over one inch away. We used a non inverting amplifier with a small gain of about 3 to amplfiy the voltage enough fo teh the Arduino to read. But, indatition to the detection ragne being very small, our code somewhat inconsisten itn that if often sdetected false positivs of incorrect frequencies.
+ 
+ Before the final competition, our treasure detection system was almsot perfect, having a detection ragne of amlmost four inches, and a very high success rate in distinguishing freqwuncies. Below is the amplfier cuirt we used:
+ 
+ INSERT amplifier SCHEMATIC HERE
+ 
+ This circuit invovles inptu votlage biasing, a lowe pass filter, and very high gain The vtoalge biasing on the non inverting input stabliized te input signal to be set inthe middle of the poewr supply rails at 2.5V. The low pass filter prevertns and high  frequecnies from gettgin amplified. The circuit employs a very high gain, >100 which causes the signal to rail to the positive ovtlage rail even from very far distances. When first deisning the amplifier, I used a funciton gerneartor as the input siganl as opposed to the IR photidoe to elmiinate any niose and isolate the test at hand. Then I used the oscilloscope to map display the amplified output. I was able to vary the amplitude of the function generator signal to simulate the distance between the treasure and the IR sensor. I used different gain resistors until my amplfied output was still sginficant given an input siganl with a 300mV pk to pk. The amplified outut necessary for the Arduino's analog read function is between 0 and 5V.
+ 
+ The main code imporvemetn afer lab 4 had to do with how we checked for bins with large magnitudes. Orignally, in lab 2, we determined the bin for 7, 11, and 17 khZ to be bins 47, 80, and 114 respectively. After FFT anlaysis is performed on the input signal, those 3 bins were compared to the surrounding bins to see if the difference between them and the surrounding bins was high, meaning there is a peak. The result was the often incorrect frequcies would be detected. Next we tried checking to see whether the bin magnitude was above a certain absolute threshold as opposed to comparing it to the neighboring bins' magnitudes. This seems to work very well and consistently correctly determinging the treasure frequency.
+ 
+ '''c
+ 
+ if (fft_log_out[47] > thresh){ // 7khz
+      digitalWrite(led1, HIGH);   // turn the LED on (HIGH is the voltage level)
+      Serial.println("GOT 7");
+      digitalWrite(freq1, LOW);
+      digitalWrite(freq2, LOW);}
+    else{
+      digitalWrite(led1, LOW);
+      digitalWrite(freq1, LOW);
+      digitalWrite(freq2, LOW);}
+    
+    if (fft_log_out[80] > thresh){  // 12khz
+      digitalWrite(led2, HIGH);   // turn the LED on (HIGH is the voltage level)
+      Serial.println("GOT 12");
+      digitalWrite(freq1, LOW);
+      digitalWrite(freq2, HIGH);}
+      
+    else{
+      digitalWrite(led2, LOW);
+      digitalWrite(freq1, LOW);
+      digitalWrite(freq2, LOW);}
+
+    if (fft_log_out[114] > thresh){  // 17khz
+      Serial.println("GOT 17");
+      digitalWrite(led3, HIGH);
+      digitalWrite(freq1, LOW);
+      digitalWrite(freq2, LOW);}   // turn the LED on (HIGH is the voltage level)
+    else{
+      digitalWrite(led3, LOW);
+      digitalWrite(freq1, LOW);
+      digitalWrite(freq2, LOW);
+      }
+      
+      '''
+ 
+When testing out microhone circuit, our oringial code from Lab2 was no longer working. We believe this has to do with changing the clock prescalar for the ADV. Eventually, we used the treasure dection code to determine the 660hz tone the microphone needs to hear. Passing the anlaog input from the microphone, and processing the Foruier transforms make it eay to identify the tone frequecny by seeing which bin has the largest magnitude.
+ 
+ 
+ After protoying the circuit on a breadboard and determining tis consitinent ability to ditsiugish betwene different frequency treasures, we moved the entire eamplifier circuit to a protoboard.Insert code here
 
 ### Radio Communication
 Two arduinos are involved in radio transmission. The arduino on the robot is responsible for sending maze information to the arduino that is serially connected to the FPGA. This information  was coded in 2 bytes: 5 bits for current position (2 bites for x and 3 bits for y), 2 bits for the 3 possible treasures, 1 bit for wall on each side, and 1 bit for done signal. 
