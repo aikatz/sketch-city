@@ -12,6 +12,114 @@ Even though we had three line sensors on our final robot design, our line follow
 Initially we were using the provided wall sensors, however since we had three wall sensors on our robot, that used up three possible inputs to our ADC, which we needed for other things. To free up pins on the ADC, and in order to get more accurate wall sensing, we ordered three [VL6180X time-of-flight](https://www.pololu.com/product/2489)($11.95 x 3 = $35.85 cost). sensors from Pololu. These sensors used i2c to communicate, and were more complex to set up than our previous sensors. However the gains in accuracy, stability and free ADC ports were worth it. We had a mysterious bug where our robot's processor would deadlock seemingly randomly, attemps to debug the issue were fruitless, until we learned that the Arduino Uno's built-in i2c SCL and SDA lines were actually tied to analog pins A4 and A5, which we were using. This was causing the crashing behavior. Once we freed up A4 and A5, the wall sensors worked wonderfully, however since we couldn't use A4 and A5, our net gain was only one analog pin. Eventually we moved to an Arduino Mega so we could have more Analog pins, however we ended up moving treasure and sound detection to a separate Arduino so we actually ended up not needing the extra pins the Mega offered. 
 
 ### Maze-Solving Algorithm
+First of all, we would like to clarify that our movement algorithm, meaning servos combinations to help our robot move, was the same as in previous milestones. It was a simple variable of type *State* that would indicate the robot where to go, including LEFT, RIGHT, STRAIGHT, etc. When deciding to implement a maze-solving algorithm, we considered the different available options and how they could benefit and work with the capabilities of our robot. After some research on efficiency of movement and mapping, and the fact that the robot was supposed to map a considerably small maze, we decided to go with *Depth-First Search*. This algortihm was not only supposed to provide a very straight forward movement sequence based on putting possible "paths" on the stack -always prioritizing the forward movement-, but it would also indicate that our robot was done mapping the maze by emptying the stack and having no more unvisited intersections to go. We used the <StackArray.h> Arduino library to implement the stack and use pretty useful functions like push() -to introduce new paths to the stack- and pop() -to get the next path-. However, a lot of interesting logic needed to be implemented to not only achieve an efficient DFS, but to also think ahead about how to send information to the other Arduino via radio in order to be displayed by the FPGA. For instance, there were two types of "walls" in our algorithm: the walls from the perspective of the robot; and the actual walls from the perspective of the maze to be sent as a 4-bit array to the other Arduino. For this purpose, we utilized a very efficient *enum* to help us with the orientation of the robot:
+
+```c
+enum Orientation{
+  NORTH,
+  SOUTH,
+  WEST,
+  EAST
+};
+```c
+
+Given these possible orientations, we were able to easily convert wall detection from robot to maze perspective:
+
+```c
+void wallMaze () {
+    
+  // Initializing array to all false
+  for (int i = 0; i < 4; i++) {
+    actualWalls[i] = false;
+  }
+  
+  // The output of this function is described as left-up-right-down 
+  if (walls[0] == true) {
+    switch(robotOrient) {
+      case NORTH: 
+        actualWalls[0] = true;
+          break;
+      case EAST: 
+        actualWalls[1] = true;
+        break;
+      case SOUTH: 
+        actualWalls[2] = true;
+        break;
+      case WEST: 
+        actualWalls[3] = true;
+        break;
+    }
+  }
+  
+  if (walls[1] == true) {
+    switch(robotOrient) {
+      case WEST:  
+        actualWalls[0] = true;
+        break;
+      case NORTH: 
+        actualWalls[1] = true;
+        break;
+      case EAST: 
+        actualWalls[2] = true;
+        break;
+      case SOUTH: 
+        actualWalls[3] = true;
+        break;
+    }
+  }
+  
+  if (walls[2] == true) {
+    switch(robotOrient) {
+      case SOUTH: 
+        actualWalls[0] = true;
+        break;
+      case WEST: 
+        actualWalls[1] = true;
+        break;
+      case NORTH: 
+        actualWalls[2] = true;
+        break;
+      case EAST: 
+        actualWalls[3] = true;
+        break;
+     }
+  }
+}
+```c
+
+With actual walls taken care of, we had to use robot-perspective wall detection and orientation to update the stack appropriately with the possible paths:
+
+```c
+void updateStack(){
+      
+  // Pushing possible paths into the stack
+  switch(robotOrient){
+    case NORTH: 
+      if(walls[0] == false) { stack.push(inters[current_pos_x][current_pos_y - 1]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x][current_pos_y + 1]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x - 1][current_pos_y]); }
+      break;
+    case EAST: 
+      if(walls[0] == false) { stack.push(inters[current_pos_x - 1][current_pos_y]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x + 1][current_pos_y]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x][current_pos_y + 1]); }
+      break;
+    case SOUTH: 
+      if(walls[0] == false) { stack.push(inters[current_pos_x][current_pos_y + 1]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x][current_pos_y - 1]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x + 1][current_pos_y]); }
+      break;
+    case WEST: 
+      if(walls[0] == false) { stack.push(inters[current_pos_x + 1][current_pos_y]); }
+      if(walls[2] == false) { stack.push(inters[current_pos_x - 1][current_pos_y]); }
+      if(walls[1] == false) { stack.push(inters[current_pos_x][current_pos_y - 1]); }
+      break;
+  }
+}
+```c
+
+With a valid stack, we were left with a very important aspect of maze-solving: back-tracking. Sadly, after spending a lot of time of this algorithm, it was constantly encountering new and more devastating bugs every time, therefore it did not perform properly at **Competition Day**. We based this algorithm as a simple loop condition that would be trigerred once true: if the position you want to go is at a distance greater than 1 intersection -either in the x or the y axis-, start back-tracking. We made this possible by creating a struct *inters* for every intersection that would hold the previous intersection the robot visited before getting there. Additionally, we checked that in the case of having our to-go intersection at a reachable distance of 1, we also checked for walls to avoid crashing. Although it could not get it done sometimes, we definitely experienced previous mappings where the robot behaved as intended. However, the only times it failed, it was because of erroneous back-pointer analysis, since we did some solid testing on the stack implementation.
+
 ### Treasure Detection and Start Tone Detection
 ### Radio Communication
 Two arduinos are involved in radio transmission. The arduino on the robot is responsible for sending maze information to the arduino that is serially connected to the FPGA. This information  was coded in 2 bytes: 5 bits for current position (2 bites for x and 3 bits for y), 2 bits for the 3 possible treasures, 1 bit for wall on each side, and 1 bit for done signal. 
