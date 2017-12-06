@@ -18,7 +18,7 @@ Mechanical Design Overview:
 
 The entire robot was CADed using Autodesk Inventor Professional CAD software. Below is a picutre of the final robot CAD. 
 
-<div style="text-align:center"><img src ="../pictures/finalwebsite/FullRobotCAD.PNG" /></div>
+<div style="text-align:center"><img src ="/pictures/finalwebsite/FullRobotCAD.PNG" /></div>
 
 
 ### Line Following
