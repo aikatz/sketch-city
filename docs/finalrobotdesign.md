@@ -1,4 +1,10 @@
 # Final Robot Design
+### Robot Movement
+### Line Following
+### Wall Detection
+### Treasure Detection
+### Maze-Solving Algorithm
+### Radio Communication
 
 ### FPGA: FPGA + Arduino Communication
 The FPGA takes a 7-bit signal as a message from the Arduino and outputs to a VGA display and a DAC connected to an audio jack. The 7-bit message can represent either the current position of the robot or the presence of walls and treasures. Each transmission from the Arduino is a set of two messages, the first containing the position and the second containing walls and treasures. The MSB of the message determines which of the two messages is being sent. When it is 0, the position is being sent, with the x-position as bits 0 to 1 and the y-position as bits 2 to 4. The the MSB is 1, the walls and treasures are being sent, with the treasures as bits 0 to 1 and the walls as bits 2 to 5. The treasures are represented as 00 for the 7kHz, 01 for 12 kHz, and 17 kHz for 17kHz. The walls are each represented as 1 bit in the order north, east, south, west from the MSB to the LSB. When the robot is done mapping the maze, it transmits a message of all 1’s, which is not normally possible.
